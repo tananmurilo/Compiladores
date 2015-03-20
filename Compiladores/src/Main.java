@@ -21,7 +21,7 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("teste");
         PalavrasReservadas reservadas = new PalavrasReservadas();
-        
+        //testar busca nas palavras resevadas
         System.out.println(reservadas.buscarPalavra("registro"));
     }
     
