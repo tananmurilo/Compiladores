@@ -25,7 +25,12 @@ public class Main {
         System.out.println(reservadas.buscarPalavra("registro"));
         
         Interface a = new Interface();
-        a.show();
+        a.setVisible(true);
+        //Arquivo arq = new Arquivo();
+        //arq.read("D:\\Users\\murilo\\Desktop\\arquivo teste.txt");
+        //System.out.println("");
+       // System.out.println("Teste na lista");
+        //arq.print();
     }
     
     

@@ -1,5 +1,6 @@
 
 import java.io.File;
+import java.util.LinkedList;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -35,9 +36,9 @@ public class Interface extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextPane1 = new javax.swing.JTextPane();
+        painelSaida = new javax.swing.JTextPane();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextPane2 = new javax.swing.JTextPane();
+        painelEntrada = new javax.swing.JTextPane();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
@@ -48,10 +49,10 @@ public class Interface extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTextPane1.setEditable(false);
-        jScrollPane1.setViewportView(jTextPane1);
+        painelSaida.setEditable(false);
+        jScrollPane1.setViewportView(painelSaida);
 
-        jScrollPane2.setViewportView(jTextPane2);
+        jScrollPane2.setViewportView(painelEntrada);
 
         jLabel1.setText("Entrada");
 
@@ -141,6 +142,12 @@ public class Interface extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
+    /**
+     * Metodo executado quando o item "abrir arquivo" do menu for acionado.
+     * Executa JFileChooser e ler o arquivo selecionado e mostra no painel. 
+     * @param evt 
+     */
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
          /* pegar o caminho do arquivo para leitura*/
         
@@ -152,6 +159,7 @@ public class Interface extends javax.swing.JFrame {
         // Impede seleções múltiplas.  
         file.setMultiSelectionEnabled(false);  
           int i= file.showSaveDialog(null);
+       
         if (i==1){
            this.path="erro ao abrir arquivo";
            this.Status_arquivo.setText(path);
@@ -159,9 +167,20 @@ public class Interface extends javax.swing.JFrame {
             File arquivo = file.getSelectedFile();
             this.path=arquivo.getPath();
             System.out.println(arquivo.getPath());
-            this.Status_arquivo.setText(path);
+            this.Status_arquivo.setText("Arquivo: "+path);
             
-            //colocar chamada do metodo de leitura do arquivo aqui.
+            //chamada do método de leitura de arquivo
+            Arquivo arq = new Arquivo();
+            arq.read(path);
+            LinkedList<String> linha =  new LinkedList<>();
+            linha = arq.getLinhas(); //pega as linhas do arquivo lido
+            String text="";
+            for (String linha1 : linha) {
+                if(linha1!=null){// a ultima posição na lista é null 
+                    text= text+linha1+"\n";
+                }    
+            }
+            this.painelEntrada.setText(text); //add o texto ao painel
         }
         
         
@@ -221,7 +240,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextPane jTextPane1;
-    private javax.swing.JTextPane jTextPane2;
+    private javax.swing.JTextPane painelEntrada;
+    private javax.swing.JTextPane painelSaida;
     // End of variables declaration//GEN-END:variables
 }
