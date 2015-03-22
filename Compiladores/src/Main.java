@@ -23,6 +23,9 @@ public class Main {
         PalavrasReservadas reservadas = new PalavrasReservadas();
         //testar busca nas palavras resevadas
         System.out.println(reservadas.buscarPalavra("registro"));
+        
+        Interface a = new Interface();
+        a.show();
     }
     
     
