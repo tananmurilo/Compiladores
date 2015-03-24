@@ -11,37 +11,156 @@
 public class Automato {
     
     int[][] matrizTransicao = new int [8][8];
-    int estadoAtual = 0;
+    //int estadoAtual = 0;
+    
     
     public String iniciar(String input){
-      
+        int estadoAtual = 0;
         String output = "";
+        String texto="";
+        String cr="";
         
-        inicializaMatriz();
+        //inicializaMatriz();
         
         
         for(int i =0; i< input.length(); i++){
-            atualizaEstado(estadoAtual, input.charAt(i));
+            
+            char ch = input.charAt(i);
+            
+            if(estadoAtual==0){ //se o estado for inicial do automato 
+               
+                //identificar os primeiros estados aqui tipo, 1 2 3 4 ...cada um vai seguir para uma folha do automato.
+                if((ch>=65 && ch<=90) || (ch>=97&&ch<=122)){ //letra a-z|A-Z
+                    
+                    estadoAtual=1; //estado para identificadores
+                    //System.out.println("primeira ltra: "+ch);
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;// concatenar com os caracteres;
+                    
+                }else if((ch>=48)&&(ch<=57)){ //numeros 0-9
+                    estadoAtual=2; //estado para numeros
+                    //System.out.println("primeira numero: "+ch);
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;// concatenar com os caracteres;
+                    
+                }else{
+                    //System.err.println("ERRO não encontrou o caracter");
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;
+                    estadoAtual=99; //estado de erro para ser exibido.
+                    //estadoAtual=0;
+                    
+                }
+                
+            }else if(estadoAtual==1){ //identificadore e palavras reservadas
+               
+                if((ch>=65 && ch<=90) || (ch>=97&&ch<=122) || (ch>=48&&ch<=57)||(ch==95)){ //letra a-z|A-Z numero e _
+                    //System.out.println("sengada + letra: "+ch);
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;// concatenar com os caracteres;
+                 
+                }else{//erro se o caractere lido não for letra numero ou _
+                    estadoAtual=99; //estado de erro para ser exibido.
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;// concatenar com os caracteres;
+                    //System.err.println("ERRO token");
+                }
+                
+            }else if(estadoAtual==2){ //numeros
+                if((ch>=48)&&(ch<=57)){ // numero 
+                    //System.out.println("sengada + letra: "+ch);
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;// concatenar com os caracteres;
+                 
+                }else if(ch==46){
+                    if (i+1 == input.length()) {//caso não tenha mais caractere depois do .
+                         estadoAtual = 98;
+                         cr = String.valueOf(ch);
+                         texto= texto+cr;
+                    }else{
+                        cr = String.valueOf(ch);
+                        texto= texto+cr;
+                        estadoAtual = 3;
+                    }
+                }else{
+                    estadoAtual=99; //estado de erro para ser exibido.
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;// concatenar com os caracteres;
+                   // System.err.println("ERRO caracter não encontrado");
+                }
+            
+            }else if(estadoAtual==3){
+                if((ch>=48)&&(ch<=57)){ //numero 
+                    //System.out.println("sengada + letra: "+ch);
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;// concatenar com os caracteres;
+                }else{
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;
+                    estadoAtual=98; //estado de erro para ser exibido.
+                }
+                
+            }else if(estadoAtual==98){//estado error de token mau formado
+                cr = String.valueOf(ch);
+                texto= texto+cr;
+                
+            }else if(estadoAtual==99){ //estado error de token/caracteres não identificado/não pertencem a linguagem
+                cr = String.valueOf(ch);
+                texto= texto+cr;
+            }else{
+                estadoAtual=99;
+                cr = String.valueOf(ch);
+                texto= texto+cr;
+                
+               // System.err.println("ERRO nenhum estado encontrado");
+            }
+            //atualizaEstado(estadoAtual, input.charAt(i));
         }
-        
-        output = getToken();
+        //pega o toke + seu identificador
+        output = getToken(texto, estadoAtual);
         
         return output;
     };
     
     private void inicializaMatriz(){
-        // Aqui ser'ao listadas todas as possíveis transições
+        //matrizTransicao[0][7];
     }
     
     private int atualizaEstado(int estado, int entrada){
             return matrizTransicao[estado] [entrada];
     };
     
-    private String getToken(){
-        switch(estadoAtual){
+    /**
+     * Método retorna o token e seu tipo
+     * @param txt texto correspondente ao token
+     * @param estado estado final/estado onde o algoritmo terminou 
+     * @return Token completo
+     */
+    private String getToken(String txt, int estado){
+        switch(estado){
+            case 1: 
+                PalavrasReservadas reservadas = new PalavrasReservadas();
+                if(reservadas.buscarPalavra(txt)==true){
+                    return "<PalavraReservada, "+txt+">";
+                }else{
+                    return "<Identificador, "+txt+">";
+                }
+                
+            case 2:
+                return "<Número, "+txt+">";
+                
+            case 3:
+                return "<Número, "+txt+">";
+                
             case 8:
                 return "<numero>";
                 
+            case 98:
+                return "<Token mau formado, "+txt+">";
+                
+            case 99:
+                return "<token não identificado, "+txt+">";
+                 
             default:  
                 return null;
                 

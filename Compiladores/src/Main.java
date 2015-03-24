@@ -31,7 +31,7 @@ public class Main {
         a.setVisible(true);
         Arquivo arq = new Arquivo();
         
-         //abrir um arquivo pra teste mudar para o path do seu arquivo
+         /*abrir um arquivo pra teste mudar para o path do seu arquivo
         arq.read("D:\\Users\\murilo\\Desktop\\arquivo teste.txt"); //abrir um arquivo pra teste mudar para o path do seu arquivo
         System.out.println("");
         System.out.println("Teste na lista do arquivo");
@@ -47,6 +47,7 @@ public class Main {
             System.out.println(t);
                     
         }
+          */
     }
     
     

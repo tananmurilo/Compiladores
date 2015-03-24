@@ -181,6 +181,14 @@ public class Interface extends javax.swing.JFrame {
                 }    
             }
             this.painelEntrada.setText(text); //add o texto ao painel
+            
+            AnalizadorLexico analizador = new AnalizadorLexico();
+            LinkedList<String> Tokens = new LinkedList<String>();
+            Tokens =   analizador.separarTokens(arq.getLinhas());//tokens separado, mas sem o tratamento.
+            String textoFinal = analizador.getTexto();//pega o texto com todos os tokens já processados
+            
+             this.painelSaida.setText(textoFinal); //add o texto ao painel
+            
         }
         
         
