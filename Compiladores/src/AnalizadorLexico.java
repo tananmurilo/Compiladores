@@ -25,9 +25,11 @@ public class AnalizadorLexico {
         LinkedList<String> tokens = new LinkedList<String>();
         expressoes = separarTokens(linhas);
         
+       int linha = 0;
+        
         automatoLexico = new Automato();
         for(int i=0; i< expressoes.size(); i++){
-            tokens.add(automatoLexico.iniciar(expressoes.get(i)));
+            tokens.add(automatoLexico.iniciar(expressoes.get(i), linha));
         }
         
     return tokens;    
@@ -44,7 +46,8 @@ public class AnalizadorLexico {
         LinkedList<String> expressoes = new LinkedList<String>();
         
         textoFinal="";//inicializar o texto vazio
-        
+        char last_char = ' ';
+         
         /**vare todas as linhas e vai separando os tokens quando enconta um delimitador.
          * Idéia: a gente pode colocar para chamar o metodo do autonomo para analizar o token ao final de cada 
          * separação feita e sair com uma lista de token já devidamente identificado, e caso o toke sejá invalido
@@ -68,19 +71,80 @@ public class AnalizadorLexico {
                   //se encontrar um delimitador ou espaço, armazena o que tiver na variavel temp na lista de tokens e inicializa a temp com o delimitador
                   if(a==' ' || a==';' || a==',' || a=='(' || a==')' || a=='{' || a=='}' || a=='[' || a==']' ){
                       expressoes.add(temp); //adiciona o token na lista
-                      String aunt = automatoLexico.iniciar(temp);//analizar o token no autonomo
+                      String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                       System.out.println("Automato: "+aunt);//testes
                       if(aunt!=null){
                        textoFinal = textoFinal+aunt+"\n";   
                       }
+                      
           
                       temp = ""; //limpa a variavel
                       String b = String.valueOf(a);
                       if(a!=' '){ //se o que tiver separando as strings for um delimitador ele entra para variavel temporaria para na proxima interação virar um token também, e o espaço é ignorado.
                           temp=temp+b;// adiciona o delimitador; 
+                          aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
+                          System.out.println("Automato: "+aunt);//testes
+                          if(aunt!=null){
+                          textoFinal = textoFinal+aunt+"\n";   
+                           }
+          
+                            temp = ""; //limpa a variavel
                       } 
-                  }else{ //se o caractere n for um delimitador ou espaço vai armazenando na string 
+                  }else if(((a=='+' || a=='-' || a=='=' || a=='.' || a=='*' || a=='/' || a=='>' || a=='<' ))&& ((last_char>=65 && last_char<=90) || (last_char>=97&&last_char<=122)) ){ //caso o operado seja precedido de caractere ele deve ser separado
                        
+                      expressoes.add(temp); //adiciona o token na lista
+                      String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
+                      System.out.println("Automato: "+aunt);//testes
+                      if(aunt!=null){
+                       textoFinal = textoFinal+aunt+"\n";   
+                      }
+                      
+                      temp = ""; //limpa a variavel
+                      String b = String.valueOf(a);
+                      temp= temp+b;// concatenar com os caracteres;
+                  
+                    }else if(((a=='+' || a=='-' || a=='=' || a=='*' || a=='/' || a=='>' || a=='<' ))&& ((last_char>=48)&&(last_char<=57)) ){ //caso o operado seja precedido de numero ele deve ser separado
+                        
+                        expressoes.add(temp); //adiciona o token na lista
+                      String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
+                      System.out.println("Automato: "+aunt);//testes
+                      if(aunt!=null){
+                       textoFinal = textoFinal+aunt+"\n";   
+                      }
+                      
+                      temp = ""; //limpa a variavel
+                      String b = String.valueOf(a);
+                      temp= temp+b;// concatenar com os caracteres;
+                      
+                    }else if(((a>=48)&&(a<=57)) && ((last_char=='+' || last_char=='-' || last_char=='=' || last_char=='*' || last_char=='/' || last_char=='>' || last_char=='<' )) ){ //caso o operador seja sucedido de numero ele deve ser separado
+
+                       expressoes.add(temp); //adiciona o token na lista
+                      String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
+                      System.out.println("Automato: "+aunt);//testes
+                      if(aunt!=null){
+                       textoFinal = textoFinal+aunt+"\n";   
+                      }
+                      
+                      temp = ""; //limpa a variavel
+                      String b = String.valueOf(a);
+                      temp= temp+b;// concatenar com os caracteres;
+                      
+                      }else if(((a>=65 && a<=90) || (a>=97&&a<=122)) && ((last_char=='.' || last_char=='+' || last_char=='-' || last_char=='=' || last_char=='*' || last_char=='/' || last_char=='>' || last_char=='<' )) ){ //caso o operador seja sucedido de letra ele deve ser separado
+
+                       expressoes.add(temp); //adiciona o token na lista
+                      String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
+                      System.out.println("Automato: "+aunt);//testes
+                      if(aunt!=null){
+                       textoFinal = textoFinal+aunt+"\n";   
+                      }
+                      
+                      temp = ""; //limpa a variavel
+                      String b = String.valueOf(a);
+                      temp= temp+b;// concatenar com os caracteres;
+                        
+                      
+                  }else{ //se o caractere n for um delimitador ou espaço vai armazenando na string 
+                      
                       String b = String.valueOf(a);
                       temp= temp+b;// concatenar com os caracteres;
                   }
@@ -89,11 +153,12 @@ public class AnalizadorLexico {
                      
                       expressoes.add(temp); //adiciona o token na lista
                      
-                      String aunt = automatoLexico.iniciar(temp);//analizar o token no autonomo
+                      String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                       System.out.println("Automato: "+aunt);
                       if(aunt!=null){
                        textoFinal = textoFinal+aunt+"\n";   
                       }
+                      
                       
                       
                   }
@@ -104,6 +169,7 @@ public class AnalizadorLexico {
                       temp= temp+b;// concatenar com os caracteres;
                   }
               }
+              last_char = a;
               cont++;
           }  
           

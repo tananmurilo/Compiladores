@@ -14,7 +14,7 @@ public class Automato {
     //int estadoAtual = 0;
     
     
-    public String iniciar(String input){
+    public String iniciar(String input, int linha){
         int estadoAtual = 0;
         String output = "";
         String texto="";
@@ -40,6 +40,18 @@ public class Automato {
                 }else if((ch>=48)&&(ch<=57)){ //numeros 0-9
                     estadoAtual=2; //estado para numeros
                     //System.out.println("primeira numero: "+ch);
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;// concatenar com os caracteres;
+                    
+                }else if(ch==' ' || ch==';' || ch==',' || ch=='(' || ch==')' || ch=='{' || ch=='}' || ch=='[' || ch==']' ){
+                
+                    estadoAtual=4; //estado para delimitadores
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;// concatenar com os caracteres;
+                
+                }else if(ch=='+' || ch=='-' || ch=='=' || ch=='.' || ch=='*' || ch=='/' || ch=='>' || ch=='<' ){
+                
+                    estadoAtual=5; //estado para operadores de um caractere
                     cr = String.valueOf(ch);
                     texto= texto+cr;// concatenar com os caracteres;
                     
@@ -117,7 +129,7 @@ public class Automato {
             //atualizaEstado(estadoAtual, input.charAt(i));
         }
         //pega o toke + seu identificador
-        output = getToken(texto, estadoAtual);
+        output = getToken(texto, estadoAtual, linha);
         
         return output;
     };
@@ -126,7 +138,7 @@ public class Automato {
         //matrizTransicao[0][7];
     }
     
-    private int atualizaEstado(int estado, int entrada){
+    private int atualizaEstado(int estado, int entrada, int linha){
             return matrizTransicao[estado] [entrada];
     };
     
@@ -136,7 +148,7 @@ public class Automato {
      * @param estado estado final/estado onde o algoritmo terminou 
      * @return Token completo
      */
-    private String getToken(String txt, int estado){
+    private String getToken(String txt, int estado, int linha){
         switch(estado){
             case 1: 
                 PalavrasReservadas reservadas = new PalavrasReservadas();
@@ -152,14 +164,20 @@ public class Automato {
             case 3:
                 return "<Número, "+txt+">";
                 
+            case 4:
+                return "<Delimitador, "+txt+">";
+                
+            case 5:
+                return "<Operador, "+txt+">";
+                
             case 8:
                 return "<numero>";
                 
             case 98:
-                return "<Token mau formado, "+txt+">";
+                return "<Token mau formado na linha " +linha+ ", "+txt+">";
                 
             case 99:
-                return "<token não identificado, "+txt+">";
+                return "<token não identificado  na linha " +linha+ ", "+txt+">";
                  
             default:  
                 return null;
