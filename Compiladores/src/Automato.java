@@ -12,6 +12,33 @@ public class Automato {
     
     int[][] matrizTransicao = new int [8][8];
     //int estadoAtual = 0;
+    /*Lembrete
+       Estados nº - descrição
+        0 - estado inicial
+        1 - identificadores e palavras reservadas
+        2 - numeros inteiros
+        3 - numeros fracionados
+        4 - delimitadores
+        5 - Estado final para operador simples . * + - = < > /
+        6 - caracter constante
+        7 - caracter constatne parte final
+        8 - Cadeia Constante
+        9 - Cadeia Constante parte final
+        10 - operador !=
+        11 - estado final para operadores duplos != == && || ++ == --
+        12 - operador &&
+        13 - operador ||
+        14 - operador <=, >= ==
+        15 - operador --
+        16 - operador ++
+        17 - comentarios
+        18 - comentario de linha
+        19 - comentario de bloco
+        20 - comentario de bloco
+        21 - comentario de bloco estado final
+        98 - token mal formado(pode ser dividi mais tarde em numero mal formado, identificado mal formado etc..)
+        99 - caracter não encontrado/não pertence a linguagem
+    */
     
     
     public String iniciar(String input, int linha){
@@ -21,6 +48,7 @@ public class Automato {
         String cr="";
         
         //inicializaMatriz();
+        
         
         
         for(int i =0; i< input.length(); i++){
@@ -43,15 +71,60 @@ public class Automato {
                     cr = String.valueOf(ch);
                     texto= texto+cr;// concatenar com os caracteres;
                     
-                }else if(ch==' ' || ch==';' || ch==',' || ch=='(' || ch==')' || ch=='{' || ch=='}' || ch=='[' || ch==']' ){
+                }else if(ch==' ' || ch==';' || ch==',' || ch=='(' || ch==')' || ch=='{' || ch=='}' || ch=='[' || ch==']' ){//delimitadores
                 
                     estadoAtual=4; //estado para delimitadores
                     cr = String.valueOf(ch);
                     texto= texto+cr;// concatenar com os caracteres;
                 
                 }else if(ch=='+' || ch=='-' || ch=='=' || ch=='.' || ch=='*' || ch=='/' || ch=='>' || ch=='<' ){
-                
-                    estadoAtual=5; //estado para operadores de um caractere
+                    if((ch=='>' || ch=='<' || ch=='=')&&(i+1 < input.length())){
+                        estadoAtual=14; //estado para operadores <=, >= e ==
+                        cr = String.valueOf(ch);
+                        texto= texto+cr;// concatenar com os caracteres; 
+                    }else if((ch=='-')&&(i+1 < input.length())){
+                        estadoAtual=15; //estado para operadores --
+                        cr = String.valueOf(ch);
+                        texto= texto+cr;// concatenar com os caracteres; 
+                    }else if((ch=='+')&&(i+1 < input.length())){
+                        estadoAtual=16; //estado para operadores ++
+                        cr = String.valueOf(ch);
+                        texto= texto+cr;// concatenar com os caracteres; 
+                    }else{
+                        estadoAtual=5; //estado para operadores de um caractere
+                        cr = String.valueOf(ch);
+                        texto= texto+cr;// concatenar com os caracteres; 
+                    }
+                   
+                    
+                }else if(ch==39){//caracter constante
+                    estadoAtual=6;
+                    //colocar as ' no texto
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;// concatenar com os caracteres;
+                    
+                }else if(ch==34){ //cadeia constante
+                    estadoAtual=8;
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;// concatenar com os caracteres;
+                    
+                }else if(ch==33){ // operador !=
+                    estadoAtual=10;
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;// concatenar com os caracteres;
+                    
+                }else if(ch==38){ // operador &&
+                    estadoAtual=12;
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;// concatenar com os caracteres;
+                    
+                }else if(ch==124){ // operador ||
+                    estadoAtual=13;
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;// concatenar com os caracteres;
+                    
+                }else if(ch==47){ // barra
+                    estadoAtual=17;
                     cr = String.valueOf(ch);
                     texto= texto+cr;// concatenar com os caracteres;
                     
@@ -112,6 +185,173 @@ public class Automato {
                     estadoAtual=98; //estado de erro para ser exibido.
                 }
                 
+            }else if(estadoAtual==6){ //caracter constante
+                if(((ch>=32&&ch<=38)||(ch>=40&&ch<=126))){ //ver se é um caracter valido
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;
+                    estadoAtual = 7;  //estado que identifica se o prox caracter é '
+                }else{
+                    estadoAtual = 98;
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;
+                }   
+            }else if(estadoAtual==7){//caracter constante parte final
+                if((ch==39)&&(i+1 == input.length())){//se o caracter for ' é o fim do caracter constante caso contrario é error
+                    //coloca as ' na string
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;
+                    estadoAtual = 7; 
+                }else{
+                    estadoAtual = 98;
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;
+                }   
+                
+            }else if(estadoAtual==8){//cadeia  constante parte final
+                if(((ch>=32&&ch<=33)||(ch>=35&&ch<=126))){ //ver se é um caracter valido.
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;
+                   
+                }else if(ch==34&&(i+1 == input.length())){//identifica o final da cadeia
+                    estadoAtual = 9;
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;
+                    
+                }else{
+                    estadoAtual = 98; //error
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;
+                }   
+                
+            }else if(estadoAtual==10){
+                if(ch=='='&&(i+1 == input.length())){
+                   estadoAtual = 11; //!=
+                   cr = String.valueOf(ch);
+                   texto= texto+cr; 
+                   
+                }else{
+                    estadoAtual = 98; //error
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;
+                }
+            }else if(estadoAtual==12){
+                if(ch=='&'&&(i+1 == input.length())){
+                   estadoAtual = 11; //!= && ||
+                   cr = String.valueOf(ch);
+                   texto= texto+cr; 
+                   
+                }else{
+                    estadoAtual = 98; //error
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;
+                }
+            }else if(estadoAtual==13){
+                if(ch=='|'&&(i+1 == input.length())){
+                   estadoAtual = 11; //!= && ||
+                   cr = String.valueOf(ch);
+                   texto= texto+cr; 
+                   
+                }else{
+                    estadoAtual = 98; //error
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;
+                }
+            }else if(estadoAtual==14){
+                if(ch=='='&&(i+1 == input.length())){
+                   estadoAtual = 11; //operador duplo
+                   cr = String.valueOf(ch);
+                   texto= texto+cr; 
+                   
+                }else{
+                    estadoAtual = 98; //error
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;
+                }
+            }else if(estadoAtual==15){
+                if(ch=='-'&&(i+1 == input.length())){
+                   estadoAtual = 11; //operador duplo
+                   cr = String.valueOf(ch);
+                   texto= texto+cr; 
+                   
+                }else{
+                    estadoAtual = 98; //error
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;
+                }
+            }else if(estadoAtual==16){
+                if(ch=='+'&&(i+1 == input.length())){
+                   estadoAtual = 11; //operador duplo
+                   cr = String.valueOf(ch);
+                   texto= texto+cr; 
+                   
+                }else{
+                    estadoAtual = 98; //error
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;
+                }
+            }else if(estadoAtual==17){
+                if(ch=='/'){
+                   estadoAtual = 18; //comentario de linha
+                   cr = String.valueOf(ch);
+                   texto= texto+cr; 
+                   
+                }else if(ch=='*'){
+                   estadoAtual = 19; //comentario de bloco
+                   cr = String.valueOf(ch);
+                   texto= texto+cr; 
+                }else{
+                    estadoAtual = 98; //error
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;
+                }
+            }else if(estadoAtual==18){
+                if(ch>=32&&ch<=126){
+                   estadoAtual = 18; //comentario de linha
+                   cr = String.valueOf(ch);
+                   texto= texto+cr; 
+                   
+                }else{
+                    estadoAtual = 98;
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;
+                }
+                
+            }else if(estadoAtual==19){
+                if((ch>=32&&ch<=41) || (ch>=43&&ch<=126)){
+                   estadoAtual = 19; //comentario de bloco
+                   cr = String.valueOf(ch);
+                   texto= texto+cr; 
+                   
+                }else if(ch=='*'){
+                   estadoAtual = 20; //comentario de bloco
+                   cr = String.valueOf(ch);
+                   texto= texto+cr; 
+                }else{
+                    estadoAtual = 98;
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;
+                }
+                
+            }else if(estadoAtual==20){
+                if((ch>=32&&ch<=41) || (ch>=43&&ch<=126)){
+                   estadoAtual = 19; //volta pro estado 19
+                   cr = String.valueOf(ch);
+                   texto= texto+cr; 
+                   
+                }else if(ch=='*'){
+                   estadoAtual = 20; //comentario de bloco
+                   cr = String.valueOf(ch);
+                   texto= texto+cr; 
+                }else if(ch=='/'){
+                   estadoAtual = 21; //comentario de bloco estado final
+                   cr = String.valueOf(ch);
+                   texto= texto+cr; 
+                }else{
+                    estadoAtual = 98;
+                    cr = String.valueOf(ch);
+                    texto= texto+cr;
+                }
+                
             }else if(estadoAtual==98){//estado error de token mau formado
                 cr = String.valueOf(ch);
                 texto= texto+cr;
@@ -153,31 +393,39 @@ public class Automato {
             case 1: 
                 PalavrasReservadas reservadas = new PalavrasReservadas();
                 if(reservadas.buscarPalavra(txt)==true){
-                    return "<PalavraReservada, "+txt+">";
+                    return "PalavraReservada "+txt;
                 }else{
-                    return "<Identificador, "+txt+">";
+                    return "Identificador "+txt;
                 }
                 
             case 2:
-                return "<Número, "+txt+">";
+                return "Número "+txt;
                 
             case 3:
-                return "<Número, "+txt+">";
+                return "Número "+txt;
                 
             case 4:
-                return "<Delimitador, "+txt+">";
+                return "Delimitador "+txt;
                 
             case 5:
-                return "<Operador, "+txt+">";
+                return "Operador simples "+txt;
+            case 7:
+                return "Caracter constante "+txt;
                 
-            case 8:
-                return "<numero>";
+            case 9:
+                return "Cadeia constante "+txt;
+            case 11:
+                return "Operador duplo "+txt;//== != <= >= ||
+            case 18:
+                return "Comentário de linha "+txt;
+            case 21:
+                return "Comentário de bloco "+txt;
                 
             case 98:
-                return "<Token mau formado na linha " +linha+ ", "+txt+">";
+                return "Token mau formado "+txt;
                 
             case 99:
-                return "<token não identificado  na linha " +linha+ ", "+txt+">";
+                return "Token não identificado "+txt;
                  
             default:  
                 return null;

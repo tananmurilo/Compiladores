@@ -74,7 +74,7 @@ public class AnalizadorLexico {
                       String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                       System.out.println("Automato: "+aunt);//testes
                       if(aunt!=null){
-                       textoFinal = textoFinal+aunt+"\n";   
+                       textoFinal = textoFinal+aunt+" "+i+"\n";    
                       }
                       
           
@@ -85,18 +85,30 @@ public class AnalizadorLexico {
                           aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                           System.out.println("Automato: "+aunt);//testes
                           if(aunt!=null){
-                          textoFinal = textoFinal+aunt+"\n";   
+                          textoFinal = textoFinal+aunt+" "+i+"\n";  
                            }
           
                             temp = ""; //limpa a variavel
                       } 
+                  }else if((((last_char>=48)&&(last_char<=57))||(last_char>=65 && last_char<=90) || (last_char>=97&&last_char<=122))&&( a=='!'||a=='&'||a=='|')){ //separar os operadore ! & | quando vem letras ou numeros antes ex: n!=c 
+                      expressoes.add(temp); //adiciona o token na lista
+                      String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
+                      System.out.println("Automato: "+aunt);//testes
+                      if(aunt!=null){
+                       textoFinal = textoFinal+aunt+" "+i+"\n";   
+                      }
+                      
+                      temp = ""; //limpa a variavel
+                      String b = String.valueOf(a);
+                      temp= temp+b;// concatenar com os caracteres;
+                      
                   }else if(((a=='+' || a=='-' || a=='=' || a=='.' || a=='*' || a=='/' || a=='>' || a=='<' ))&& ((last_char>=65 && last_char<=90) || (last_char>=97&&last_char<=122)) ){ //caso o operado seja precedido de caractere ele deve ser separado
                        
                       expressoes.add(temp); //adiciona o token na lista
                       String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                       System.out.println("Automato: "+aunt);//testes
                       if(aunt!=null){
-                       textoFinal = textoFinal+aunt+"\n";   
+                       textoFinal = textoFinal+aunt+" "+i+"\n";    
                       }
                       
                       temp = ""; //limpa a variavel
@@ -105,37 +117,37 @@ public class AnalizadorLexico {
                   
                     }else if(((a=='+' || a=='-' || a=='=' || a=='*' || a=='/' || a=='>' || a=='<' ))&& ((last_char>=48)&&(last_char<=57)) ){ //caso o operado seja precedido de numero ele deve ser separado
                         
-                        expressoes.add(temp); //adiciona o token na lista
+                      expressoes.add(temp); //adiciona o token na lista
                       String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                       System.out.println("Automato: "+aunt);//testes
                       if(aunt!=null){
-                       textoFinal = textoFinal+aunt+"\n";   
+                       textoFinal = textoFinal+aunt+" "+i+"\n";   
                       }
                       
                       temp = ""; //limpa a variavel
                       String b = String.valueOf(a);
                       temp= temp+b;// concatenar com os caracteres;
                       
-                    }else if(((a>=48)&&(a<=57)) && ((last_char=='+' || last_char=='-' || last_char=='=' || last_char=='*' || last_char=='/' || last_char=='>' || last_char=='<' )) ){ //caso o operador seja sucedido de numero ele deve ser separado
+                    }else if(((a>=48)&&(a<=57)) && ((last_char=='+' || last_char=='-' || last_char=='=' || last_char=='*' || last_char=='/' || last_char=='>' || last_char=='<' || last_char=='&' || last_char=='|')) ){ //caso o operador seja sucedido de numero ele deve ser separado
 
                        expressoes.add(temp); //adiciona o token na lista
                       String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                       System.out.println("Automato: "+aunt);//testes
                       if(aunt!=null){
-                       textoFinal = textoFinal+aunt+"\n";   
+                       textoFinal = textoFinal+aunt+" "+i+"\n";  
                       }
                       
                       temp = ""; //limpa a variavel
                       String b = String.valueOf(a);
                       temp= temp+b;// concatenar com os caracteres;
                       
-                      }else if(((a>=65 && a<=90) || (a>=97&&a<=122)) && ((last_char=='.' || last_char=='+' || last_char=='-' || last_char=='=' || last_char=='*' || last_char=='/' || last_char=='>' || last_char=='<' )) ){ //caso o operador seja sucedido de letra ele deve ser separado
+                      }else if(((a>=65 && a<=90) || (a>=97&&a<=122)) && ((last_char=='.' || last_char=='+' || last_char=='-' || last_char=='=' || last_char=='*' || last_char=='/' || last_char=='>' || last_char=='<' || last_char=='&' || last_char=='|' )) ){ //caso o operador seja sucedido de letra ele deve ser separado
 
                        expressoes.add(temp); //adiciona o token na lista
                       String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                       System.out.println("Automato: "+aunt);//testes
                       if(aunt!=null){
-                       textoFinal = textoFinal+aunt+"\n";   
+                       textoFinal = textoFinal+aunt+" "+i+"\n";    
                       }
                       
                       temp = ""; //limpa a variavel
@@ -156,11 +168,8 @@ public class AnalizadorLexico {
                       String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                       System.out.println("Automato: "+aunt);
                       if(aunt!=null){
-                       textoFinal = textoFinal+aunt+"\n";   
-                      }
-                      
-                      
-                      
+                       textoFinal = textoFinal+aunt+" "+i+"\n";    
+                      }   
                   }
                   
               }else{//se a variavel tiver vazia armazena o caracter eceto espaço.
