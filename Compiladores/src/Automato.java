@@ -77,7 +77,7 @@ public class Automato {
                     cr = String.valueOf(ch);
                     texto= texto+cr;// concatenar com os caracteres;
                 
-                }else if(ch=='+' || ch=='-' || ch=='=' || ch=='.' || ch=='*' || ch=='/' || ch=='>' || ch=='<' ){
+                }else if(ch=='+' || ch=='-' || ch=='=' || ch=='.' || ch=='*'|| ch=='>' || ch=='<' ){
                     if((ch=='>' || ch=='<' || ch=='=')&&(i+1 < input.length())){
                         estadoAtual=14; //estado para operadores <=, >= e ==
                         cr = String.valueOf(ch);
@@ -123,10 +123,19 @@ public class Automato {
                     cr = String.valueOf(ch);
                     texto= texto+cr;// concatenar com os caracteres;
                     
-                }else if(ch==47){ // barra
-                    estadoAtual=17;
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;// concatenar com os caracteres;
+                }else if(ch=='/'){ // barra
+                    if(i+1<input.length()){
+                       if( input.charAt(i+1)=='/' ||  input.charAt(i+1)=='*'){
+                        estadoAtual=17;
+                        cr = String.valueOf(ch);
+                        texto= texto+cr;// concatenar com os caracteres;
+                    } 
+                    }else{
+                        estadoAtual=5; //operador
+                        cr = String.valueOf(ch);
+                        texto= texto+cr;// concatenar com os caracteres;
+                    }
+                    
                     
                 }else{
                     //System.err.println("ERRO não encontrou o caracter");
@@ -317,7 +326,7 @@ public class Automato {
                 }
                 
             }else if(estadoAtual==19){
-                if((ch>=32&&ch<=41) || (ch>=43&&ch<=126)){
+                if((ch>=32&&ch<=41) || (ch>=43&&ch<=126)||ch=='\n'){
                    estadoAtual = 19; //comentario de bloco
                    cr = String.valueOf(ch);
                    texto= texto+cr; 
@@ -347,6 +356,7 @@ public class Automato {
                    cr = String.valueOf(ch);
                    texto= texto+cr; 
                 }else{
+                    //System.err.println("entrou no erro");
                     estadoAtual = 98;
                     cr = String.valueOf(ch);
                     texto= texto+cr;

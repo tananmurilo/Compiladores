@@ -67,9 +67,7 @@ public class AnalizadorLexico {
               //se a variavel não tiver vazia vai armazenado os caracteres na variavel
               if(!temp.isEmpty()){
                  
-                  
-                  //se encontrar um delimitador ou espaço, armazena o que tiver na variavel temp na lista de tokens e inicializa a temp com o delimitador
-                  if(a==' ' || a==';' || a==',' || a=='(' || a==')' || a=='{' || a=='}' || a=='[' || a==']' ){
+                 if(a==' ' || a==';' || a==',' || a=='(' || a==')' || a=='{' || a=='}' || a=='[' || a==']' ){//se encontrar um delimitador ou espaço, armazena o que tiver na variavel temp na lista de tokens e inicializa a temp com o delimitador
                       expressoes.add(temp); //adiciona o token na lista
                       String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                       System.out.println("Automato: "+aunt);//testes
@@ -173,7 +171,7 @@ public class AnalizadorLexico {
                   }
                   
               }else{//se a variavel tiver vazia armazena o caracter eceto espaço.
-                  if(a!=' '){
+                 if(a!=' '){
                       String b = String.valueOf(a);
                       temp= temp+b;// concatenar com os caracteres;
                   }
