@@ -58,9 +58,12 @@ public class AnalizadorLexico {
           //System.out.println(" linha "+i);
           String temp ="";
           int cont =0;
+          Boolean numeroFloat = false;
           
           while(l!=null && cont < l.length()){
+             
               char a =  l.charAt(cont);
+               System.out.println(a+"     >"+temp+"<");
               //System.out.println("cont: "+cont+" tmax:"+ l.length());
               //System.out.println("Linha: "+i+" Caractere: "+a);
               
@@ -89,70 +92,40 @@ public class AnalizadorLexico {
                             temp = ""; //limpa a variavel
                       } 
                   }else if((((last_char>=48)&&(last_char<=57))||(last_char>=65 && last_char<=90) || (last_char>=97&&last_char<=122))&&( a=='!'||a=='&'||a=='|')){ //separar os operadore ! & | quando vem letras ou numeros antes ex: n!=c 
-                      expressoes.add(temp); //adiciona o token na lista
-                      String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
-                      System.out.println("Automato: "+aunt);//testes
-                      if(aunt!=null){
-                       textoFinal = textoFinal+aunt+" "+i+"\n";   
-                      }
                       
-                      temp = ""; //limpa a variavel
-                      String b = String.valueOf(a);
-                      temp= temp+b;// concatenar com os caracteres;
+                      temp = enviarToken(expressoes, temp, i, a);
                       
                   }else if(((a=='+' || a=='-' || a=='=' || a=='.' || a=='*' || a=='/' || a=='>' || a=='<' ))&& ((last_char>=65 && last_char<=90) || (last_char>=97&&last_char<=122)) ){ //caso o operado seja precedido de caractere ele deve ser separado
                        
-                      expressoes.add(temp); //adiciona o token na lista
-                      String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
-                      System.out.println("Automato: "+aunt);//testes
-                      if(aunt!=null){
-                       textoFinal = textoFinal+aunt+" "+i+"\n";    
-                      }
-                      
-                      temp = ""; //limpa a variavel
-                      String b = String.valueOf(a);
-                      temp= temp+b;// concatenar com os caracteres;
+                      temp = enviarToken(expressoes, temp, i, a);
                   
                     }else if(((a=='+' || a=='-' || a=='=' || a=='*' || a=='/' || a=='>' || a=='<' ))&& ((last_char>=48)&&(last_char<=57)) ){ //caso o operado seja precedido de numero ele deve ser separado
                         
-                      expressoes.add(temp); //adiciona o token na lista
-                      String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
-                      System.out.println("Automato: "+aunt);//testes
-                      if(aunt!=null){
-                       textoFinal = textoFinal+aunt+" "+i+"\n";   
-                      }
-                      
-                      temp = ""; //limpa a variavel
-                      String b = String.valueOf(a);
-                      temp= temp+b;// concatenar com os caracteres;
+                      temp = enviarToken(expressoes, temp, i, a);
                       
                     }else if(((a>=48)&&(a<=57)) && ((last_char=='+' || last_char=='-' || last_char=='=' || last_char=='*' || last_char=='/' || last_char=='>' || last_char=='<' || last_char=='&' || last_char=='|')) ){ //caso o operador seja sucedido de numero ele deve ser separado
 
-                       expressoes.add(temp); //adiciona o token na lista
-                      String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
-                      System.out.println("Automato: "+aunt);//testes
-                      if(aunt!=null){
-                       textoFinal = textoFinal+aunt+" "+i+"\n";  
-                      }
+                      temp = enviarToken(expressoes, temp, i, a);
                       
-                      temp = ""; //limpa a variavel
-                      String b = String.valueOf(a);
-                      temp= temp+b;// concatenar com os caracteres;
-                      
-                      }else if(((a>=65 && a<=90) || (a>=97&&a<=122)) && ((last_char=='.' || last_char=='+' || last_char=='-' || last_char=='=' || last_char=='*' || last_char=='/' || last_char=='>' || last_char=='<' || last_char=='&' || last_char=='|' )) ){ //caso o operador seja sucedido de letra ele deve ser separado
+                    }else if(((a>=65 && a<=90) || (a>=97&&a<=122)) && ((last_char=='.' || last_char=='+' || last_char=='-' || last_char=='=' || last_char=='*' || last_char=='/' || last_char=='>' || last_char=='<' || last_char=='&' || last_char=='|' )) ){ //caso o operador seja sucedido de letra ele deve ser separado
 
-                       expressoes.add(temp); //adiciona o token na lista
-                      String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
-                      System.out.println("Automato: "+aunt);//testes
-                      if(aunt!=null){
-                       textoFinal = textoFinal+aunt+" "+i+"\n";    
-                      }
-                      
-                      temp = ""; //limpa a variavel
-                      String b = String.valueOf(a);
-                      temp= temp+b;// concatenar com os caracteres;
+                      temp = enviarToken(expressoes, temp, i, a);
                         
+                    }else if(a=='.' && ((last_char>=48)&&(last_char<=57))){
                       
+                        if(!numeroFloat) {
+                             String b = String.valueOf(a);
+                             temp= temp+b;// concatenar com os caracteres;
+                             numeroFloat = true;
+                        }else {
+                              temp = enviarToken(expressoes, temp, i, a);
+                              numeroFloat = false;
+                        }
+                   
+                  }else if(((a>=48)&&(a<=57)) && last_char=='.' && temp.equals(".")){     
+                      
+                      temp = enviarToken(expressoes, temp, i, a);
+                        
                   }else{ //se o caractere n for um delimitador ou espaço vai armazenando na string 
                       
                       String b = String.valueOf(a);
@@ -187,5 +160,18 @@ public class AnalizadorLexico {
         return expressoes;
     };
     
-    
+    private String enviarToken(LinkedList<String> expressoes, String temp, int i, char a){
+                      expressoes.add(temp); //adiciona o token na lista
+                      String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
+                      System.out.println("Automato: "+aunt);//testes
+                      if(aunt!=null){
+                       textoFinal = textoFinal+aunt+" "+i+"\n";   
+                      }
+                      
+                      temp = ""; //limpa a variavel
+                      String b = String.valueOf(a);
+                      temp= temp+b;// concatenar com os caracteres;
+                      
+                      return temp;
+    }
 }
