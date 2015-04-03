@@ -24,6 +24,8 @@ public class Interface extends javax.swing.JFrame {
     }
     
     private String path = "";
+    private String path_saida = "";
+    private String textoFinal ="";
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -41,11 +43,12 @@ public class Interface extends javax.swing.JFrame {
         painelEntrada = new javax.swing.JTextPane();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
         Status_arquivo = new javax.swing.JLabel();
+        Status_Saida = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
+        menuSalvar = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -58,13 +61,6 @@ public class Interface extends javax.swing.JFrame {
 
         jLabel2.setText("Saída");
 
-        jButton1.setText("Executar Alteração");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -76,25 +72,28 @@ public class Interface extends javax.swing.JFrame {
                 .addComponent(jLabel2)
                 .addGap(210, 210, 210))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(203, 203, 203)
-                        .addComponent(jButton1))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(Status_arquivo, javax.swing.GroupLayout.PREFERRED_SIZE, 491, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(Status_arquivo, javax.swing.GroupLayout.PREFERRED_SIZE, 491, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)
+                    .addComponent(Status_Saida, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(Status_arquivo, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(Status_arquivo, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(Status_Saida, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2))
@@ -102,9 +101,7 @@ public class Interface extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane2)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 459, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(12, 12, 12)
-                .addComponent(jButton1)
-                .addContainerGap())
+                .addGap(46, 46, 46))
         );
 
         jMenu1.setText("Arquivo");
@@ -121,6 +118,14 @@ public class Interface extends javax.swing.JFrame {
             }
         });
         jMenu1.add(jMenuItem1);
+
+        menuSalvar.setText("Salvar arquivo");
+        menuSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSalvarActionPerformed(evt);
+            }
+        });
+        jMenu1.add(menuSalvar);
 
         jMenuBar1.add(jMenu1);
 
@@ -185,22 +190,51 @@ public class Interface extends javax.swing.JFrame {
             AnalizadorLexico analizador = new AnalizadorLexico();
             LinkedList<String> Tokens = new LinkedList<String>();
             Tokens =   analizador.separarTokens(arq.getLinhas());//tokens separado, mas sem o tratamento.
-            String textoFinal = analizador.getTexto();//pega o texto com todos os tokens já processados
+            textoFinal = analizador.getTexto();//pega o texto com todos os tokens já processados
+            String t = textoFinal.replaceAll("%n", "\n");//substituir todos os %n por \n, %n é quebrar de linha para o metodo de salvar arquivo, \n é quebra de linha na string e para o painel do programa.
             
-             this.painelSaida.setText(textoFinal); //add o texto ao painel
+             this.painelSaida.setText(t); //add o texto ao painel
             
         }
         
         
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
-
     private void jMenu1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu1ActionPerformed
       
     }//GEN-LAST:event_jMenu1ActionPerformed
+    /**
+     * Metodo executado quando o item "Salvar arquivo" do menu for acionado.
+     * Executa JFileChooser pega o path da pasta selecionada e cria um arquivo Saida.txt. 
+     * @param evt 
+     */
+    private void menuSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSalvarActionPerformed
+        JFileChooser file = new JFileChooser(); 
+        file.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        //filtro apenas para arquivos txt
+        //file.addChoosableFileFilter(new FileNameExtensionFilter( "Arquivo texto (*.txt)", "txt"));  
+        file.setAcceptAllFileFilterUsed(false);  
+        // Impede seleções múltiplas.  
+        file.setMultiSelectionEnabled(false);  
+          int i= file.showSaveDialog(null);
+       
+        if (i==1){
+           this.path_saida="Erro diretorio inválido";
+           this.Status_Saida.setText(path_saida);
+        } else {
+            File arquivo = file.getSelectedFile();
+            this.path_saida=arquivo.getPath();
+            //System.out.println(arquivo.getPath());
+            this.Status_Saida.setText("Arquivo salvo em: "+path_saida+"\\Saida.txt");
+            
+            Arquivo arq = new Arquivo();
+            
+            arq.writer(this.textoFinal, this.path_saida);
+            
+            
+           
+        }
+    }//GEN-LAST:event_menuSalvarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -238,8 +272,8 @@ public class Interface extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel Status_Saida;
     private javax.swing.JLabel Status_arquivo;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu1;
@@ -248,6 +282,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JMenuItem menuSalvar;
     private javax.swing.JTextPane painelEntrada;
     private javax.swing.JTextPane painelSaida;
     // End of variables declaration//GEN-END:variables

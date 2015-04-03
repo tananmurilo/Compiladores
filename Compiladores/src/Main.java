@@ -30,6 +30,7 @@ public class Main {
         Interface a = new Interface();
         a.setVisible(true);
         Arquivo arq = new Arquivo();
+        //arq.writer();
         
          /*abrir um arquivo pra teste mudar para o path do seu arquivo
         arq.read("D:\\Users\\murilo\\Desktop\\arquivo teste.txt"); //abrir um arquivo pra teste mudar para o path do seu arquivo

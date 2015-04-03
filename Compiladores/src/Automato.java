@@ -10,8 +10,11 @@
  */
 public class Automato {
     
-    int[][] matrizTransicao = new int [8][8];
-    //int estadoAtual = 0;
+    int estadoAtual = 0;
+    String output = "";
+    String texto="";
+    String cr="";
+    
     /*Lembrete
        Estados nº - descrição
         0 - estado inicial
@@ -42,15 +45,12 @@ public class Automato {
     
     
     public String iniciar(String input, int linha){
-        int estadoAtual = 0;
-        String output = "";
-        String texto="";
-        String cr="";
-        
-        //inicializaMatriz();
         
         
-        
+        estadoAtual = 0;
+        texto = "";
+        cr = "";
+
         for(int i =0; i< input.length(); i++){
             
             char ch = input.charAt(i);
@@ -59,324 +59,220 @@ public class Automato {
                
                 //identificar os primeiros estados aqui tipo, 1 2 3 4 ...cada um vai seguir para uma folha do automato.
                 if((ch>=65 && ch<=90) || (ch>=97&&ch<=122)){ //letra a-z|A-Z
-                    
-                    estadoAtual=1; //estado para identificadores
-                    //System.out.println("primeira ltra: "+ch);
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;// concatenar com os caracteres;
+                    atualizaEstado(1,ch);//estado para identificador
                     
                 }else if((ch>=48)&&(ch<=57)){ //numeros 0-9
-                    estadoAtual=2; //estado para numeros
-                    //System.out.println("primeira numero: "+ch);
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;// concatenar com os caracteres;
+                    atualizaEstado(2,ch);//estado para numeros
                     
                 }else if(ch==' ' || ch==';' || ch==',' || ch=='(' || ch==')' || ch=='{' || ch=='}' || ch=='[' || ch==']' ){//delimitadores
-                
-                    estadoAtual=4; //estado para delimitadores
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;// concatenar com os caracteres;
+                    atualizaEstado(4,ch); //estado para delimitadores
                 
                 }else if(ch=='+' || ch=='-' || ch=='=' || ch=='.' || ch=='*'|| ch=='>' || ch=='<' ){
                     if((ch=='>' || ch=='<' || ch=='=')&&(i+1 < input.length())){
-                        estadoAtual=14; //estado para operadores <=, >= e ==
-                        cr = String.valueOf(ch);
-                        texto= texto+cr;// concatenar com os caracteres; 
+                        atualizaEstado(14,ch); //estado para operadores <=, >= e ==
+
                     }else if((ch=='-')&&(i+1 < input.length())){
-                        estadoAtual=15; //estado para operadores --
-                        cr = String.valueOf(ch);
-                        texto= texto+cr;// concatenar com os caracteres; 
+                        atualizaEstado(15,ch); //estado para operadores --
+
                     }else if((ch=='+')&&(i+1 < input.length())){
-                        estadoAtual=16; //estado para operadores ++
-                        cr = String.valueOf(ch);
-                        texto= texto+cr;// concatenar com os caracteres; 
+                        atualizaEstado(16,ch); //estado para operadores ++
+
                     }else{
-                        estadoAtual=5; //estado para operadores de um caractere
-                        cr = String.valueOf(ch);
-                        texto= texto+cr;// concatenar com os caracteres; 
+                        atualizaEstado(5,ch); //estado para operadores de um caractere
+
                     }
                    
                     
-                }else if(ch==39){//caracter constante
-                    estadoAtual=6;
-                    //colocar as ' no texto
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;// concatenar com os caracteres;
-                    
-                }else if(ch==34){ //cadeia constante
-                    estadoAtual=8;
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;// concatenar com os caracteres;
-                    
+                }else if(ch==39){//caracter constante ''
+                    atualizaEstado(6,ch); 
+
+                }else if(ch==34){ //cadeia constante ""
+                    atualizaEstado(8,ch); 
+
                 }else if(ch==33){ // operador !=
-                    estadoAtual=10;
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;// concatenar com os caracteres;
-                    
+                    atualizaEstado(10,ch); //erro
+
                 }else if(ch==38){ // operador &&
-                    estadoAtual=12;
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;// concatenar com os caracteres;
+                    atualizaEstado(12,ch);
                     
                 }else if(ch==124){ // operador ||
-                    estadoAtual=13;
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;// concatenar com os caracteres;
+                    atualizaEstado(13,ch);
                     
                 }else if(ch=='/'){ // barra
                     if(i+1<input.length()){
                        if( input.charAt(i+1)=='/' ||  input.charAt(i+1)=='*'){
-                        estadoAtual=17;
-                        cr = String.valueOf(ch);
-                        texto= texto+cr;// concatenar com os caracteres;
-                    } 
+                           atualizaEstado(17,ch); 
+                           
+                        } 
                     }else{
-                        estadoAtual=5; //operador
-                        cr = String.valueOf(ch);
-                        texto= texto+cr;// concatenar com os caracteres;
-                    }
-                    
-                    
+                        atualizaEstado(5,ch); //operador
+                        
+                    }  
                 }else{
-                    //System.err.println("ERRO não encontrou o caracter");
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;
-                    estadoAtual=99; //estado de erro para ser exibido.
-                    //estadoAtual=0;
+                   atualizaEstado(99,ch); //erro
                     
                 }
                 
             }else if(estadoAtual==1){ //identificadore e palavras reservadas
                
                 if((ch>=65 && ch<=90) || (ch>=97&&ch<=122) || (ch>=48&&ch<=57)||(ch==95)){ //letra a-z|A-Z numero e _
-                    //System.out.println("sengada + letra: "+ch);
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;// concatenar com os caracteres;
+                    atualizaEstado(1,ch); 
                  
                 }else{//erro se o caractere lido não for letra numero ou _
-                    estadoAtual=99; //estado de erro para ser exibido.
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;// concatenar com os caracteres;
-                    //System.err.println("ERRO token");
+                   atualizaEstado(99,ch); //erro
                 }
                 
             }else if(estadoAtual==2){ //numeros
                 if((ch>=48)&&(ch<=57)){ // numero 
-                    //System.out.println("sengada + letra: "+ch);
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;// concatenar com os caracteres;
-                 
+                    atualizaEstado(2,ch); 
+
                 }else if(ch==46){
                     if (i+1 == input.length()) {//caso não tenha mais caractere depois do .
-                         estadoAtual = 98;
-                         cr = String.valueOf(ch);
-                         texto= texto+cr;
+                        atualizaEstado(98,ch); //erro
+                        
                     }else{
-                        cr = String.valueOf(ch);
-                        texto= texto+cr;
-                        estadoAtual = 3;
+                        atualizaEstado(3,ch); //numero
+
                     }
                 }else{
-                    estadoAtual=99; //estado de erro para ser exibido.
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;// concatenar com os caracteres;
-                   // System.err.println("ERRO caracter não encontrado");
+                    atualizaEstado(99,ch); //erro
                 }
             
             }else if(estadoAtual==3){
                 if((ch>=48)&&(ch<=57)){ //numero 
-                    //System.out.println("sengada + letra: "+ch);
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;// concatenar com os caracteres;
+                    atualizaEstado(3,ch); 
+                   
                 }else{
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;
-                    estadoAtual=98; //estado de erro para ser exibido.
+                    atualizaEstado(98,ch); //erro
                 }
                 
             }else if(estadoAtual==6){ //caracter constante
                 if(((ch>=32&&ch<=38)||(ch>=40&&ch<=126))){ //ver se é um caracter valido
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;
-                    estadoAtual = 7;  //estado que identifica se o prox caracter é '
+                    atualizaEstado(7,ch); //estado que identifica se o prox caracter é '
+
                 }else{
-                    estadoAtual = 98;
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;
+                    atualizaEstado(98,ch); //erro
                 }   
             }else if(estadoAtual==7){//caracter constante parte final
                 if((ch==39)&&(i+1 == input.length())){//se o caracter for ' é o fim do caracter constante caso contrario é error
-                    //coloca as ' na string
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;
-                    estadoAtual = 7; 
+                    atualizaEstado(7,ch); 
+                     
                 }else{
-                    estadoAtual = 98;
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;
+                    atualizaEstado(98,ch); //erro
                 }   
                 
             }else if(estadoAtual==8){//cadeia  constante parte final
-                if(((ch>=32&&ch<=33)||(ch>=35&&ch<=126))){ //ver se é um caracter valido.
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;
+                if(((ch>=32&&ch<=33)||(ch>=35&&ch<=126))&& i+1 < input.length()){ //ver se é um caracter valido.
+                    atualizaEstado(8,ch); //cadeia constante
                    
-                }else if(ch==34&&(i+1 == input.length())){//identifica o final da cadeia
-                    estadoAtual = 9;
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;
-                    
+                }else if(ch==34){//identifica o final da cadeia
+                    atualizaEstado(9,ch);
+       
                 }else{
-                    estadoAtual = 98; //error
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;
-                }   
+                    atualizaEstado(98,ch); //erro
+                }  
                 
             }else if(estadoAtual==10){
                 if(ch=='='&&(i+1 == input.length())){
-                   estadoAtual = 11; //!=
-                   cr = String.valueOf(ch);
-                   texto= texto+cr; 
-                   
+                    atualizaEstado(11,ch); //operador duplo
                 }else{
-                    estadoAtual = 98; //error
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;
+                    atualizaEstado(98,ch); //erro
                 }
             }else if(estadoAtual==12){
                 if(ch=='&'&&(i+1 == input.length())){
-                   estadoAtual = 11; //!= && ||
-                   cr = String.valueOf(ch);
-                   texto= texto+cr; 
-                   
+                    atualizaEstado(11,ch); //operador duplo
+ 
                 }else{
-                    estadoAtual = 98; //error
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;
+                    atualizaEstado(98,ch); //erro
                 }
             }else if(estadoAtual==13){
                 if(ch=='|'&&(i+1 == input.length())){
-                   estadoAtual = 11; //!= && ||
-                   cr = String.valueOf(ch);
-                   texto= texto+cr; 
+                    atualizaEstado(11,ch); //operador duplo
                    
                 }else{
-                    estadoAtual = 98; //error
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;
+                    atualizaEstado(98,ch); //erro
                 }
             }else if(estadoAtual==14){
                 if(ch=='='&&(i+1 == input.length())){
-                   estadoAtual = 11; //operador duplo
-                   cr = String.valueOf(ch);
-                   texto= texto+cr; 
+                    atualizaEstado(11,ch); //operador duplo
                    
                 }else{
-                    estadoAtual = 98; //error
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;
+                    atualizaEstado(98,ch); //erro
                 }
             }else if(estadoAtual==15){
                 if(ch=='-'&&(i+1 == input.length())){
-                   estadoAtual = 11; //operador duplo
-                   cr = String.valueOf(ch);
-                   texto= texto+cr; 
-                   
+                    atualizaEstado(11,ch); //operador duplo
+
                 }else{
-                    estadoAtual = 98; //error
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;
+                    atualizaEstado(98,ch); //erro
+    
                 }
             }else if(estadoAtual==16){
                 if(ch=='+'&&(i+1 == input.length())){
-                   estadoAtual = 11; //operador duplo
-                   cr = String.valueOf(ch);
-                   texto= texto+cr; 
-                   
+                    atualizaEstado(11,ch); //operador duplo
+
                 }else{
-                    estadoAtual = 98; //error
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;
+                    atualizaEstado(98,ch); //erro
+
                 }
             }else if(estadoAtual==17){
                 if(ch=='/'){
-                   estadoAtual = 18; //comentario de linha
-                   cr = String.valueOf(ch);
-                   texto= texto+cr; 
-                   
+                    atualizaEstado(18,ch); //comentario de linha
+
                 }else if(ch=='*'){
-                   estadoAtual = 19; //comentario de bloco
-                   cr = String.valueOf(ch);
-                   texto= texto+cr; 
+                    atualizaEstado(19,ch); //comentario de bloco
+ 
                 }else{
-                    estadoAtual = 98; //error
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;
+                     atualizaEstado(98,ch); //erro
+                    
                 }
             }else if(estadoAtual==18){
                 if(ch>=32&&ch<=126){
-                   estadoAtual = 18; //comentario de linha
-                   cr = String.valueOf(ch);
-                   texto= texto+cr; 
-                   
+                     atualizaEstado(18,ch); //comentario de linha
+  
                 }else{
-                    estadoAtual = 98;
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;
+                     atualizaEstado(98,ch);
                 }
                 
             }else if(estadoAtual==19){
                 if((ch>=32&&ch<=41) || (ch>=43&&ch<=126)||ch=='\n'){
-                   estadoAtual = 19; //comentario de bloco
-                   cr = String.valueOf(ch);
-                   texto= texto+cr; 
+                   
+                    atualizaEstado(19,ch); //
                    
                 }else if(ch=='*'){
-                   estadoAtual = 20; //comentario de bloco
-                   cr = String.valueOf(ch);
-                   texto= texto+cr; 
+                    atualizaEstado(20,ch); //Coementario de bloco estado 20
+                    
                 }else{
-                    estadoAtual = 98;
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;
+                     atualizaEstado(98,ch);
+                     
                 }
                 
             }else if(estadoAtual==20){
-                if((ch>=32&&ch<=41) || (ch>=43&&ch<=126)){
-                   estadoAtual = 19; //volta pro estado 19
-                   cr = String.valueOf(ch);
-                   texto= texto+cr; 
+ 
+                if(ch=='/'){
+                   atualizaEstado(21,ch); //cometario de bloco estado final
                    
                 }else if(ch=='*'){
-                   estadoAtual = 20; //comentario de bloco
-                   cr = String.valueOf(ch);
-                   texto= texto+cr; 
-                }else if(ch=='/'){
-                   estadoAtual = 21; //comentario de bloco estado final
-                   cr = String.valueOf(ch);
-                   texto= texto+cr; 
+                    atualizaEstado(20,ch);//fica no 20 enquanto ler *
+                    
+                }else if((ch>=32&&ch<=41) || (ch>=43&&ch<=126)){
+                    atualizaEstado(19,ch);//volta pro 19 caso ler um caractere
+                  
                 }else{
                     //System.err.println("entrou no erro");
-                    estadoAtual = 98;
-                    cr = String.valueOf(ch);
-                    texto= texto+cr;
+                     atualizaEstado(98,ch);
                 }
                 
             }else if(estadoAtual==98){//estado error de token mau formado
-                cr = String.valueOf(ch);
-                texto= texto+cr;
+                 atualizaEstado(98,ch);
                 
             }else if(estadoAtual==99){ //estado error de token/caracteres não identificado/não pertencem a linguagem
-                cr = String.valueOf(ch);
-                texto= texto+cr;
+                atualizaEstado(99,ch);
             }else{
-                estadoAtual=99;
-                cr = String.valueOf(ch);
-                texto= texto+cr;
+                 atualizaEstado(99,ch);
                 
-               // System.err.println("ERRO nenhum estado encontrado");
             }
-            //atualizaEstado(estadoAtual, input.charAt(i));
+            
         }
         //pega o toke + seu identificador
         output = getToken(texto, estadoAtual, linha);
@@ -384,12 +280,16 @@ public class Automato {
         return output;
     };
     
-    private void inicializaMatriz(){
-        //matrizTransicao[0][7];
-    }
     
-    private int atualizaEstado(int estado, int entrada, int linha){
-            return matrizTransicao[estado] [entrada];
+    /**
+     * Atualiza o estado do automato
+     * @param proxEstado proximo estado que o automato deve ir
+     * @param caracterLido caractere lido no estado atual
+     */
+    private void atualizaEstado(int proxEstado, char caracterLido){
+            estadoAtual = proxEstado; //comentario de bloco
+            cr = String.valueOf(caracterLido);
+            texto= texto+cr; 
     };
     
     /**

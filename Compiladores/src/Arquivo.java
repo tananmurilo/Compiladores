@@ -10,7 +10,9 @@
  */
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.LinkedList;
 
 
@@ -61,6 +63,22 @@ public class Arquivo {
             e.getMessage());
       }
       
+    }
+    
+    public void writer(String texto, String path){
+       try {
+           //"D:\\Users\\murilo\\Desktop\\saida.txt"
+            String text = path+"\\Saida.txt";
+            FileWriter arquivo = new FileWriter(text);
+            PrintWriter gravar = new PrintWriter(arquivo);
+            gravar.printf(texto);
+            //gravar.printf("%n asdasda");
+            
+            arquivo.close();
+       } catch (IOException e) {
+          System.err.printf("Erro ao salvar o arquivo: %s.\n",
+            e.getMessage());
+      }
     }
   
 
