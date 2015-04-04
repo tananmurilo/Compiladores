@@ -191,9 +191,8 @@ public class Interface extends javax.swing.JFrame {
             LinkedList<String> Tokens = new LinkedList<String>();
             Tokens =   analizador.separarTokens(arq.getLinhas());//tokens separado, mas sem o tratamento.
             textoFinal = analizador.getTexto();//pega o texto com todos os tokens já processados
-            String t = textoFinal.replaceAll("%n", "\n");//substituir todos os %n por \n, %n é quebrar de linha para o metodo de salvar arquivo, \n é quebra de linha na string e para o painel do programa.
-            
-             this.painelSaida.setText(t); //add o texto ao painel
+                       
+             this.painelSaida.setText(textoFinal); //add o texto ao painel
             
         }
         
@@ -228,8 +227,9 @@ public class Interface extends javax.swing.JFrame {
             this.Status_Saida.setText("Arquivo salvo em: "+path_saida+"\\Saida.txt");
             
             Arquivo arq = new Arquivo();
-            
-            arq.writer(this.textoFinal, this.path_saida);
+            String t = textoFinal.replaceAll("%", "%%"); //no metodo de salvar arquivo o % é um caracter de escape e precisa ter %% pra ler como %
+            String fim = t.replaceAll("\n", "%n"); //quebra de linha no metodo de salvar arquivo é %n
+            arq.writer(fim, this.path_saida);
             
             
            

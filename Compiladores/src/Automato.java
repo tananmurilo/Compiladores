@@ -39,6 +39,7 @@ public class Automato {
         19 - comentario de bloco
         20 - comentario de bloco
         21 - comentario de bloco estado final
+        97 - caracter inválido (?@#$%_~^: etc)
         98 - token mal formado(pode ser dividi mais tarde em numero mal formado, identificado mal formado etc..)
         99 - caracter não encontrado/não pertence a linguagem
     */
@@ -108,8 +109,10 @@ public class Automato {
                         atualizaEstado(5,ch); //operador
                         
                     }  
+                }else if(ch<32 || ch=='_' || ch=='#' || ch=='$' || ch=='%' || ch==':' || ch=='?' || ch=='@' || ch=='^' || ch=='`' || ch=='~' || ch>126){
+                    atualizaEstado(97,ch);
                 }else{
-                   atualizaEstado(99,ch); //erro
+                    atualizaEstado(99,ch); //erro
                     
                 }
                 
@@ -263,6 +266,9 @@ public class Automato {
                      atualizaEstado(98,ch);
                 }
                 
+            }else if(estadoAtual==97){//estado erro caracter inválido
+                atualizaEstado(97,ch);
+                
             }else if(estadoAtual==98){//estado error de token mau formado
                  atualizaEstado(98,ch);
                 
@@ -330,6 +336,8 @@ public class Automato {
                 return "Comentário de linha "+txt;
             case 21:
                 return "Comentário de bloco "+txt;
+            case 97:
+                return "Erro de símbolo "+txt;
                 
             case 98:
                 return "Token mau formado "+txt;

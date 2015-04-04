@@ -72,17 +72,17 @@ public class AnalizadorLexico {
                       if(a=='/'){ // se uma barra entra na logica de procurar comentarios
                           if(cont+1< l.length()&&(l.charAt(cont+1)=='/')){ //comentario de linha ver se o prox caracter é um barra
 
-                              if(!temp.isEmpty()){
+                              
                                 expressoes.add(temp); //adiciona o token na lista
                                 String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                                 System.out.println("Automato: "+aunt);//testes
                                 if(aunt!=null){
-                                    textoFinal = textoFinal+aunt+" "+i+"%n";   
+                                    textoFinal = textoFinal+aunt+" "+i+"\n";   
                                   
                                 }
-                              }else{
+                              
                                  temp = ""; 
-                              }
+                              
                               
                               while(l!=null && cont < l.length()){ //vare toda a linha e coloca o tiver nela na variavel
                                     a =  l.charAt(cont);  
@@ -95,6 +95,13 @@ public class AnalizadorLexico {
                          }else if(cont+1< l.length()&&(l.charAt(cont+1)=='*')){//comentario de bloco ver se o prox caracter é um *
                               boolean fim = false;
                               int linhaInicial  = i;
+                              expressoes.add(temp); //adiciona o token na lista
+                                String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
+                                System.out.println("Automato: "+aunt);//testes
+                                if(aunt!=null){
+                                    textoFinal = textoFinal+aunt+" "+i+"\n";   
+                                  
+                              }
                               temp = "/*"; 
                               cont= cont+2;
                               while(!fim && i<linhas.size()){ //ir linha por linha até achar o fim do comentario
@@ -109,10 +116,10 @@ public class AnalizadorLexico {
                                          temp = temp+"*/";
                                          cont = cont +2;
                                          expressoes.add(temp); //adiciona o token na lista
-                                         String aunt = automatoLexico.iniciar(temp, linhaInicial);//analizar o token no autonomo
+                                         aunt = automatoLexico.iniciar(temp, linhaInicial);//analizar o token no autonomo
                                          System.out.println("Automato: "+aunt);//testes
                                          if(aunt!=null){
-                                             textoFinal = textoFinal+aunt+" "+linhaInicial +"%n";   
+                                             textoFinal = textoFinal+aunt+" "+linhaInicial +"\n";   
                                          }
 
                                          temp = ""; 
@@ -127,7 +134,7 @@ public class AnalizadorLexico {
                                   if(cont>=l.length()&&!fim){//final de linha
                                        //System.out.println("if fim de linha");
                                         cont = 0;
-                                        temp= temp+" ";//quebra de linha concatenar a proxima linha com espaço, caso queira pode-se colocar %n pra concatenar com enter
+                                        temp= temp+" ";//quebra de linha concatenar a proxima linha com espaço, caso queira pode-se colocar \n pra concatenar com enter
                                         i++; 
                                             
                                          
@@ -141,7 +148,7 @@ public class AnalizadorLexico {
                                    String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                                    System.out.println("Automato: "+aunt);//testes
                                    if(aunt!=null){
-                                       textoFinal = textoFinal+aunt+" "+i+"%n";   
+                                       textoFinal = textoFinal+aunt+" "+i+"\n";   
 
                                    }
                                    temp = "/";
@@ -156,7 +163,7 @@ public class AnalizadorLexico {
                                 String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                                 System.out.println("Automato: "+aunt);//testes
                                 if(aunt!=null){
-                                    textoFinal = textoFinal+aunt+" "+i+"%n";   
+                                    textoFinal = textoFinal+aunt+" "+i+"\n";   
                                   
                                 }
                                 temp = ""; 
@@ -177,7 +184,7 @@ public class AnalizadorLexico {
                                         String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                                         System.out.println("Automato: "+aunt);//testes
                                         if(aunt!=null){
-                                            textoFinal = textoFinal+aunt+" "+i+"%n";   
+                                            textoFinal = textoFinal+aunt+" "+i+"\n";   
 
                                         }
                                         System.out.println(temp);
@@ -201,7 +208,7 @@ public class AnalizadorLexico {
                                 String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                                 System.out.println("Automato: "+aunt);//testes
                                 if(aunt!=null){
-                                    textoFinal = textoFinal+aunt+" "+i+"%n";   
+                                    textoFinal = textoFinal+aunt+" "+i+"\n";   
                                   
                                 }
                                 temp = ""; 
@@ -209,26 +216,36 @@ public class AnalizadorLexico {
                                 
                       }else{
                           
-                      }                      
+                      } //fecha chave do if que separa comentarios e cadeia constante                    
                 }else if(!temp.isEmpty()){//se a variavel não tiver vazia vai armazenado os caracteres na variavel
-                 
-                    if(a==' ' || a==';' || a==',' || a=='(' || a==')' || a=='{' || a=='}' || a=='[' || a==']' ){//se encontrar um delimitador ou espaço, armazena o que tiver na variavel temp na lista de tokens e inicializa a temp com o delimitador
-                      expressoes.add(temp); //adiciona o token na lista
-                      String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
-                      System.out.println("Automato: "+aunt);//testes
-                      if(aunt!=null){
-                       textoFinal = textoFinal+aunt+" "+i+"%n";    
-                      }
-                      
-          
-                      temp = ""; //limpa a variavel
-                      String b = String.valueOf(a);
+                    //se encontrar um caractere que não pertence a linguagem ou representa nada, tratar como um delimitador e gerar o erro
+                    if(a<32 || a=='#' || a=='$' || a=='%' || a==':' || a=='?' || a=='@' || a=='^' || a=='`' || a=='~' || a>126){
+                        temp = enviarToken(expressoes, temp, i, a);//chamar a função para separar o token que havia na string antes do caractere encontrado
+                        //analizar o caracter
+                        expressoes.add(temp); //adiciona o token na lista 
+                        String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
+                        if(aunt!=null){
+                           textoFinal = textoFinal+aunt+" "+i+"\n";   
+                        }
+                        temp = "";
+                   
+                    }else if(a==' ' || a==';' || a==',' || a=='(' || a==')' || a=='{' || a=='}' || a=='[' || a==']' ){//se encontrar um delimitador ou espaço, armazena o que tiver na variavel temp na lista de tokens e inicializa a temp com o delimitador
+                        expressoes.add(temp); //adiciona o token na lista
+                        String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
+                        System.out.println("Automato: "+aunt);//testes
+                        if(aunt!=null){
+                         textoFinal = textoFinal+aunt+" "+i+"\n";    
+                        }
+
+
+                        temp = ""; //limpa a variavel
+                        String b = String.valueOf(a);
                       if(a!=' '){ //se o que tiver separando as strings for um delimitador ele entra para variavel temporaria para na proxima interação virar um token também, e o espaço é ignorado.
                           temp=temp+b;// adiciona o delimitador; 
                           aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                           System.out.println("Automato: "+aunt);//testes
                           if(aunt!=null){
-                          textoFinal = textoFinal+aunt+" "+i+"%n";  
+                          textoFinal = textoFinal+aunt+" "+i+"\n";  
                            }
           
                             temp = ""; //limpa a variavel
@@ -281,16 +298,28 @@ public class AnalizadorLexico {
                       String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                       System.out.println("Automato: "+aunt);
                       if(aunt!=null){
-                       textoFinal = textoFinal+aunt+" "+i+"%n";    
+                       textoFinal = textoFinal+aunt+" "+i+"\n";    
                       }   
                 }
                   
             }else{//se a variavel tiver vazia armazena o caracter eceto espaço.
-                 if(a!=' '){
+                    //se for um caractere fora da linguagem separar o token, error caracter invalido
+                 if(a=='_' || a<32 || a=='#' || a=='$' || a=='%' || a==':' || a=='?' || a=='@' || a=='^' || a=='`' || a=='~' || a>126){
+                    String b = String.valueOf(a);
+                    temp= temp+b;//
+                    expressoes.add(temp); //adiciona o token na lista
+                    String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
+                    if(aunt!=null){
+                       textoFinal = textoFinal+aunt+" "+i+"\n";   
+                    }
+                      
+                    temp = ""; //limpa a variavel
+                    
+                 }else if(a!=' '){
                       String b = String.valueOf(a);
                       temp= temp+b;// concatenar com os caracteres;
-                  }
-              }
+                 }
+            }
               last_char = a;
               cont++;
           }  
@@ -307,7 +336,7 @@ public class AnalizadorLexico {
                       String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                       System.out.println("Automato: "+aunt);//testes
                       if(aunt!=null){
-                       textoFinal = textoFinal+aunt+" "+i+"%n";   
+                       textoFinal = textoFinal+aunt+" "+i+"\n";   
                       }
                       
                       temp = ""; //limpa a variavel
