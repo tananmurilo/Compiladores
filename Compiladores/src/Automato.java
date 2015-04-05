@@ -109,7 +109,7 @@ public class Automato {
                         atualizaEstado(5,ch); //operador
                         
                     }  
-                }else if(ch<32 || ch=='_' || ch=='#' || ch=='$' || ch=='%' || ch==':' || ch=='?' || ch=='@' || ch=='^' || ch=='`' || ch=='~' || ch>126){
+                }else if(ch<32 || ch=='_' || ch=='#' || ch=='$' || ch=='%' || ch==':' || ch=='?' || ch=='@' || ch=='^' || ch=='`' || ch=='~' ||ch==92 || ch>126){
                     atualizaEstado(97,ch);
                 }else{
                     atualizaEstado(99,ch); //erro

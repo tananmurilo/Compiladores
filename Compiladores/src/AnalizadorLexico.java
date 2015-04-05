@@ -219,7 +219,7 @@ public class AnalizadorLexico {
                       } //fecha chave do if que separa comentarios e cadeia constante                    
                 }else if(!temp.isEmpty()){//se a variavel não tiver vazia vai armazenado os caracteres na variavel
                     //se encontrar um caractere que não pertence a linguagem ou representa nada, tratar como um delimitador e gerar o erro
-                    if(a<32 || a=='#' || a=='$' || a=='%' || a==':' || a=='?' || a=='@' || a=='^' || a=='`' || a=='~' || a>126){
+                    if(a<32 || a=='#' || a=='$' || a=='%' || a==':' || a=='?' || a=='@' || a=='^' || a=='`' || a=='~' ||a==92 || a>126){
                         temp = enviarToken(expressoes, temp, i, a);//chamar a função para separar o token que havia na string antes do caractere encontrado
                         //analizar o caracter
                         expressoes.add(temp); //adiciona o token na lista 
@@ -304,7 +304,7 @@ public class AnalizadorLexico {
                   
             }else{//se a variavel tiver vazia armazena o caracter eceto espaço.
                     //se for um caractere fora da linguagem separar o token, error caracter invalido
-                 if(a=='_' || a<32 || a=='#' || a=='$' || a=='%' || a==':' || a=='?' || a=='@' || a=='^' || a=='`' || a=='~' || a>126){
+                 if(a=='_' || a<32 || a=='#' || a=='$' || a=='%' || a==':' || a=='?' || a=='@' || a=='^' || a=='`' || a=='~' ||a==92 || a>126){
                     String b = String.valueOf(a);
                     temp= temp+b;//
                     expressoes.add(temp); //adiciona o token na lista
