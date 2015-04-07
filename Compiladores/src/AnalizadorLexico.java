@@ -67,7 +67,7 @@ public class AnalizadorLexico {
                
               
                    //identificar comentarios e cadeia constante antes de quebrar o texto em pedacinhos.
-                if(a=='/'||a==34){ //se encontrar uma / verificar se é comentario e se for " verificar se é cadeia constante
+                if(a=='/'||a==34 ||a==39){ //se encontrar uma / verificar se é comentario e se for " verificar se é cadeia constante
                       
                       if(a=='/'){ // se uma barra entra na logica de procurar comentarios
                           if(cont+1< l.length()&&(l.charAt(cont+1)=='/')){ //comentario de linha ver se o prox caracter é um barra
@@ -188,22 +188,73 @@ public class AnalizadorLexico {
 
                                         }
                                         System.out.println(temp);
+                                        fim=true;
                                         temp = ""; 
                                     }else{
                                         b = String.valueOf(a);
-                                        temp= temp+b;   
+                                        temp= temp+b;
+                                        cont++;
                                         
                                     }
                                     System.out.println(temp);
-                                    cont++;
+                                    
                                     
                             }
-                            if(fim && cont < l.length()){
-                                a =  l.charAt(cont);
-                                b = String.valueOf(a);
-                                temp= temp+b;
-                                System.out.println(temp);
-                            }else if(!fim && cont == l.length()){
+                            if(!fim && cont == l.length()){
+                                expressoes.add(temp); //adiciona o token na lista
+                                String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
+                                System.out.println("Automato: "+aunt);//testes
+                                if(aunt!=null){
+                                    textoFinal = textoFinal+aunt+" "+i+"\n";   
+                                  
+                                }
+                                temp = ""; 
+                            }
+                                
+                      }else if(a==39){//caracter constante
+                            if(!temp.isEmpty()){
+                                expressoes.add(temp); //adiciona o token na lista
+                                String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
+                                System.out.println("Automato: "+aunt);//testes
+                                if(aunt!=null){
+                                    textoFinal = textoFinal+aunt+" "+i+"\n";   
+                                  
+                                }
+                                temp = ""; 
+                            }
+                            a =  l.charAt(cont);
+                            String b = String.valueOf(a);
+                            temp= temp+b; //add aspas no temp
+                            boolean fim = false;  
+                            cont++;
+                            System.out.println(temp);
+                            while(l!=null && cont < l.length()&&!fim){ //vare a linha e coloca o que tiver antes das aspas ou da quebra de linha na variavel temp
+                                    a =  l.charAt(cont); 
+                                    if(a==39){  
+                                         
+                                        b = String.valueOf(a);
+                                        temp= temp+b; //add aspas no temp
+                                        expressoes.add(temp); //adiciona o token na lista
+                                        String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
+                                        System.out.println("Automato: "+aunt);//testes
+                                        if(aunt!=null){
+                                            textoFinal = textoFinal+aunt+" "+i+"\n";   
+
+                                        }
+                                        System.out.println(temp);
+                                        fim = true;
+                                        temp = ""; 
+                                    }else{
+                                        b = String.valueOf(a);
+                                        temp= temp+b; 
+                                        cont++;
+                                        
+                                    }
+                                    System.out.println(temp);
+                                    
+                                    
+                            }
+                            if(!fim && cont == l.length()){
                                 expressoes.add(temp); //adiciona o token na lista
                                 String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                                 System.out.println("Automato: "+aunt);//testes
@@ -304,7 +355,17 @@ public class AnalizadorLexico {
                   
             }else{//se a variavel tiver vazia armazena o caracter eceto espaço.
                     //se for um caractere fora da linguagem separar o token, error caracter invalido
-                 if(a=='_' || a<32 || a=='#' || a=='$' || a=='%' || a==':' || a=='?' || a=='@' || a=='^' || a=='`' || a=='~' ||a==92 || a>126){
+                 if((cont+1) == l.length()){//indentifica quando for quebra de linha
+                      String b = String.valueOf(a);
+                      temp= temp+b;// concatenar com os caracteres;
+                      expressoes.add(temp); //adiciona o token na lista
+                     
+                      String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
+                      System.out.println("Automato: "+aunt);
+                      if(aunt!=null){
+                       textoFinal = textoFinal+aunt+" "+i+"\n";    
+                      }   
+                 }else if(a=='_' || a<32 || a=='#' || a=='$' || a=='%' || a==':' || a=='?' || a=='@' || a=='^' || a=='`' || a=='~' ||a==92 || a>126){
                     String b = String.valueOf(a);
                     temp= temp+b;//
                     expressoes.add(temp); //adiciona o token na lista
