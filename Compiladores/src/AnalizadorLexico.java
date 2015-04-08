@@ -156,7 +156,7 @@ public class AnalizadorLexico {
                               }
                               
                               if( linhas.get(i)==null){
-                                  textoFinal = textoFinal+"comentário de bloco mal fechado";
+                                  textoFinal = textoFinal+"Comentário de bloco não fechado "+temp+" "+i+"\n"; 
                               }
                               
                           }else{
