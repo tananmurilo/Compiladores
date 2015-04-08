@@ -100,6 +100,7 @@ public class Automato {
                     atualizaEstado(13,ch);
                     
                 }else if(ch=='/'){ // barra
+                   
                     if(i+1<input.length()){
                        if( input.charAt(i+1)=='/' ||  input.charAt(i+1)=='*'){
                            atualizaEstado(17,ch); 
@@ -219,6 +220,7 @@ public class Automato {
 
                 }
             }else if(estadoAtual==17){
+                
                 if(ch=='/'){
                     atualizaEstado(18,ch); //comentario de linha
 
@@ -238,6 +240,7 @@ public class Automato {
                 }
                 
             }else if(estadoAtual==19){
+                 System.out.println(ch);
                 if((ch>=32&&ch<=41) || (ch>=43&&ch<=126)||ch=='\n'){
                    
                     atualizaEstado(19,ch); //
@@ -246,6 +249,7 @@ public class Automato {
                     atualizaEstado(20,ch); //Coementario de bloco estado 20
                     
                 }else{
+                    
                      atualizaEstado(98,ch);
                      
                 }
@@ -262,7 +266,7 @@ public class Automato {
                     atualizaEstado(19,ch);//volta pro 19 caso ler um caractere
                   
                 }else{
-                    //System.err.println("entrou no erro");
+                   
                      atualizaEstado(98,ch);
                 }
                 

@@ -15,6 +15,7 @@ public class AnalizadorLexico {
     
      Automato automatoLexico = new Automato();
      String textoFinal="";//juntar todos os tokens em um texto só
+     Boolean numeroFloat = false;
      
      public String getTexto(){
          return this.textoFinal;
@@ -58,14 +59,15 @@ public class AnalizadorLexico {
           //System.out.println(" linha "+i);
           String temp ="";
           int cont =0;
-          Boolean numeroFloat = false;
+          
           
           while(l!=null && cont < l.length()){
              
               char a =  l.charAt(cont);
                System.out.println(a+"     >"+temp+"<");
+               System.out.println(numeroFloat);
                
-              
+               
                    //identificar comentarios e cadeia constante antes de quebrar o texto em pedacinhos.
                 if(a=='/'||a==34 ||a==39){ //se encontrar uma / verificar se é comentario e se for " verificar se é cadeia constante
                       
@@ -104,12 +106,21 @@ public class AnalizadorLexico {
                               }
                               temp = "/*"; 
                               cont= cont+2;
-                              while(!fim && i<linhas.size()){ //ir linha por linha até achar o fim do comentario
+                              while(!fim && i<linhas.size() && linhas.get(i)!=null){ //ir linha por linha até achar o fim do comentario
                                   l = linhas.get(i);
+                                  System.out.println("tamanho da linha:"+linhas.size());
+                                  System.out.println("cont:"+i);
+                                  System.out.println("valor de l:"+l);
+                                  
                                   
                                   while(l!=null && cont < l.length()&&(!fim)){ //vare toda a linha e coloca o tiver nela na variavel até encontrar o fechamento de comentario
                                     a =  l.charAt(cont);
-                                    if(a=='*'&&(l.charAt(cont+1)=='/')){//final do comentario de bloco
+                                    
+                                    if(cont+1 == l.length()){
+                                       String b = String.valueOf(a);
+                                       temp= temp+b;
+                                       cont++;
+                                    }else if(a=='*'&&(l.charAt(cont+1)=='/')){//final do comentario de bloco
                                         //System.out.println("FIM");
                                          fim = true;
                                             //separa e envia pro automato o que já tinha na var temp
@@ -121,7 +132,7 @@ public class AnalizadorLexico {
                                          if(aunt!=null){
                                              textoFinal = textoFinal+aunt+" "+linhaInicial +"\n";   
                                          }
-
+                                            
                                          temp = ""; 
                                     }else{
                                        
@@ -131,6 +142,7 @@ public class AnalizadorLexico {
                                     }
                                     
                                   }
+                                  
                                   if(cont>=l.length()&&!fim){//final de linha
                                        //System.out.println("if fim de linha");
                                         cont = 0;
@@ -142,6 +154,11 @@ public class AnalizadorLexico {
                                   
                                   
                               }
+                              
+                              if( linhas.get(i)==null){
+                                  textoFinal = textoFinal+"comentário de bloco mal fechado";
+                              }
+                              
                           }else{
                                 if(!temp.isEmpty()){
                                    expressoes.add(temp); //adiciona o token na lista
@@ -270,6 +287,7 @@ public class AnalizadorLexico {
                       } //fecha chave do if que separa comentarios e cadeia constante                    
                 }else if(!temp.isEmpty()){//se a variavel não tiver vazia vai armazenado os caracteres na variavel
                     //se encontrar um caractere que não pertence a linguagem ou representa nada, tratar como um delimitador e gerar o erro
+                    
                     if(a<32 || a=='#' || a=='$' || a=='%' || a==':' || a=='?' || a=='@' || a=='^' || a=='`' || a=='~' ||a==92 || a>126){
                         temp = enviarToken(expressoes, temp, i, a);//chamar a função para separar o token que havia na string antes do caractere encontrado
                         //analizar o caracter
@@ -314,7 +332,8 @@ public class AnalizadorLexico {
                       temp = enviarToken(expressoes, temp, i, a);
                       
                     }else if(((a>=48)&&(a<=57)) && ((last_char=='+' || last_char=='-' || last_char=='=' || last_char=='*' || last_char=='/' || last_char=='>' || last_char=='<' || last_char=='&' || last_char=='|')) ){ //caso o operador seja sucedido de numero ele deve ser separado
-
+                        
+                      numeroFloat=false;
                       temp = enviarToken(expressoes, temp, i, a);
                       
                     }else if(((a>=65 && a<=90) || (a>=97&&a<=122)) && ((last_char=='.' || last_char=='+' || last_char=='-' || last_char=='=' || last_char=='*' || last_char=='/' || last_char=='>' || last_char=='<' || last_char=='&' || last_char=='|' )) ){ //caso o operador seja sucedido de letra ele deve ser separado
@@ -322,7 +341,7 @@ public class AnalizadorLexico {
                       temp = enviarToken(expressoes, temp, i, a);
                         
                     }else if(a=='.' && ((last_char>=48)&&(last_char<=57))){
-                      
+                        
                         if(!numeroFloat) {
                              String b = String.valueOf(a);
                              temp= temp+b;// concatenar com os caracteres;
@@ -333,12 +352,12 @@ public class AnalizadorLexico {
                         }
                    
                     }else if(((a>=48)&&(a<=57)) && last_char=='.' && temp.equals(".")){     
-                      
                       temp = enviarToken(expressoes, temp, i, a);
                         
-                    }else{ //se o caractere n for um delimitador ou espaço vai armazenando na string 
-                      
-                      String b = String.valueOf(a);
+                    }else if(((a>=48)&&(a<=57)) && last_char!='.'){ 
+                        numeroFloat=false;
+                        
+                    }else{  String b = String.valueOf(a);
                       temp= temp+b;// concatenar com os caracteres;
                     }
                   
@@ -379,6 +398,7 @@ public class AnalizadorLexico {
                  }else if(a!=' '){
                       String b = String.valueOf(a);
                       temp= temp+b;// concatenar com os caracteres;
+                      numeroFloat=false;
                  }
             }
               last_char = a;
@@ -393,6 +413,9 @@ public class AnalizadorLexico {
     };
     
     private String enviarToken(LinkedList<String> expressoes, String temp, int i, char a){
+        
+                       
+        
                       expressoes.add(temp); //adiciona o token na lista
                       String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                       System.out.println("Automato: "+aunt);//testes
