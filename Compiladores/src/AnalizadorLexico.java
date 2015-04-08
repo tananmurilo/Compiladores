@@ -390,6 +390,7 @@ public class AnalizadorLexico {
             }else{//se a variavel tiver vazia armazena o caracter eceto espaço.
                     //se for um caractere fora da linguagem separar o token, error caracter invalido
                  if((cont+1) == l.length()){//indentifica quando for quebra de linha
+                     if(a!=' '){
                       String b = String.valueOf(a);
                       temp= temp+b;// concatenar com os caracteres;
                       expressoes.add(temp); //adiciona o token na lista
@@ -399,6 +400,9 @@ public class AnalizadorLexico {
                       if(aunt!=null){
                        textoFinal = textoFinal+aunt+" "+i+"\n";    
                       }   
+                      numeroFloat=false;
+                    }
+                      
                  }else if(a=='_' || a<32 || a=='#' || a=='$' || a=='%' || a==':' || a=='?' || a=='@' || a=='^' || a=='`' || a=='~' ||a==92 || a>126){
                     String b = String.valueOf(a);
                     temp= temp+b;//
