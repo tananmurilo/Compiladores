@@ -331,6 +331,8 @@ public class AnalizadorLexico {
                         
                       temp = enviarToken(expressoes, temp, i, a);
                       
+                    }else if(a=='.'&&last_char=='.'){//pontos seguido de ponto
+                        temp = enviarToken(expressoes, temp, i, a);
                     }else if(((a>=48)&&(a<=57)) && ((last_char=='+' || last_char=='-' || last_char=='=' || last_char=='*' || last_char=='/' || last_char=='>' || last_char=='<' || last_char=='&' || last_char=='|')) ){ //caso o operador seja sucedido de numero ele deve ser separado
                         
                       numeroFloat=false;
@@ -343,9 +345,22 @@ public class AnalizadorLexico {
                     }else if(a=='.' && ((last_char>=48)&&(last_char<=57))){
                         
                         if(!numeroFloat) {
-                             String b = String.valueOf(a);
-                             temp= temp+b;// concatenar com os caracteres;
-                             numeroFloat = true;
+                            
+                            if(cont+1 < l.length()){
+                                char prox = l.charAt(cont+1);
+                                if((prox>=48)&&(prox<=57)){//se tiver número na sequencia
+                                    String b = String.valueOf(a);
+                                    temp= temp+b;// concatenar com os caracteres;
+                                    numeroFloat = true;  
+                                }else{
+                                     temp = enviarToken(expressoes, temp, i, a);
+                                    numeroFloat = false; 
+                                }
+                            }else{//se tiver qualquer coisa diferente de um numero na sequencia
+                                temp = enviarToken(expressoes, temp, i, a);
+                                numeroFloat = false; 
+                            }
+                             
                         }else {
                               temp = enviarToken(expressoes, temp, i, a);
                               numeroFloat = false;
