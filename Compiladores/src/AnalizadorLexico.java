@@ -428,8 +428,8 @@ public class AnalizadorLexico {
           cont=0;//zerar contador para o proximo while
         }
         
-        if(!(textoFinal.contains("Token mau formado") || textoFinal.contains("Token não identificado")))  {
-            textoFinal = textoFinal + "\n \n Nenhum erro encontrado";
+        if(!(textoFinal.contains("Token mal formado") || textoFinal.contains("Token não identificado") || textoFinal.contains("Erro de símbolo")   || textoFinal.contains("Comentário de bloco não fechado")))  {
+            textoFinal = textoFinal + "\n \n Sucesso! Nenhum erro encontrado";
         } else  textoFinal = textoFinal + "\n \n Erros encontrados";
         /*Aqui serão separadas pelo espaço e pelos delimitadores cada esxpressao a ser traduzida em um token*/
         return expressoes;

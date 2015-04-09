@@ -344,7 +344,7 @@ public class Automato {
                 return "Erro de símbolo "+txt;
                 
             case 98:
-                return "Token mau formado "+txt;
+                return "Token mal formado "+txt;
                 
             case 99:
                 return "Token não identificado "+txt;
