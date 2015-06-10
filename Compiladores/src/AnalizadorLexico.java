@@ -63,7 +63,7 @@ public class AnalizadorLexico {
           
           while(l!=null && cont < l.length()){
              
-              char a =  l.charAt(cont);
+               char a =  l.charAt(cont);   
                System.out.println(a+"     >"+temp+"<");
                System.out.println(numeroFloat);
                
@@ -285,7 +285,7 @@ public class AnalizadorLexico {
                       }else{
                           
                       } //fecha chave do if que separa comentarios e cadeia constante                    
-                }else if(!temp.isEmpty()){//se a variavel não tiver vazia vai armazenado os caracteres na variavel
+                }else if(!temp.isEmpty() && (a != '\t')){//se a variavel não tiver vazia vai armazenado os caracteres na variavel
                     //se encontrar um caractere que não pertence a linguagem ou representa nada, tratar como um delimitador e gerar o erro
                     
                     if(a<32 || a=='#' || a=='$' || a=='%' || a==':' || a=='?' || a=='@' || a=='^' || a=='`' || a=='~' ||a==92 || a>126){
@@ -375,6 +375,7 @@ public class AnalizadorLexico {
                     }else{  String b = String.valueOf(a);
                       temp= temp+b;// concatenar com os caracteres;
                     }
+                    
                   
                 if((cont+1) == l.length()){//indentifica quando for quebra de linha(uma string representa uma linha então se não houver mais caractere na string é uma quebra de linha)
                      
@@ -386,6 +387,7 @@ public class AnalizadorLexico {
                        textoFinal = textoFinal+aunt+" "+i+"\n";    
                       }   
                 }
+                
                   
             }else{//se a variavel tiver vazia armazena o caracter eceto espaço.
                     //se for um caractere fora da linguagem separar o token, error caracter invalido
@@ -403,7 +405,12 @@ public class AnalizadorLexico {
                       numeroFloat=false;
                     }
                       
-                 }else if(a=='_' || a<32 || a=='#' || a=='$' || a=='%' || a==':' || a=='?' || a=='@' || a=='^' || a=='`' || a=='~' ||a==92 || a>126){
+                 }else if(a == '\t'){
+                     
+                     
+                     
+                     
+                 } else if(a=='_' || a<32 || a=='#' || a=='$' || a=='%' || a==':' || a=='?' || a=='@' || a=='^' || a=='`' || a=='~' ||a==92 || a>126){
                     String b = String.valueOf(a);
                     temp= temp+b;//
                     expressoes.add(temp); //adiciona o token na lista

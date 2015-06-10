@@ -241,17 +241,13 @@ public class Automato {
                 
             }else if(estadoAtual==19){
                  System.out.println(ch);
-                if((ch>=32&&ch<=41) || (ch>=43&&ch<=126)||ch=='\n'){
+                if(ch=='*'){
                    
-                    atualizaEstado(19,ch); //
+                    atualizaEstado(20,ch); //
                    
-                }else if(ch=='*'){
-                    atualizaEstado(20,ch); //Coementario de bloco estado 20
+                }else {
+                    atualizaEstado(19,ch); //Coementario de bloco estado 20
                     
-                }else{
-                    
-                     atualizaEstado(98,ch);
-                     
                 }
                 
             }else if(estadoAtual==20){
@@ -262,12 +258,9 @@ public class Automato {
                 }else if(ch=='*'){
                     atualizaEstado(20,ch);//fica no 20 enquanto ler *
                     
-                }else if((ch>=32&&ch<=41) || (ch>=43&&ch<=126)){
+                }else {
                     atualizaEstado(19,ch);//volta pro 19 caso ler um caractere
-                  
-                }else{
-                   
-                     atualizaEstado(98,ch);
+                 
                 }
                 
             }else if(estadoAtual==97){//estado erro caracter inválido
@@ -338,6 +331,13 @@ public class Automato {
                 return "Operador duplo "+txt;//== != <= >= ||
             case 18:
                 return "Comentário de linha "+txt;
+                
+            case 19:
+                return "Comentário mal fechado "+txt;
+                
+            case 20:
+                return "Comentário mal fechado "+txt;    
+                
             case 21:
                 return "Comentário de bloco "+txt;
             case 97:
