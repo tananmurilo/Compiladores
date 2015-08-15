@@ -232,12 +232,13 @@ public class Automato {
                     
                 }
             }else if(estadoAtual==18){
-                if(ch>=32&&ch<=126){
-                     atualizaEstado(18,ch); //comentario de linha
-  
+               
+                 atualizaEstado(18,ch); //comentario de linha
+                 /*
                 }else{
                      atualizaEstado(98,ch);
                 }
+                */
                 
             }else if(estadoAtual==19){
                  System.out.println(ch);

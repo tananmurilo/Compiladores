@@ -47,7 +47,8 @@ public class Interface extends javax.swing.JFrame {
         Status_Saida = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        MenuLexico = new javax.swing.JMenuItem();
+        MenuSintatico = new javax.swing.JMenuItem();
         menuSalvar = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -111,13 +112,21 @@ public class Interface extends javax.swing.JFrame {
             }
         });
 
-        jMenuItem1.setText("Abrir arquivo");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        MenuLexico.setText("Abrir arquivo Lexico");
+        MenuLexico.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                MenuLexicoActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem1);
+        jMenu1.add(MenuLexico);
+
+        MenuSintatico.setText("Abrir arquivo Sintatico");
+        MenuSintatico.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuSintaticoActionPerformed(evt);
+            }
+        });
+        jMenu1.add(MenuSintatico);
 
         menuSalvar.setText("Salvar arquivo");
         menuSalvar.addActionListener(new java.awt.event.ActionListener() {
@@ -153,7 +162,7 @@ public class Interface extends javax.swing.JFrame {
      * Executa JFileChooser e ler o arquivo selecionado e mostra no painel. 
      * @param evt 
      */
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void MenuLexicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuLexicoActionPerformed
          /* pegar o caminho do arquivo para leitura*/
         
         JFileChooser file = new JFileChooser(); 
@@ -197,7 +206,7 @@ public class Interface extends javax.swing.JFrame {
         }
         
         
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_MenuLexicoActionPerformed
 
     private void jMenu1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu1ActionPerformed
       
@@ -236,6 +245,51 @@ public class Interface extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuSalvarActionPerformed
 
+    private void MenuSintaticoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuSintaticoActionPerformed
+           /* pegar o caminho do arquivo para leitura*/
+        
+        JFileChooser file = new JFileChooser(); 
+        file.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        //filtro apenas para arquivos txt
+        file.addChoosableFileFilter(new FileNameExtensionFilter( "Arquivo texto (*.txt)", "txt"));  
+        file.setAcceptAllFileFilterUsed(false);  
+        // Impede seleções múltiplas.  
+        file.setMultiSelectionEnabled(false);  
+          int i= file.showSaveDialog(null);
+       
+        if (i==1){
+           this.path="erro ao abrir arquivo";
+           this.Status_arquivo.setText(path);
+        } else {
+            File arquivo = file.getSelectedFile();
+            this.path=arquivo.getPath();
+            System.out.println(arquivo.getPath());
+            this.Status_arquivo.setText("Arquivo: "+path);
+            
+            //chamada do método de leitura de arquivo
+            Arquivo arq = new Arquivo();
+            arq.read(path);
+            LinkedList<String> linha =  new LinkedList<>();
+            linha = arq.getLinhas(); //pega as linhas do arquivo lido
+            String text="";
+            for (String linha1 : linha) {
+                if(linha1!=null){// a ultima posição na lista é null 
+                    text= text+linha1+"\n";
+                }    
+            }
+            this.painelEntrada.setText(text); //add o texto ao painel
+             //chamar o analisador sintatico aqui
+            AnalisadorSintatico sintatico = new AnalisadorSintatico();
+            LinkedList<String> Tokens = new LinkedList<String>();
+           // Tokens =   analizador.separarTokens(arq.getLinhas());//tokens separado, mas sem o tratamento.
+           // textoFinal = analizador.getTexto();//pega o texto com todos os tokens já processados
+                     
+            
+             this.painelSaida.setText("Falta fazer a analise sintatica ainda"); //add o texto ao painel
+            
+        }
+    }//GEN-LAST:event_MenuSintaticoActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -272,13 +326,14 @@ public class Interface extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem MenuLexico;
+    private javax.swing.JMenuItem MenuSintatico;
     private javax.swing.JLabel Status_Saida;
     private javax.swing.JLabel Status_arquivo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
