@@ -1,6 +1,7 @@
 
 import java.io.File;
 import java.util.LinkedList;
+import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -200,7 +201,8 @@ public class Interface extends javax.swing.JFrame {
             LinkedList<String> Tokens = new LinkedList<String>();
             Tokens =   analizador.separarTokens(arq.getLinhas());//tokens separado, mas sem o tratamento.
             textoFinal = analizador.getTexto();//pega o texto com todos os tokens já processados
-                       
+            
+                                   
              this.painelSaida.setText(textoFinal); //add o texto ao painel
             
         }
@@ -279,13 +281,15 @@ public class Interface extends javax.swing.JFrame {
             }
             this.painelEntrada.setText(text); //add o texto ao painel
              //chamar o analisador sintatico aqui
-            AnalisadorSintatico sintatico = new AnalisadorSintatico();
-            LinkedList<String> Tokens = new LinkedList<String>();
-           // Tokens =   analizador.separarTokens(arq.getLinhas());//tokens separado, mas sem o tratamento.
-           // textoFinal = analizador.getTexto();//pega o texto com todos os tokens já processados
-                     
+            AnalizadorSintatico sintatico = new AnalizadorSintatico();
+            AnalizadorLexico lexico = new AnalizadorLexico();
+            lexico.separarTokens(arq.getLinhas());//tokens separado, mas sem o tratamento.
             
-             this.painelSaida.setText("Falta fazer a analise sintatica ainda"); //add o texto ao painel
+            List<String> ListTokens = lexico.getTokens();
+            
+            sintatico.IniciarSintatico(ListTokens);
+            
+            this.painelSaida.setText("Falta fazer a analise sintatica ainda"); //add o texto ao painel
             
         }
     }//GEN-LAST:event_MenuSintaticoActionPerformed

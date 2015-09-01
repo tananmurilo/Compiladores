@@ -1,5 +1,6 @@
 
 import java.util.LinkedList;
+import java.util.List;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -14,11 +15,21 @@ import java.util.LinkedList;
 public class AnalizadorLexico {
     
      Automato automatoLexico = new Automato();
+     List<String> Tokens =  new LinkedList<>();
      String textoFinal="";//juntar todos os tokens em um texto só
      Boolean numeroFloat = false;
      
      public String getTexto(){
          return this.textoFinal;
+     }
+     
+     public List<String> getTokens(){
+         return this.Tokens;
+     }
+      
+      public void setTextoFinal(String aunt, int i){
+        textoFinal = textoFinal+aunt+" "+i+"\n";
+        Tokens.add(aunt);
      }
     
     public LinkedList<String> gerarTokens(LinkedList<String> linhas){
@@ -79,7 +90,7 @@ public class AnalizadorLexico {
                                 String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                                 System.out.println("Automato: "+aunt);//testes
                                 if(aunt!=null){
-                                    textoFinal = textoFinal+aunt+" "+i+"\n";   
+                                    setTextoFinal(aunt, i);  
                                   
                                 }
                               
@@ -101,7 +112,7 @@ public class AnalizadorLexico {
                                 String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                                 System.out.println("Automato: "+aunt);//testes
                                 if(aunt!=null){
-                                    textoFinal = textoFinal+aunt+" "+i+"\n";   
+                                    setTextoFinal(aunt, i);  
                                   
                               }
                               temp = "/*"; 
@@ -165,7 +176,7 @@ public class AnalizadorLexico {
                                    String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                                    System.out.println("Automato: "+aunt);//testes
                                    if(aunt!=null){
-                                       textoFinal = textoFinal+aunt+" "+i+"\n";   
+                                       setTextoFinal(aunt, i);  
 
                                    }
                                    temp = "/";
@@ -180,7 +191,7 @@ public class AnalizadorLexico {
                                 String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                                 System.out.println("Automato: "+aunt);//testes
                                 if(aunt!=null){
-                                    textoFinal = textoFinal+aunt+" "+i+"\n";   
+                                    setTextoFinal(aunt, i);  
                                   
                                 }
                                 temp = ""; 
@@ -201,7 +212,7 @@ public class AnalizadorLexico {
                                         String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                                         System.out.println("Automato: "+aunt);//testes
                                         if(aunt!=null){
-                                            textoFinal = textoFinal+aunt+" "+i+"\n";   
+                                            setTextoFinal(aunt, i);  
 
                                         }
                                         System.out.println(temp);
@@ -222,7 +233,7 @@ public class AnalizadorLexico {
                                 String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                                 System.out.println("Automato: "+aunt);//testes
                                 if(aunt!=null){
-                                    textoFinal = textoFinal+aunt+" "+i+"\n";   
+                                    setTextoFinal(aunt, i);  
                                   
                                 }
                                 temp = ""; 
@@ -234,7 +245,7 @@ public class AnalizadorLexico {
                                 String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                                 System.out.println("Automato: "+aunt);//testes
                                 if(aunt!=null){
-                                    textoFinal = textoFinal+aunt+" "+i+"\n";   
+                                    setTextoFinal(aunt, i);  
                                   
                                 }
                                 temp = ""; 
@@ -255,7 +266,7 @@ public class AnalizadorLexico {
                                         String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                                         System.out.println("Automato: "+aunt);//testes
                                         if(aunt!=null){
-                                            textoFinal = textoFinal+aunt+" "+i+"\n";   
+                                            setTextoFinal(aunt, i);  
 
                                         }
                                         System.out.println(temp);
@@ -276,7 +287,7 @@ public class AnalizadorLexico {
                                 String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                                 System.out.println("Automato: "+aunt);//testes
                                 if(aunt!=null){
-                                    textoFinal = textoFinal+aunt+" "+i+"\n";   
+                                    setTextoFinal(aunt, i);  
                                   
                                 }
                                 temp = ""; 
@@ -294,7 +305,7 @@ public class AnalizadorLexico {
                         expressoes.add(temp); //adiciona o token na lista 
                         String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                         if(aunt!=null){
-                           textoFinal = textoFinal+aunt+" "+i+"\n";   
+                           setTextoFinal(aunt, i);  
                         }
                         temp = "";
                    
@@ -303,7 +314,7 @@ public class AnalizadorLexico {
                         String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                         System.out.println("Automato: "+aunt);//testes
                         if(aunt!=null){
-                         textoFinal = textoFinal+aunt+" "+i+"\n";    
+                         setTextoFinal(aunt, i);   
                         }
 
 
@@ -314,7 +325,7 @@ public class AnalizadorLexico {
                           aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                           System.out.println("Automato: "+aunt);//testes
                           if(aunt!=null){
-                          textoFinal = textoFinal+aunt+" "+i+"\n";  
+                          setTextoFinal(aunt, i); 
                            }
           
                             temp = ""; //limpa a variavel
@@ -384,7 +395,7 @@ public class AnalizadorLexico {
                       String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                       System.out.println("Automato: "+aunt);
                       if(aunt!=null){
-                       textoFinal = textoFinal+aunt+" "+i+"\n";    
+                       setTextoFinal(aunt, i);   
                       }   
                 }
                 
@@ -400,7 +411,7 @@ public class AnalizadorLexico {
                       String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                       System.out.println("Automato: "+aunt);
                       if(aunt!=null){
-                       textoFinal = textoFinal+aunt+" "+i+"\n";    
+                       setTextoFinal(aunt, i);   
                       }   
                       numeroFloat=false;
                     }
@@ -416,7 +427,7 @@ public class AnalizadorLexico {
                     expressoes.add(temp); //adiciona o token na lista
                     String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                     if(aunt!=null){
-                       textoFinal = textoFinal+aunt+" "+i+"\n";   
+                       setTextoFinal(aunt, i);  
                     }
                       
                     temp = ""; //limpa a variavel
@@ -450,9 +461,10 @@ public class AnalizadorLexico {
                       String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
                       System.out.println("Automato: "+aunt);//testes
                       if(aunt!=null){
-                       textoFinal = textoFinal+aunt+" "+i+"\n";   
+                       
+                       setTextoFinal(aunt, i);  
                       }
-                      
+                                                    
                       temp = ""; //limpa a variavel
                       String b = String.valueOf(a);
                       temp= temp+b;// concatenar com os caracteres;
