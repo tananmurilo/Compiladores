@@ -14,7 +14,7 @@ public Producoes(List<String> tokens, List<String> values){
     valueList = values;
 }  
    
-public boolean atr(int index){  //Incompleto
+public boolean atr(){  //Incompleto
     if(tokenList.get(head).equals("Identificador")){
         head++;
         if(valueList.get(head).equals("="))
@@ -64,15 +64,17 @@ public boolean valores(){ //Incompleto
 <DCAcomp> ::= <DC> | ƛ
 */
 public boolean constantes(){
-    if(valueList.get(head).equals("{")){
+    if(valueList.get(head).equals("constantes")){
         head++;
-        if(declaraConstante()||valueList.get(head).equals("}")){//o } no caso as constantes vão ser vazias
+        if(valueList.get(head).equals("{")){
             head++;
-            return true;
-        }else return false;
-    }else{
-        return false;
-    }
+            if(declaraConstante()||valueList.get(head).equals("}")){//o } no caso as constantes vão ser vazias
+                head++;
+                return true;
+            }
+        }
+    } 
+    return false;
 }
 
 //<DC>::= <Tipo><Identificador>=<Valores>;<DCAcomp> 
@@ -97,7 +99,6 @@ public boolean declaraConstante(){
 //<DCAcomp> ::= <DC> | ƛ
 public boolean dCAcomp(){//pode gerar outra declaração de constante ou encontrar o lambida
     if(declaraConstante()||valueList.get(head).equals("}")){
-        head++;
         return true;
     }else return false;
 }
@@ -125,20 +126,27 @@ public boolean tipo(){
 <A>::= <atributos> | ƛ
 
 */
+
 public boolean registro(){
-    if(tokenList.get(head).equals("Identificador")){
+    if(valueList.get(head).equals("registro")){
         head++;
-        if(valueList.get(head).equals("{")){
+        if(tokenList.get(head).equals("Identificador")){
             head++;
-            return f();
-        }else return false;
-    }else return false;
+            if(valueList.get(head).equals("{")){
+                head++;
+                if(f()){
+                    head++;
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
 }
 
 //<F>::=  <atributos> | ƛ
 public boolean f (){
     if(atributos()||valueList.get(head).equals("}")){
-        head++;
         return true;
     }else return false;
 }
@@ -159,7 +167,6 @@ public boolean atributos(){
 //<A>::= <atributos> | ƛ
 public boolean a(){
     if(atributos()||valueList.get(head).equals("}")){
-        head++;
         return true;
     }else return false;
 }
