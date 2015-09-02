@@ -54,4 +54,114 @@ public boolean valores(){ //Incompleto
         } 
         return false;
     }
+
+
+/* produção das constantes no doc
+<Constantes>::= constantes{ <H> }
+<H>::= <DC> | ƛ
+
+<DC>::= <Tipo><Identificador>=<Valores>;<DCAcomp> 
+<DCAcomp> ::= <DC> | ƛ
+*/
+public boolean constantes(){
+    if(valueList.get(head).equals("{")){
+        head++;
+        if(declaraConstante()||valueList.get(head).equals("}")){//o } no caso as constantes vão ser vazias
+            head++;
+            return true;
+        }else return false;
+    }else{
+        return false;
+    }
+}
+
+//<DC>::= <Tipo><Identificador>=<Valores>;<DCAcomp> 
+public boolean declaraConstante(){
+     if(tipo()){//chama o metodo de identificar tipo
+            if(tokenList.get(head).equals("Identificador")){
+                head++;
+                if(valueList.get(head).equals("=")){
+                    head++;
+                    if(valores()){//chama o metodo de valores
+                        if(valueList.get(head).equals(";")){
+                            head++;
+                            return dCAcomp();
+                        }else return false;
+                    }else return false;
+                }else return false;  
+            }else return false;   
+      }else return false;
+}
+
+
+//<DCAcomp> ::= <DC> | ƛ
+public boolean dCAcomp(){//pode gerar outra declaração de constante ou encontrar o lambida
+    if(declaraConstante()||valueList.get(head).equals("}")){
+        head++;
+        return true;
+    }else return false;
+}
+
+
+/*
+<Tipo>::= inteiro | booleano | real | char | cadeia
+*/
+public boolean tipo(){
+     if(valueList.get(head).equals("inteiro")||valueList.get(head).equals("booleano")||valueList.get(head).equals("real")||
+        valueList.get(head).equals("char")||valueList.get(head).equals("cadeia")){
+         head++;
+         return true;
+         
+     }else return false;
+}
+
+
+/*gramatica
+<Reg>::= registro<G>
+<G>::=  <Identificador>{<F>}
+<F>::=  <atributos> | ƛ
+
+<atributos>::= <Tipo><Identificador>;<A>
+<A>::= <atributos> | ƛ
+
+*/
+public boolean registro(){
+    if(tokenList.get(head).equals("Identificador")){
+        head++;
+        if(valueList.get(head).equals("{")){
+            head++;
+            return f();
+        }else return false;
+    }else return false;
+}
+
+//<F>::=  <atributos> | ƛ
+public boolean f (){
+    if(atributos()||valueList.get(head).equals("}")){
+        head++;
+        return true;
+    }else return false;
+}
+
+//<atributos>::= <Tipo><Identificador>;<A>
+public boolean atributos(){
+    if(tipo()){
+        if(tokenList.get(head).equals("Identificador")){
+            head++;
+            if(valueList.get(head).equals(";")){
+                head++;
+                return a();
+            }else return false;
+        }else return false;
+    }else return false;
+}
+
+//<A>::= <atributos> | ƛ
+public boolean a(){
+    if(atributos()||valueList.get(head).equals("}")){
+        head++;
+        return true;
+    }else return false;
+}
+
 }
