@@ -28,8 +28,9 @@ public class AnalizadorLexico {
      }
       
       public void setTextoFinal(String aunt, int i){
-        textoFinal = textoFinal+aunt+" "+i+"\n";
-        Tokens.add(aunt);
+        int linha = i+1;   
+        textoFinal = textoFinal+aunt+" "+linha+"\n";
+        Tokens.add(aunt+" "+linha);
      }
     
     public LinkedList<String> gerarTokens(LinkedList<String> linhas){
@@ -432,7 +433,20 @@ public class AnalizadorLexico {
                       
                     temp = ""; //limpa a variavel
                     
-                 }else if(a!=' '){
+                 } else if(a==' ' || a==';' || a==',' || a=='(' || a==')' || a=='{' || a=='}' || a=='[' || a==']' ){//delimitadores
+                       
+                    String b = String.valueOf(a);
+                    temp= temp+b;//
+                    expressoes.add(temp); //adiciona o token na lista
+                    String aunt = automatoLexico.iniciar(temp, i);//analizar o token no autonomo
+                    if(aunt!=null){
+                       setTextoFinal(aunt, i);  
+                    }
+
+                    temp = ""; //limpa a variavel                        
+                     
+                     
+                } else if(a!=' '){
                       String b = String.valueOf(a);
                       temp= temp+b;// concatenar com os caracteres;
                       numeroFloat=false;

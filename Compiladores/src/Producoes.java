@@ -8,11 +8,18 @@ public class Producoes {
    int head = 0;
    private List<String> tokenList;
    private List<String> valueList;
+   private List<String> linePositions;
     
-public Producoes(List<String> tokens, List<String> values){
+public Producoes(List<String> tokens, List<String> values, List<String> lines){
     tokenList = tokens;
     valueList = values;
+    linePositions = lines;
 }  
+
+private boolean imprimeErro(String erro){
+    System.err.println(erro + " na linha " + linePositions.get(head));
+    return false;
+};
 
 /*Primarios falta fazer o numero
 <Numero>::= <Digito><Inteiro> | <Digito> | <Inteiro>.<Inteiro>
@@ -23,21 +30,31 @@ public Producoes(List<String> tokens, List<String> values){
 */
 
 
+//public boolean inteiro(){
+//    if(digito()){
+//        if(inteiro()){
+//            return true;
+//        }else return true;//dcaso seja um lambida       
+//    }else return false;
+//}
+//
+//public boolean digito(){
+//    if(valueList.get(head).equals("0")||valueList.get(head).equals("1")||valueList.get(head).equals("2")||valueList.get(head).equals("3")
+//    ||valueList.get(head).equals("4")||valueList.get(head).equals("5")||valueList.get(head).equals("6")||valueList.get(head).equals("7")
+//    ||valueList.get(head).equals("8")||valueList.get(head).equals("9")){
+//        head++;
+//        return true;
+//    }else return false;
+//}
 public boolean inteiro(){
-    if(digito()){
-        if(inteiro()){
+    if(tokenList.get(head).equals("Numero")) {
+        float valor = Float.parseFloat(valueList.get(head));
+        if((valor%1) == 0){
+            head++;
             return true;
-        }else return true;//dcaso seja um lambida       
-    }else return false;
-}
-
-public boolean digito(){
-    if(valueList.get(head).equals("0")||valueList.get(head).equals("1")||valueList.get(head).equals("2")||valueList.get(head).equals("3")
-    ||valueList.get(head).equals("4")||valueList.get(head).equals("5")||valueList.get(head).equals("6")||valueList.get(head).equals("7")
-    ||valueList.get(head).equals("8")||valueList.get(head).equals("9")){
-        head++;
-        return true;
-    }else return false;
+        } else return imprimeErro("Tipos incompatíveis: flutuante aonde deveria ser inteiro");
+    }
+    return imprimeErro("Erro na declaração de vetor: ineteiro esperado");
 }
 
 public boolean atr(){  //Incompleto
@@ -69,25 +86,28 @@ public boolean valorRetornado(){ //Incompleto
 public boolean declaraVetor(){
     if(valueList.get(head).equals("[")){
         head++;
-        if(inteiro())
-            if(valueList.get(head).equals("[")){
+        if(inteiro()){
+            if(valueList.get(head).equals("]")){
                 head++;
                 return(declaraMatriz());
             }
+        }
     }
-    return false;
+    
+    return imprimeErro("Erro ao declarar vetor");
 }
 
 public boolean declaraMatriz(){
     if(valueList.get(head).equals("[")){
         head++;
-        if(inteiro())
-            if(valueList.get(head).equals("[")){
+        if(inteiro()){
+            if(valueList.get(head).equals("]")){
                 head++;
                 return true;
             }
+        }
     } else return true;
-    return false;
+    return imprimeErro("Erro ao declarar vetor");
 }
 
 
@@ -124,7 +144,7 @@ public boolean inicializacao(){
 }
 //<X>::= <Identificador> | <Valores>
 public boolean x(){
-    if(tokenList.get(head).equals("Identificador")|| valores()){
+    if(tokenList.get(head).equals("Identificador")){
         head++;
         return true;
     }else return(valores());
@@ -142,7 +162,8 @@ public boolean constantes(){
         head++;
         if(valueList.get(head).equals("{")){
             head++;
-            if(declaraConstante()||valueList.get(head).equals("}")){//o } no caso as constantes vão ser vazias
+            declaraConstante();
+            if(valueList.get(head).equals("}")){//o } no caso as constantes vão ser vazias
                 head++;
                 return true;
             }
@@ -209,7 +230,6 @@ public boolean registro(){
             if(valueList.get(head).equals("{")){
                 head++;
                 if(f()){
-                    head++;
                     return true;
                 }
             }
@@ -220,7 +240,9 @@ public boolean registro(){
 
 //<F>::=  <atributos> | ƛ
 public boolean f (){
-    if(atributos()||valueList.get(head).equals("}")){
+    atributos();
+    if(valueList.get(head).equals("}")){
+        head++;
         return true;
     }else return false;
 }
@@ -243,6 +265,59 @@ public boolean a(){
     if(atributos()||valueList.get(head).equals("}")){
         return true;
     }else return false;
+}
+
+/* produção das variaveis no doc
+<Variaveis>::= variaveis { <R> }
+<R>::= <DV> | ƛ
+
+<DV>::= <Tipo><Identificador><AcompDv> |  <Identificador><Identificador>;<F> 
+<AcompDV> ::= <Inicializacao>;<F> | <Declara_vetor>;<F>
+<F>::= <DV> | ƛ
+*/
+
+public boolean variaveis(){
+    if(valueList.get(head).equals("variaveis")){
+        head++;
+        if(valueList.get(head).equals("{")){
+            head++;
+            declaraVariaveis();          
+            if(valueList.get(head).equals("}")){//o } no caso as constantes vão ser vazias
+                head++;
+                return true;
+            }
+        }
+    } 
+    return false;
+}
+
+public boolean declaraVariaveis(){
+     if(tipo()){//chama o metodo de identificar tipo
+            if(tokenList.get(head).equals("Identificador")){
+                head++;
+                if(AcompDV()) return true;
+            }
+                
+      }
+     
+    return imprimeErro("Erro ao declarar variáveis");
+}
+
+public boolean AcompDV(){
+    if (declaraVetor()){
+        if(valueList.get(head).equals(";")){
+            head++;
+            declaraVariaveis();
+            return true;
+        }
+    } else if(inicializacao()){
+        if(valueList.get(head).equals(";")){
+            head++;
+            declaraVariaveis();
+            return true;
+        }
+    } 
+    return false;
 }
 
 }

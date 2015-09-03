@@ -19,6 +19,7 @@ public class AnalizadorSintatico {
     private List<String> linhaArquivo;
     private List<String> tokenList =  new LinkedList<>();
     private List<String> valueList =  new LinkedList<>();
+    private List<String> linePositions =  new LinkedList<>();
     
     
     //onde provavelmente vai ser nossa logida do analisador
@@ -35,12 +36,13 @@ public class AnalizadorSintatico {
             if(temp[0] != "Error") {
                 tokenList.add(temp[0]);
                 valueList.add(temp[1]);
+                linePositions.add(temp[2]);
             }
         }
-        Producoes producoes = new Producoes(tokenList, valueList);
+        Producoes producoes = new Producoes(tokenList, valueList, linePositions);
         // Aqui abaixo é aonde começaria a valiação do código; Depois de adicionadas todas as produções, a primeira
         //função a ser chamada deveria ser a "algoritimo"; por enquanto está atribuicao, para testes.
-        System.out.println(producoes.declaraVetor());
+        System.out.println(producoes.variaveis());
         //System.out.println(producoes.registro());
         return null;
     }
@@ -64,28 +66,28 @@ public class AnalizadorSintatico {
         String temp[];
         temp=lerLinha(numLinha).split(" ");//dividir a string em pedaços separados por espaços
         if(temp[0].equals("PalavraReservada")){
-            return "PalavraReservada "+temp[1];    
+            return "PalavraReservada "+temp[1]+" "+temp[2];    
         }else if(temp[0].equals("Identificador")){
-            return "Identificador "+temp[1];
+            return "Identificador "+temp[1]+" "+temp[2];
         }else if(temp[0].equals("Número")){
-            return "Numero "+temp[1];
+            return "Numero "+temp[1]+" "+temp[2];
         }else if(temp[0].equals("Delimitador")){
-            return "Delimitador "+temp[1];
+            return "Delimitador "+temp[1]+" "+temp[2];
         }else if(temp[0].equals("Operador")){
             if(temp[1].equals("simples")){
-                return "OperadorSimples "+temp[2];
+                return "OperadorSimples "+temp[2]+" "+temp[3];
             }else{
-                return "OperadorDuplo "+temp[2];
+                return "OperadorDuplo "+temp[2]+" "+temp[3];
             }   
         }else if(temp[0].equals("Caracter")){
-            return "Caracter "+temp[1];
+            return "Caracter "+temp[1]+" "+temp[2];
         }else if(temp[0].equals("Cadeia")){
-            return "Cadeia "+temp[1];  
+            return "Cadeia "+temp[1]+" "+temp[2];  
         }else if(temp[0].equals("Comentário")){
             if(temp[1].equals("mal")){
                 return "Error";
             }else{
-               return "Comentario "+temp[3]; 
+               return "Comentario "+temp[3]+" "+temp[4]; 
             }  
         }else if(temp[0].equals("Token")||temp[0].equals("Erro")){
             return "Error";

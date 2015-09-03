@@ -1,0 +1,9 @@
+variaveis{
+
+char c[3][4];
+inteiro x=3;
+real a;
+booleano b[2];
+
+
+}
