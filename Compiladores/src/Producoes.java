@@ -27,9 +27,7 @@ public boolean inteiro(){
     if(digito()){
         if(inteiro()){
             return true;
-        }else if(tokenList.get(head).equals("Delimitador")){//delimitador seria um lambida
-            return true;  
-        }else return false;
+        }else return true;//dcaso seja um lambida       
     }else return false;
 }
 
@@ -66,18 +64,34 @@ public boolean valorRetornado(){ //Incompleto
 <Declara_vetor>::= [ <inteiro> ] <declara_mat>
 <Declara_mat>::=[ <inteiro> ]  | ƛ
 
+*/
 
 public boolean declaraVetor(){
     if(valueList.get(head).equals("[")){
         head++;
-        if(inteiro()){
-            
-        }
+        if(inteiro())
+            if(valueList.get(head).equals("[")){
+                head++;
+                return(declaraMatriz());
+            }
     }
+    return false;
 }
-*/
 
-public boolean valores(){ //Incompleto
+public boolean declaraMatriz(){
+    if(valueList.get(head).equals("[")){
+        head++;
+        if(inteiro())
+            if(valueList.get(head).equals("[")){
+                head++;
+                return true;
+            }
+    } else return true;
+    return false;
+}
+
+
+    public boolean valores(){ //Incompleto
         if(tokenList.get(head).equals("Numero")) {
             head++;            
             return true;
@@ -105,16 +119,15 @@ public boolean inicializacao(){
     if(valueList.get(head).equals("=")){
         head++;
         return x(); 
-    }else if(valueList.get(head).equals(",")||valueList.get(head).equals(";")){//coloquei como sendo o ƛ o encontro de um delimidor , ou ;, já que variaveis sem inicialização vem logo acompanhadas desses delimitadores
-        return true;
-    }else return false;
+    }else return true; // caso lambda
+        
 }
 //<X>::= <Identificador> | <Valores>
 public boolean x(){
     if(tokenList.get(head).equals("Identificador")|| valores()){
         head++;
         return true;
-    }else return false;
+    }else return(valores());
 }
 
 /* produção das constanttes no doc
