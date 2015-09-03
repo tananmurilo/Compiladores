@@ -13,7 +13,35 @@ public Producoes(List<String> tokens, List<String> values){
     tokenList = tokens;
     valueList = values;
 }  
-   
+
+/*Primarios falta fazer o numero
+<Numero>::= <Digito><Inteiro> | <Digito> | <Inteiro>.<Inteiro>
+<Inteiro>::= <Digito><Inteiro> 
+<Digito>::= 0  | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 
+<Delimitadores>::= ; | , | ( | ) | { | } | [ | ]
+
+*/
+
+
+public boolean inteiro(){
+    if(digito()){
+        if(inteiro()){
+            return true;
+        }else if(tokenList.get(head).equals("Delimitador")){//delimitador seria um lambida
+            return true;  
+        }else return false;
+    }else return false;
+}
+
+public boolean digito(){
+    if(valueList.get(head).equals("0")||valueList.get(head).equals("1")||valueList.get(head).equals("2")||valueList.get(head).equals("3")
+    ||valueList.get(head).equals("4")||valueList.get(head).equals("5")||valueList.get(head).equals("6")||valueList.get(head).equals("7")
+    ||valueList.get(head).equals("8")||valueList.get(head).equals("9")){
+        head++;
+        return true;
+    }else return false;
+}
+
 public boolean atr(){  //Incompleto
     if(tokenList.get(head).equals("Identificador")){
         head++;
@@ -34,6 +62,20 @@ public boolean valorRetornado(){ //Incompleto
         }
         return false;
     }
+/*
+<Declara_vetor>::= [ <inteiro> ] <declara_mat>
+<Declara_mat>::=[ <inteiro> ]  | ƛ
+
+
+public boolean declaraVetor(){
+    if(valueList.get(head).equals("[")){
+        head++;
+        if(inteiro()){
+            
+        }
+    }
+}
+*/
 
 public boolean valores(){ //Incompleto
         if(tokenList.get(head).equals("Numero")) {
@@ -55,8 +97,27 @@ public boolean valores(){ //Incompleto
         return false;
     }
 
+/*<Inicialização>::= <ƛ> | =<X>
+<X>::= <Identificador> | <Valores>
+*/
+// teste para =342; ou ;
+public boolean inicializacao(){
+    if(valueList.get(head).equals("=")){
+        head++;
+        return x(); 
+    }else if(valueList.get(head).equals(",")||valueList.get(head).equals(";")){//coloquei como sendo o ƛ o encontro de um delimidor , ou ;, já que variaveis sem inicialização vem logo acompanhadas desses delimitadores
+        return true;
+    }else return false;
+}
+//<X>::= <Identificador> | <Valores>
+public boolean x(){
+    if(tokenList.get(head).equals("Identificador")|| valores()){
+        head++;
+        return true;
+    }else return false;
+}
 
-/* produção das constantes no doc
+/* produção das constanttes no doc
 <Constantes>::= constantes{ <H> }
 <H>::= <DC> | ƛ
 
