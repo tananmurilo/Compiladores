@@ -278,7 +278,7 @@ public class Automato {
             }
             
         }
-        //pega o toke + seu identificador
+        //pega o token + seu identificador
         output = getToken(texto, estadoAtual, linha);
         
         return output;
@@ -303,6 +303,7 @@ public class Automato {
      * @return Token completo
      */
     private String getToken(String txt, int estado, int linha){
+        if(txt.equals(" ")) return null;
         switch(estado){
             case 1: 
                 PalavrasReservadas reservadas = new PalavrasReservadas();

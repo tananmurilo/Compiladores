@@ -1,3 +1,12 @@
+registro casa{
+	inteiro largura;	
+}
+
+constantes{
+inteiro d = 23;
+
+}
+
 variaveis{
 
 char c[3][4];
@@ -7,3 +16,10 @@ booleano b[2];
 
 
 }
+
+funcao inteiro teste ()  {
+
+	retorno 23;
+}
+
+algoritmo {}

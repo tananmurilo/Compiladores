@@ -17,35 +17,55 @@ public Producoes(List<String> tokens, List<String> values, List<String> lines){
 }  
 
 private boolean imprimeErro(String erro){
-    System.err.println(erro + " na linha " + linePositions.get(head));
+    System.out.println(erro + " na linha " + linePositions.get(head));
     return false;
 };
 
-/*Primarios falta fazer o numero
-<Numero>::= <Digito><Inteiro> | <Digito> | <Inteiro>.<Inteiro>
-<Inteiro>::= <Digito><Inteiro> 
-<Digito>::= 0  | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 
-<Delimitadores>::= ; | , | ( | ) | { | } | [ | ]
+/*
+<iniciar>::=<registro><iniciar> | <constantes><variaveis><iniciar2>
+<iniciar2>::=<funcao><iniciar2> | <algoritmo>
+<algoritmo>::=algoritmo { <CG> }
 
 */
 
+public boolean iniciar(){
+    if(registro()){
+        return iniciar();
+    } else if(constantes()){
+         if(variaveis()) return iniciar2();       
+         else imprimeErro("Bloco variaveis mal formatado");
+    } else  imprimeErro("Bloco constantes mal formatado");
+   return false;
+}
 
-//public boolean inteiro(){
-//    if(digito()){
-//        if(inteiro()){
-//            return true;
-//        }else return true;//dcaso seja um lambida       
-//    }else return false;
-//}
-//
-//public boolean digito(){
-//    if(valueList.get(head).equals("0")||valueList.get(head).equals("1")||valueList.get(head).equals("2")||valueList.get(head).equals("3")
-//    ||valueList.get(head).equals("4")||valueList.get(head).equals("5")||valueList.get(head).equals("6")||valueList.get(head).equals("7")
-//    ||valueList.get(head).equals("8")||valueList.get(head).equals("9")){
-//        head++;
-//        return true;
-//    }else return false;
-//}
+public boolean iniciar2(){
+    if(algoritmo())return true;
+    else if(funcao()){
+        return iniciar2();
+    }
+    return false;
+}
+
+public boolean algoritmo(){
+    if(valueList.get(head).equals("algoritmo")){
+        head++;
+        if(valueList.get(head).equals("{")){
+            head++;
+            codigoGeral();
+            if(valueList.get(head).equals("}")){//o } no caso as constantes vão ser vazias
+                head++;
+                return true;
+            }
+        }
+    return imprimeErro("Bloco algoritmo mal formatado");    
+    } 
+    return false;
+}
+
+public boolean codigoGeral(){ // incompleto
+    return true;
+}
+
 public boolean inteiro(){
     if(tokenList.get(head).equals("Numero")) {
         float valor = Float.parseFloat(valueList.get(head));
@@ -54,7 +74,7 @@ public boolean inteiro(){
             return true;
         } else return imprimeErro("Tipos incompatíveis: flutuante aonde deveria ser inteiro");
     }
-    return imprimeErro("Erro na declaração de vetor: ineteiro esperado");
+    return imprimeErro("Tipos incompatíveis: ineteiro esperado");
 }
 
 public boolean atr(){  //Incompleto
@@ -92,9 +112,10 @@ public boolean declaraVetor(){
                 return(declaraMatriz());
             }
         }
+        return imprimeErro("Erro ao declarar vetor");
     }
     
-    return imprimeErro("Erro ao declarar vetor");
+    return false;
 }
 
 public boolean declaraMatriz(){
@@ -106,8 +127,8 @@ public boolean declaraMatriz(){
                 return true;
             }
         }
+      return imprimeErro("Erro ao declarar vetor");
     } else return true;
-    return imprimeErro("Erro ao declarar vetor");
 }
 
 
@@ -298,7 +319,7 @@ public boolean declaraVariaveis(){
                 if(AcompDV()) return true;
             }
                 
-      }
+      } else if(valueList.get(head).equals("}")) return true;
      
     return imprimeErro("Erro ao declarar variáveis");
 }
@@ -318,6 +339,130 @@ public boolean AcompDV(){
         }
     } 
     return false;
+}
+
+/*
+Função:
+
+	<Funcao>::= funcao <funcaoAcomp>
+
+<funcaoAcomp> ::= vazio <Identificador>(<vazioAcomp> |
+		         <Tipo> <Identificador>(<tipoAcomp>
+
+<vazioAcomp> ::= <parametro>){<CG>} | ){<CG>}
+
+<tipoAcomp> ::=  <parametro>){<CG> retorno <Valores>;} | ){<CG> retorno <Valores>}
+
+<parametro>::=<Tipo><Identificador><parametroAcomp>
+                         registro <Identificador><parametroAcomp>
+
+<parametroAcomp> ::= <parametro2> | ƛ
+
+<parametro2>::= ,<parametro>
+*/
+
+public boolean funcao(){
+    if(valueList.get(head).equals("funcao")){
+        head++;
+        if(valueList.get(head).equals("vazio")){
+            head++;
+            if(tokenList.get(head).equals("Identificador")){
+                head++;
+                if(valueList.get(head).equals("(")){
+                    head++;
+                    if(funcao_vazioAcomp()) return true;
+                }   
+            }    
+        } else if(tipo()){
+            if(tokenList.get(head).equals("Identificador")){
+                head++;
+                if(valueList.get(head).equals("(")){
+                    head++;
+                    if(funcao_tipoAcomp()) return true;
+                }
+            }  
+        }
+    }
+        return imprimeErro("Erro: Função mal formada");
+} 
+
+private boolean funcao_vazioAcomp(){
+    if(valueList.get(head).equals(")")){
+        head++;
+         if(valueList.get(head).equals("{")){
+             head++;
+             if(codigoGeral()){
+                 if(valueList.get(head).equals("}")){
+                    head++;
+                    return true;
+                 }
+             }
+         }   
+    }   else if(parametro()){
+        if(valueList.get(head).equals(")")){
+            head++;
+             if(valueList.get(head).equals("{")){
+                 head++;
+                 if(codigoGeral()){
+                     if(valueList.get(head).equals("}")){
+                        head++;
+                        return true;
+                     }
+                 }
+             }   
+        }   
+    }
+    return false;
+}
+
+private boolean funcao_tipoAcomp(){
+    if(valueList.get(head).equals(")")){
+        head++;
+        if(valueList.get(head).equals("{")){
+            head++;
+            if(codigoGeral()){
+                if(valueList.get(head).equals("retorno")){
+                   head++;
+                    if(valores())
+                        if(valueList.get(head).equals(";")){
+                            head++;
+                            if(valueList.get(head).equals("}")){
+                                head++;
+                                return true;
+                            }
+                        }
+                }  
+            }
+            return imprimeErro("Erro: função sem retorno");
+         }   
+    }   else if(parametro()){
+        if(valueList.get(head).equals(")")){
+            head++;
+            if(valueList.get(head).equals("{")){
+                 head++;
+                 if(codigoGeral()){
+                    if(valueList.get(head).equals("retorno")){
+                        head++;
+                        if(valores())
+                            if(valueList.get(head).equals(";")){
+                            head++;
+                                if(valueList.get(head).equals("}")){
+                                    head++;
+                                    return true;
+                                }
+                            }
+                    }
+                    
+                }
+                return imprimeErro("Erro: função sem retorno");
+             }   
+        }   
+    }
+    return false;
+}
+
+private boolean parametro(){ // incompleto
+    return true;
 }
 
 }
