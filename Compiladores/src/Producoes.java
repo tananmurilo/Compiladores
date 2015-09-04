@@ -465,4 +465,124 @@ private boolean parametro(){ // incompleto
     return true;
 }
 
+//Comandos 
+
+/*
+<leia>::= leia(<DL>);
+<DL>::= <Identificador><D> | <AceReg><D> | <AceVet><D> | <AceMat><D>
+<D>::= <DL2> | ƛ
+<DL2>::= ,<DL>
+*/
+
+public boolean leia(){
+    if(valueList.get(head).equals("leia")){
+        head++;
+        if(valueList.get(head).equals("(")){
+            head++;
+            if(dL()){
+                if(valueList.get(head).equals(")")){
+                    head++;
+                    if(valueList.get(head).equals(";")){
+                        head++;
+                        return true;
+                    } 
+                }
+            }
+            
+        }
+    }
+    return imprimeErro("Comando leia mal formatado");
 }
+
+/*
+<DL>::= <Identificador><D> | <AceReg><D> | <AceVet><D> | <AceMat><D>
+<D>::= <DL2> | ƛ
+<DL2>::= ,<DL>
+*/
+private boolean dL(){
+    if(tokenList.get(head).equals("Identificador")){
+        head++;
+        return d();
+    }else if(aceReg()||aceVet()||aceMat()){
+        return d();
+    }
+    return false;
+}
+//<D>::= <DL2> | ƛ
+//<DL2>::= ,<DL>
+private boolean d(){
+    if(valueList.get(head).equals(",")){
+        head ++;
+        return dL();
+    }else return true;  //lambida 
+}
+
+/*
+<escreva>::= escreva(<DE>);
+<DE>::= <Identificador><E> | <AceReg><E> | <AceVet><E> | <AceMat><E> | <CadeiasConstantes><E> | <CaracteresConstantes><E>
+<E>::= <DE2> | ƛ
+<DE2>::= ,<DE> 
+
+*/
+public boolean escreva(){//falta fazer, vou terminar nestante
+    return false;
+}
+
+//funcoes de acesso
+//<AceReg>::= <Identificador>.<Identificador>
+public boolean aceReg(){
+    if(tokenList.get(head).equals("Identificador")){
+        head++;
+        if(valueList.get(head).equals(".")){
+            head++;
+            if(tokenList.get(head).equals("Identificador")){
+               head++;
+               return true;
+            }
+        }
+    }
+    return imprimeErro("Acesso ao registrador incorreto");
+}
+//<AceVet>::= <Identificador>[<Numero>]
+public boolean aceVet(){
+    if(tokenList.get(head).equals("Identificador")){
+        head++;
+        if(valueList.get(head).equals("[")){
+            head++;
+            if(inteiro()){
+                if(valueList.get(head).equals("]")){
+                    head++;
+                    return true;
+                }
+            }
+        }
+    }
+    return imprimeErro("acessso ao vetor incorreto");
+}
+//<AceMat>::= <Identificador>[<Numero>][<Numero>]
+public boolean aceMat(){
+     if(tokenList.get(head).equals("Identificador")){
+        head++;
+        if(valueList.get(head).equals("[")){
+            head++;
+            if(inteiro()){
+                if(valueList.get(head).equals("]")){
+                    head++;
+                    if(valueList.get(head).equals("[")){
+                        head++;
+                        if(inteiro()){
+                            if(valueList.get(head).equals("]")){
+                                head++;
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return imprimeErro("acessso a matriz incorreto");
+}
+
+}
+
