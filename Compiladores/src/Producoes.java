@@ -63,6 +63,7 @@ public boolean algoritmo(){
 }
 
 public boolean codigoGeral(){ // incompleto
+  
     return true;
 }
 
@@ -465,6 +466,10 @@ private boolean parametro(){ // incompleto
     return true;
 }
 
+public boolean condicao(){//falta fazer
+ 
+    return true;
+}
 //Comandos 
 
 /*
@@ -482,6 +487,7 @@ public boolean leia(){
             if(dL()){
                 if(valueList.get(head).equals(")")){
                     head++;
+                    
                     if(valueList.get(head).equals(";")){
                         head++;
                         return true;
@@ -525,7 +531,112 @@ private boolean d(){
 
 */
 public boolean escreva(){//falta fazer, vou terminar nestante
+    if(valueList.get(head).equals("escreva")){
+        head++;
+        if(valueList.get(head).equals("(")){
+            head++;
+            if(de()){
+                if(valueList.get(head).equals(")")){
+                    head++;
+                    if(valueList.get(head).equals(";")){
+                        head++;
+                        return true;
+                    } 
+                }
+            }
+            
+        }
+    }
+    return imprimeErro("Comando escreva mal formatado");
+}
+private boolean de(){
+    if(tokenList.get(head).equals("Identificador")||tokenList.get(head).equals("Caracter")||tokenList.get(head).equals("Cadeia")){
+        head++;
+        return e();
+    }else if(aceReg()||aceVet()||aceMat()){
+        return e();
+    }
     return false;
+}
+
+private boolean e(){
+   if(valueList.get(head).equals(",")){
+        head ++;
+        return de();
+    }else return true;  //lambida 
+}
+
+/*comando enquanto se e senao dependem das funcoes condicao e codigogeral que estão incompletas
+<Enquanto>::= enquanto(<Condicao>){<CG>}
+*/
+public boolean enquanto(){
+    if(valueList.get(head).equals("enquanto")){
+        head++;
+        if(valueList.get(head).equals("(")){
+            head++;
+            if(condicao()){//falta fazer a condição
+                if(valueList.get(head).equals(")")){
+                    head++;
+                    if(valueList.get(head).equals("{")){
+                        head++;
+                        if(codigoGeral()){
+                            if(valueList.get(head).equals("}")){
+                                head++;
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+       
+    }
+    return imprimeErro("Erro no comando enquanto");
+}
+
+/*
+<se>::=se(<Condicao>){<CG>}<I>
+<I>::= senao{<CG>} | ƛ
+*/
+
+public boolean se(){
+    if(valueList.get(head).equals("se")){
+        head++;
+        if(valueList.get(head).equals("(")){
+            head++;
+            if(condicao()){//falta fazer a condicao
+                if(valueList.get(head).equals(")")){
+                    head++;
+                    if(valueList.get(head).equals("{")){
+                        head++;
+                        if(codigoGeral()){
+                            if(valueList.get(head).equals("}")){
+                                head++;
+                                return i();
+                                
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return imprimeErro("Erro no comando se");  
+}
+//<I>::= senao{<CG>} | ƛ
+private boolean i(){
+    if(valueList.get(head).equals("senao")){
+        head++;
+        if(valueList.get(head).equals("{")){
+            head++;
+            if(codigoGeral()){
+                if(valueList.get(head).equals("}")){
+                    return true;
+                }
+            }
+        }
+    }
+    return true; //se for lambida retorna verdadeiro
 }
 
 //funcoes de acesso
