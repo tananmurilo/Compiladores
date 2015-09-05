@@ -78,25 +78,74 @@ public boolean inteiro(){
     return imprimeErro("Tipos incompatíveis: ineteiro esperado");
 }
 
-public boolean atr(){  //Incompleto
+public boolean atr(){  
     if(tokenList.get(head).equals("Identificador")){
+        if(valueList.get(head+1).equals(".")){
+            if(aceReg()) {
+                if(valueList.get(head).equals("=")){
+                    head++;
+                    if(valorRetornado()) return true;
+                }
+            } 
+        } else{
         head++;
-        if(valueList.get(head).equals("="))
-            head++;
-            if(valorRetornado()) return true;
-    }      
+            if(valueList.get(head).equals("=")){
+                head++;
+                if(valorRetornado()) return true;
+            }
+        }
+    }       
     
-    return false;
+    return imprimeErro("Erro: atribuição mal formada");
 }
 
-public boolean valorRetornado(){ //Incompleto
+public boolean valorRetornado(){ 
         if(tokenList.get(head).equals("Identificador")) {
-            head++;            
-            return true;
+            if(valueList.get(head+1).equals(".")){ // lendo à frente para decidir em qual função entrar
+                if(aceReg()) {
+                    if(valueList.get(head).equals(";")) {
+                    head++;
+                    return true;
+                    }
+                } 
+            } if(valueList.get(head+1).equals("+")|| valueList.get(head+1).equals("-")|| valueList.get(head+1).equals("*")|| valueList.get(head+1).equals("/")){
+                if(operacoes()) {
+                    if(valueList.get(head).equals(";")) {
+                    head++;
+                    return true;
+                    }
+                } 
+            }if(valueList.get(head+1).equals("(")){ // lendo à frente para decidir em qual função entrar
+                return chamadaFuncao();
+            } else{
+                head++;            
+                if(valueList.get(head).equals(";")) {
+                    head++;
+                    return true;
+                }
+            }
+        } else if(tokenList.get(head).equals("Numero")) {  
+           if(valueList.get(head+1).equals("+")|| valueList.get(head+1).equals("-")|| valueList.get(head+1).equals("*")|| valueList.get(head+1).equals("/")){
+                if(operacoes()) {
+                    if(valueList.get(head).equals(";")) {
+                    head++;
+                    return true;
+                    }
+                } 
+            } else {
+                head++;
+                if(valueList.get(head).equals(";")) {
+                    head++;
+                    return true;
+                }
+            }
         } else if(valores()) {  
-            return true;
+            if(valueList.get(head).equals(";")) {
+                    head++;
+                    return true;
+            }
         }
-        return false;
+        return imprimeErro("Erro: um valor deve ser atribuido");
     }
 /*
 <Declara_vetor>::= [ <inteiro> ] <declara_mat>
@@ -470,6 +519,35 @@ public boolean condicao(){//falta fazer
  
     return true;
 }
+
+public boolean chamadaFuncao(){//falta fazer
+    if(tokenList.get(head).equals("Identificador")){
+        head++;
+        if(valueList.get(head).equals("(")){
+            head++;
+            parametroCF();
+            if(valueList.get(head).equals(")")){
+                head++;
+                if(valueList.get(head).equals(";")) {
+                    head++;
+                    return true;
+                }
+            }
+        }
+    }
+    return imprimeErro("Erro: chamada de função mal formada");
+}
+
+private boolean parametroCF(){ // incompleto
+    if(operando()){
+        if(valueList.get(head).equals(",")){
+        head++;
+        return parametroCF();
+        }
+    return true;    
+    }
+    return imprimeErro("Erro: parametro de chamada função inválido");
+}
 //Comandos 
 
 /*
@@ -487,7 +565,6 @@ public boolean leia(){
             if(dL()){
                 if(valueList.get(head).equals(")")){
                     head++;
-                    
                     if(valueList.get(head).equals(";")){
                         head++;
                         return true;
@@ -506,13 +583,17 @@ public boolean leia(){
 <DL2>::= ,<DL>
 */
 private boolean dL(){
-    if(tokenList.get(head).equals("Identificador")){
-        head++;
-        return d();
-    }else if(aceReg()||aceVet()||aceMat()){
-        return d();
+    if(tokenList.get(head).equals("Identificador")){ //lendo à frente
+        if(valueList.get(head+1).equals(".")){//lendo à frente
+            if(aceReg()) return d();
+        }else if(valueList.get(head+1).equals("[")){//lendo à frente
+            if(aceVM()) return d();
+        }else{
+            head++;
+            return d();
+        }
     }
-    return false;
+    return imprimeErro("Erro: parametro(s) mal formatado(s)");
 }
 //<D>::= <DL2> | ƛ
 //<DL2>::= ,<DL>
@@ -520,7 +601,7 @@ private boolean d(){
     if(valueList.get(head).equals(",")){
         head ++;
         return dL();
-    }else return true;  //lambida 
+    }else return true;  //lambda 
 }
 
 /*
@@ -550,11 +631,18 @@ public boolean escreva(){//falta fazer, vou terminar nestante
     return imprimeErro("Comando escreva mal formatado");
 }
 private boolean de(){
-    if(tokenList.get(head).equals("Identificador")||tokenList.get(head).equals("Caracter")||tokenList.get(head).equals("Cadeia")){
+    if(tokenList.get(head).equals("Caracter")||tokenList.get(head).equals("Cadeia")){
         head++;
         return e();
-    }else if(aceReg()||aceVet()||aceMat()){
-        return e();
+    }else if(tokenList.get(head).equals("Identificador")){
+        if(valueList.get(head+1).equals(".")){//lendo à frente
+            if(aceReg()) return e();
+        } else if(valueList.get(head+1).equals("[")){//lendo à frente
+            if(aceVM()) return e();
+        }else{
+            head++;
+            return e();
+        }
     }
     return false;
 }
@@ -655,44 +743,65 @@ public boolean aceReg(){
     return imprimeErro("Acesso ao registrador incorreto");
 }
 //<AceVet>::= <Identificador>[<Numero>]
-public boolean aceVet(){
+//public boolean aceVet(){
+//    if(tokenList.get(head).equals("Identificador")){
+//        head++;
+//        if(valueList.get(head).equals("[")){
+//            head++;
+//            if(inteiro()){
+//                if(valueList.get(head).equals("]")){
+//                    head++;
+//                    return true;
+//                }
+//            }
+//        }
+//    }
+//    return imprimeErro("acessso ao vetor incorreto");
+//}
+////<AceMat>::= <Identificador>[<Numero>][<Numero>]
+//public boolean aceMat(){
+//     if(tokenList.get(head).equals("Identificador")){
+//        head++;
+//        if(valueList.get(head).equals("[")){
+//            head++;
+//            if(inteiro()){
+//                if(valueList.get(head).equals("]")){
+//                    head++;
+//                    if(valueList.get(head).equals("[")){
+//                        head++;
+//                        if(inteiro()){
+//                            if(valueList.get(head).equals("]")){
+//                                head++;
+//                                return true;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//    return imprimeErro("acessso a matriz incorreto");
+//}
+
+private boolean aceVM(){
     if(tokenList.get(head).equals("Identificador")){
         head++;
-        if(valueList.get(head).equals("[")){
-            head++;
-            if(inteiro()){
-                if(valueList.get(head).equals("]")){
-                    head++;
-                    return true;
-                }
-            }
-        }
+        return declaraVetor();
     }
-    return imprimeErro("acessso ao vetor incorreto");
+    return false;
 }
-//<AceMat>::= <Identificador>[<Numero>][<Numero>]
-public boolean aceMat(){
-     if(tokenList.get(head).equals("Identificador")){
+
+private boolean operacoes(){ // incompleto
+    return true;
+}
+
+private boolean operando(){ // incompleto
+    if(valores()) return true;
+    else if(tokenList.get(head).equals("Identificador")){
         head++;
-        if(valueList.get(head).equals("[")){
-            head++;
-            if(inteiro()){
-                if(valueList.get(head).equals("]")){
-                    head++;
-                    if(valueList.get(head).equals("[")){
-                        head++;
-                        if(inteiro()){
-                            if(valueList.get(head).equals("]")){
-                                head++;
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        return true;
     }
-    return imprimeErro("acessso a matriz incorreto");
+    return false;
 }
 
 }

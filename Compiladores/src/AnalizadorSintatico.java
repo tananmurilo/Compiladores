@@ -42,7 +42,7 @@ public class AnalizadorSintatico {
         Producoes producoes = new Producoes(tokenList, valueList, linePositions);
         // Aqui abaixo é aonde começaria a valiação do código; Depois de adicionadas todas as produções, a primeira
         //função a ser chamada deveria ser a "algoritimo"; por enquanto está atribuicao, para testes.
-        System.out.println(producoes.iniciar());
+        System.out.println(producoes.atr());
         
         return null;
     }
