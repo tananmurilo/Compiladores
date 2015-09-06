@@ -42,7 +42,12 @@ public class AnalizadorSintatico {
         Producoes producoes = new Producoes(tokenList, valueList, linePositions);
         // Aqui abaixo é aonde começaria a valiação do código; Depois de adicionadas todas as produções, a primeira
         //função a ser chamada deveria ser a "algoritimo"; por enquanto está atribuicao, para testes.
-        System.out.println(producoes.atr());
+        //System.out.println(producoes.atr());
+        //n consegui fazer de outro jeito sem ser com o lambida como ;
+        //executa teste para 1=1; 2-a+4*2; 3+(4)-5; 2+(d+1)*3; dao o esperado(verdadeiro)
+        // para 3+); 23+4); 
+        //problema quando abre uma chave e não fecha da verdadeiro 9+(6-9;
+        System.out.println(producoes.operacoes());
         
         return null;
     }

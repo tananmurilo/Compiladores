@@ -514,9 +514,18 @@ private boolean funcao_tipoAcomp(){
 private boolean parametro(){ // incompleto
     return true;
 }
-
+/*
+<Condicao>::= <ExpC><X> |  (<Condicao>)
+<X>::= <OpL> | ƛ
+<OpL>::= &&<Y> | ||<Y> | ƛ
+<Y>::= <Condicao>
+<ExpC>::= <Operando> <OpCond><Operando> 
+<Operando>::= <Valores> | <Identificador>
+<OpCond>::= ><Z> | <<Z> | == | !=
+<Z>::=      = | ƛ
+*/
 public boolean condicao(){//falta fazer
- 
+    
     return true;
 }
 
@@ -790,10 +799,94 @@ private boolean aceVM(){
     }
     return false;
 }
-
-private boolean operacoes(){ // incompleto
-    return true;
+/*
+<Operacoes> ::= <ValNum><ValNumAcomp> |   (<ValNum><operandoOperacoes2> 
+<ValNumAcomp> ::= <operandoOperacoes> | ƛ
+<operandoOperacoes>::= <Opn><Operacoes> 
+<operandoOperacoes2>::= <operandoOperacoes>) <operandoOperacoesAcomp>  | )
+<operandoOperacoesAcomp>::= <operandoOperacoes> |  ƛ
+<Opn>::= + | - | * |  / 
+<ValNum>::= <Identificador> | <Número>
+*/
+public boolean operacoes(){ // falta testa mais
+    
+    if(valNum()){
+        if(valNumAcomp()){
+            System.out.println("head parou no "+head);
+            return true;
+        }
+    }else if(valueList.get(head).equals("(")){
+        head++;
+        if(valNum()){
+            if(operandoOperacoes2()){
+                System.out.println("head parou no "+head);
+                return true;
+                
+            }
+        }
+    }
+    return false;
+            
 }
+private boolean valNum(){
+    if(tokenList.get(head).equals("Identificador")||tokenList.get(head).equals("Numero")){
+        head++;
+        return true;
+    }else return false;
+}
+//<ValNumAcomp> ::= <operandoOperacoes> | ƛ
+private boolean valNumAcomp(){
+    if(operandoOperacoes()){
+        return true;
+     //não pode retorna true como sendo lambida se não da true para 1*e);
+    // não pode retornar false pq para 1*j-1 retorna falso;
+    //entao coloquei o if do ; pra identificar o fim da operação, mas retorna true para 1(*e; o restante retorna tudo certo inclusive para 1*e); retorna false como esperado
+    }else if(valueList.get(head).equals(";")){
+        return true;
+    }
+    else return false;
+}
+private boolean operandoOperacoes(){
+    if(opn()){
+        return operacoes();
+    }else return false;
+}
+//<operandoOperacoes2>::= <operandoOperacoes>) <operandoOperacoesAcomp>  | )
+private boolean operandoOperacoes2(){
+    if(operandoOperacoes()){
+        if(valueList.get(head).equals(")")){
+           head++;
+           if(operandoOperacoesAcomp()){
+               return true;
+           }
+        }
+    }else if(valueList.get(head).equals(")")){
+        head++;
+        return true;
+    }
+    return false;
+}
+//<operandoOperacoesAcomp>::= <operandoOperacoes> |  ƛ
+private boolean operandoOperacoesAcomp(){
+    if(operandoOperacoes()){
+        return true;
+    //não pode retorna true como sendo lambida se não da true para 1*e);
+    // não pode retornar false pq para 1*j-1 retorna falso;
+    //entao coloquei o if do ; pra identificar o fim da operação, mas retorna true para 1(*e; o restante retorna tudo certo inclusive para 1*e); retorna false como esperado
+    }else if(valueList.get(head).equals(";")){
+        return true;
+    }
+    else return false;
+}
+
+private boolean opn(){
+    if(valueList.get(head).equals("+")||valueList.get(head).equals("-")||valueList.get(head).equals("*")||valueList.get(head).equals("/")){
+        head++;
+        return true;
+    }else return false;
+}
+
+
 
 private boolean operando(){ // incompleto
     if(valores()) return true;
