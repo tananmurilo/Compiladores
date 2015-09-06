@@ -103,47 +103,28 @@ public boolean valorRetornado(){
         if(tokenList.get(head).equals("Identificador")) {
             if(valueList.get(head+1).equals(".")){ // lendo à frente para decidir em qual função entrar
                 if(aceReg()) {
-                    if(valueList.get(head).equals(";")) {
-                    head++;
                     return true;
-                    }
                 } 
             } if(valueList.get(head+1).equals("+")|| valueList.get(head+1).equals("-")|| valueList.get(head+1).equals("*")|| valueList.get(head+1).equals("/")){
                 if(operacoes()) {
-                    if(valueList.get(head).equals(";")) {
-                    head++;
                     return true;
-                    }
                 } 
             }if(valueList.get(head+1).equals("(")){ // lendo à frente para decidir em qual função entrar
                 return chamadaFuncao();
             } else{
-                head++;            
-                if(valueList.get(head).equals(";")) {
-                    head++;
                     return true;
-                }
             }
         } else if(tokenList.get(head).equals("Numero")) {  
            if(valueList.get(head+1).equals("+")|| valueList.get(head+1).equals("-")|| valueList.get(head+1).equals("*")|| valueList.get(head+1).equals("/")){
                 if(operacoes()) {
-                    if(valueList.get(head).equals(";")) {
-                    head++;
                     return true;
-                    }
                 } 
             } else {
                 head++;
-                if(valueList.get(head).equals(";")) {
-                    head++;
-                    return true;
-                }
+                return true;
             }
-        } else if(valores()) {  
-            if(valueList.get(head).equals(";")) {
-                    head++;
-                    return true;
-            }
+        } else if(valores()) {
+                return true;
         }
         return imprimeErro("Erro: um valor deve ser atribuido");
     }
@@ -836,15 +817,11 @@ private boolean valNum(){
 }
 //<ValNumAcomp> ::= <operandoOperacoes> | ƛ
 private boolean valNumAcomp(){
-    if(operandoOperacoes()){
-        return true;
-     //não pode retorna true como sendo lambida se não da true para 1*e);
-    // não pode retornar false pq para 1*j-1 retorna falso;
-    //entao coloquei o if do ; pra identificar o fim da operação, mas retorna true para 1(*e; o restante retorna tudo certo inclusive para 1*e); retorna false como esperado
-    }else if(valueList.get(head).equals(";")){
+    if(valueList.get(head).equals("+") || valueList.get(head).equals("-") || valueList.get(head).equals("*") || valueList.get(head).equals("/")){
+        return operandoOperacoes();
+    }else {
         return true;
     }
-    else return false;
 }
 private boolean operandoOperacoes(){
     if(opn()){
@@ -868,15 +845,11 @@ private boolean operandoOperacoes2(){
 }
 //<operandoOperacoesAcomp>::= <operandoOperacoes> |  ƛ
 private boolean operandoOperacoesAcomp(){
-    if(operandoOperacoes()){
-        return true;
-    //não pode retorna true como sendo lambida se não da true para 1*e);
-    // não pode retornar false pq para 1*j-1 retorna falso;
-    //entao coloquei o if do ; pra identificar o fim da operação, mas retorna true para 1(*e; o restante retorna tudo certo inclusive para 1*e); retorna false como esperado
-    }else if(valueList.get(head).equals(";")){
+    if(valueList.get(head).equals("+") || valueList.get(head).equals("-") || valueList.get(head).equals("*") || valueList.get(head).equals("/")){
+        return operandoOperacoes();
+    }else {
         return true;
     }
-    else return false;
 }
 
 private boolean opn(){
@@ -934,36 +907,45 @@ public boolean para(){//falta testar
             }
         }
     }
-    return false;
+    return imprimeErro("Erro: Comando para mal formado");
 }
 
 private boolean iniP(){
-    if(atr()){
-        return true;
-    }else if (tokenList.get(head).equals("Identificador")){
-        head++;
-        return true;      
-    }else return false;
+    if(tokenList.get(head).equals("Identificador")){
+        if(tokenList.get(head+1).equals(";")){
+            head++;
+            return true; 
+        }else {  
+            return atr();
+        }
+    }else return imprimeErro("Erro: Parametro 1 do comando para mal formado");
 }
 //<OpFor>::=<Operacoes> | <Incremento>
 private boolean opFor(){
-   if(operacoes()){
-       return true;
-   }else if(incremento()){
-       return true;
-   }else return false;
+    if(tokenList.get(head).equals("Numero") || tokenList.get(head).equals("Identificador")){
+        if(valueList.get(head+1).equals("++") || valueList.get(head+1).equals("--")){
+            if(incremento()) return true;
+        } else {
+            if(operacoes()) return true;
+        }
+    } else if(incremento()) return true;
+    return imprimeErro("Erro: Parametro 3 do comando para mal formado");
 }
 
 //<Incremento>::=<ValNum><Z> | <Z><ValNum> 
 //<Z>::= ++ | --
 private boolean incremento(){
     if(valNum()){
-       return z();
-    }else return false;
+       if(z()) return true;
+    }else if(z()){
+        if(valNum()) return true;
+    }
+    return false;
 }
 
 private boolean z(){
     if(valueList.get(head).equals("++")||valueList.get(head).equals("--")){
+        head++;
         return true;
     }else return false;
 }
