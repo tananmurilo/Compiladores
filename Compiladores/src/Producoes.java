@@ -896,6 +896,94 @@ private boolean operando(){ // incompleto
     }
     return false;
 }
+/*
+<para>::=para(<IniP>;<Condicao>;<OpFor>){<CG>}
+<OpFor>::=<Operacoes> | <Incremento>
+<IniP>::=<Atr> | <Identificador>
+<Incremento>::=<ValNum><Z> | <Z><ValNum> 
+<Z>::= ++ | --
+*/
+public boolean para(){//falta testar
+    if(valueList.get(head).equals("para")){
+        head++;
+        if(valueList.get(head).equals("(")){
+            head++;
+            if(iniP()){
+                if(valueList.get(head).equals(";")){
+                    head++;
+                    if(condicao()){
+                        if(valueList.get(head).equals(";")){
+                            head++;
+                            if(opFor()){
+                                if(valueList.get(head).equals(")")){
+                                    head++;
+                                    if(valueList.get(head).equals("{")){
+                                        head++;
+                                        if(codigoGeral()){//falta fazer o cg
+                                            if(valueList.get(head).equals("}")){
+                                                head++;
+                                                return true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
+private boolean iniP(){
+    if(atr()){
+        return true;
+    }else if (tokenList.get(head).equals("Identificador")){
+        head++;
+        return true;      
+    }else return false;
+}
+//<OpFor>::=<Operacoes> | <Incremento>
+private boolean opFor(){
+   if(operacoes()){
+       return true;
+   }else if(incremento()){
+       return true;
+   }else return false;
+}
+
+//<Incremento>::=<ValNum><Z> | <Z><ValNum> 
+//<Z>::= ++ | --
+private boolean incremento(){
+    if(valNum()){
+       return z();
+    }else return false;
+}
+
+private boolean z(){
+    if(valueList.get(head).equals("++")||valueList.get(head).equals("--")){
+        return true;
+    }else return false;
+}
+
+//<Comandos>::= <Se> | <Enquanto> | <Para> | <Escreva> | <Leia>
+
+public boolean comandos(){//sem testes
+    if(valueList.get(head).equals("se")){
+        return se();
+    }else if(valueList.get(head).equals("enquanto")){
+        return enquanto();
+    }else if(valueList.get(head).equals("para")){
+        return para();
+    }else if (valueList.get(head).equals("escreva")){
+        return escreva();
+    }else if(valueList.get(head).equals("leia")){
+        return leia();
+    }else return false;
+}
+
 
 }
 
