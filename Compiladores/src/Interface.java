@@ -54,6 +54,7 @@ public class Interface extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        painelSaida.setEditable(false);
         jScrollPane1.setViewportView(painelSaida);
 
         jScrollPane2.setViewportView(painelEntrada);
@@ -282,7 +283,7 @@ public class Interface extends javax.swing.JFrame {
                     text= text+k+" "+linha1+"\n";
                 }    
             }
-            this.painelEntrada.setText(text); //add o texto ao painel
+            this.painelSaida.setText(text); //add o texto ao painel
              //chamar o analisador sintatico aqui
             AnalizadorSintatico sintatico = new AnalizadorSintatico();
             AnalizadorLexico lexico = new AnalizadorLexico();
