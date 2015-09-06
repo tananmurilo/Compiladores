@@ -54,7 +54,6 @@ public class Interface extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        painelSaida.setEditable(false);
         jScrollPane1.setViewportView(painelSaida);
 
         jScrollPane2.setViewportView(painelEntrada);
@@ -190,9 +189,11 @@ public class Interface extends javax.swing.JFrame {
             LinkedList<String> linha =  new LinkedList<>();
             linha = arq.getLinhas(); //pega as linhas do arquivo lido
             String text="";
+            int k = 0;
             for (String linha1 : linha) {
+                k++;
                 if(linha1!=null){// a ultima posição na lista é null 
-                    text= text+linha1+"\n";
+                    text= text+k+" "+linha1+"\n";
                 }    
             }
             this.painelEntrada.setText(text); //add o texto ao painel
@@ -274,9 +275,11 @@ public class Interface extends javax.swing.JFrame {
             LinkedList<String> linha =  new LinkedList<>();
             linha = arq.getLinhas(); //pega as linhas do arquivo lido
             String text="";
+            int k = 0;
             for (String linha1 : linha) {
+                k++;
                 if(linha1!=null){// a ultima posição na lista é null 
-                    text= text+linha1+"\n";
+                    text= text+k+" "+linha1+"\n";
                 }    
             }
             this.painelEntrada.setText(text); //add o texto ao painel

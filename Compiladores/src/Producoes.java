@@ -61,10 +61,33 @@ public boolean algoritmo(){
     } 
     return false;
 }
-
-public boolean codigoGeral(){ // incompleto
-  
-    return true;
+/*
+<CG>::= <Variaveis><C> | <Comandos><C> | <CF>;<C>| <Atr>;<C> | ƛ
+<C>::= <CG> | ƛ
+*/
+public boolean codigoGeral(){ // falta fazer + testes
+    if(variaveis()){
+        return c();
+    }else if(comandos()){
+        return c();
+    }else if(chamadaFuncao()){//cf, nossa chamanda de função ja verifica se tem ;
+        return c();
+    }else if(atr()){
+        if(valueList.get(head).equals(";")){
+            head++;
+            return c();
+        }else return imprimeErro("falta delimitador ;");
+        
+    }else return false; 
+   
+}
+private boolean c(){
+    if(valueList.size()<head){//fim de arquivo
+        if(codigoGeral()){
+             return true;
+        }else return true; //lambda  
+    }   else return true;
+    
 }
 
 public boolean inteiro(){

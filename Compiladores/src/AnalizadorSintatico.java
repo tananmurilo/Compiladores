@@ -45,7 +45,7 @@ public class AnalizadorSintatico {
         //System.out.println(producoes.atr());
 
         
-        System.out.println(producoes.comandos());
+        System.out.println(producoes.codigoGeral());
         
         return null;
     }
