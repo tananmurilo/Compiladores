@@ -47,7 +47,7 @@ public class AnalizadorSintatico {
         //executa teste para 1=1; 2-a+4*2; 3+(4)-5; 2+(d+1)*3; dao o esperado(verdadeiro)
         // para 3+); 23+4); 
         //problema quando abre uma chave e não fecha da verdadeiro 9+(6-9;
-        System.out.println(producoes.operacoes());
+        System.out.println(producoes.condicao());
         
         return null;
     }

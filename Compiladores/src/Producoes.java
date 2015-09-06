@@ -527,6 +527,7 @@ private boolean parametro(){ // incompleto
 */
 public boolean condicao(){//falta testar
     if(expC()){
+        
         return xCond();
     }else if(valueList.get(head).equals("(")){
         head++;
@@ -537,7 +538,7 @@ public boolean condicao(){//falta testar
             }
         }
     }
-    return false;
+    return imprimeErro("Erro no condição");
 }
 //<X>::= <OpL> | ƛ
 private boolean xCond(){
@@ -547,12 +548,14 @@ private boolean xCond(){
 //<OpL>::= &&<Y> | ||<Y> | ƛ
 //<Y>::= <Condicao>
 private boolean opl(){
+   
     if(valueList.get(head).equals("&&")|| valueList.get(head).equals("||")){
         head++;
         return condicao();
     }else return true; //lambda
 }
 private boolean expC(){
+    
     if(operando()){
         if(opCond()){
             return operando();
@@ -563,27 +566,34 @@ private boolean expC(){
 //<OpCond>::= ><Z> | <<Z> | == | !=
 //<Z>::=      = | ƛ
 private boolean opCond(){
+    
     if(valueList.get(head).equals(">")||valueList.get(head).equals("<")){
         head++;
-        return zCond();
+        return true;
+        //return zCond();
     }else if(valueList.get(head).equals("==")){
         head++;
         return true;
-    }else if(valueList.get(head).equals("!")){
+    }else if(valueList.get(head).equals("!=")){
         head++;
-        if(valueList.get(head).equals("=")){
-            head++;
-            return true;
-        }
+        return true;
+    }else if(valueList.get(head).equals("<=")){
+        head++;
+        return true;
+    }else if(valueList.get(head).equals(">=")){
+        head++;
+        return true;
     }
     return false;
 }
+/* nosso codigo trata como 1 tokem só <=, >=
 private boolean zCond(){
     if(valueList.get(head).equals("=")){
         head++;
         return true;
     }else return true; //lambda
 }
+*/
 
 public boolean chamadaFuncao(){//falta fazer
     if(tokenList.get(head).equals("Identificador")){
