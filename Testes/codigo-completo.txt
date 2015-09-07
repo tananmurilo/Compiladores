@@ -1,0 +1,35 @@
+resgistro caixa{ //não obrigatorio
+	inteiro valor;
+}
+
+constantes{ //obrigatorio- pode vazio
+	inteiro min=20;
+	inteiro max=100;
+}
+
+variaveis{//obrigatorio- pode vazio
+	inteiro qnt;
+	inteiro pagamento;
+	cadeia msg = "Vem comprar";
+}
+
+funcao inteiro calcular(inteiro a, inteiro b){
+	retorno a*b;
+}
+
+algoritmo{
+	variaveis{
+		valorUnitario = 10;
+	}
+	caixa.valor=0;
+	escreva(msg," Quanto vai querer?");
+	leia(qnt);
+	se(qnt>=20 && qnt<=100){
+		pagamento = calcular(qnt,valorUnitario);
+		escreva("O valor e:",pagamento);
+		caixa.valor = caixa.valor+pagamento;
+	}senao{
+		escreva("Voce pode so comprar no minimo 20 e no maximo 100");
+	}
+
+}//fim

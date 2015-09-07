@@ -283,7 +283,7 @@ public class Interface extends javax.swing.JFrame {
                     text= text+k+" "+linha1+"\n";
                 }    
             }
-            this.painelSaida.setText(text); //add o texto ao painel
+            this.painelEntrada.setText(text); //add o texto ao painel
              //chamar o analisador sintatico aqui
             AnalizadorSintatico sintatico = new AnalizadorSintatico();
             AnalizadorLexico lexico = new AnalizadorLexico();
