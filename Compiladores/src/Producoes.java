@@ -686,7 +686,7 @@ private boolean parametro(){
 private boolean parametro2(){ 
     if(valueList.get(head).equals(",")){
         head++;
-        return parametroCF();
+        return parametro();
     } else {
         return true;
     }
@@ -792,7 +792,6 @@ public boolean chamadaFuncao(){//falta fazer
 }
 
 private boolean parametroCF(){ 
-    if(tipo()){
         if(operando()){
             if(valueList.get(head).equals(",")){
                 head++;
@@ -800,8 +799,6 @@ private boolean parametroCF(){
             }
         return true;    
         }
-        
-    }
     return imprimeErro("Erro: parametro de chamada função inválido");
 }
 //Comandos 
