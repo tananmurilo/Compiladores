@@ -1,0 +1,13 @@
+constantes
+{
+}
+variaveis
+{
+    inteiro i=0;
+}
+algoritmo
+{
+    i=0;
+    i++;
+    --i;
+}

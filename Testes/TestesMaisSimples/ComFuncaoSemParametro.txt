@@ -1,0 +1,18 @@
+constantes
+{
+}
+variaveis
+{
+    inteiro i=0;
+}
+funcao vazio semNada()
+{
+}
+funcao inteiro soma()
+{
+    retorno x;
+}
+algoritmo
+{
+   soma(10, 20);
+}

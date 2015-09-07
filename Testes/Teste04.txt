@@ -1,0 +1,20 @@
+constantes
+{
+}
+variaveis
+{
+    inteiro i=0;
+}
+funcao inteiro soma(inteiro a, inteiro b) {
+    inteiro x;
+    x = a+b;
+    retorno x;
+}
+funcao vazio escrever(cadeia nome) {
+    escreva(nome);
+}
+algoritmo
+{
+   soma (10, 20);
+   escrever ("Rafael");
+}

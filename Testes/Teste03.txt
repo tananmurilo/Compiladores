@@ -1,0 +1,17 @@
+constantes
+{
+}
+variaveis
+{
+    inteiro i=0;
+}
+algoritmo
+{
+    para (i=0; i<10; i++) {
+	escreva ("Testando o para");
+    }
+    i=0;
+    enquanto (i<10) {
+	escreva ("Testando o enquanto");
+    }
+}

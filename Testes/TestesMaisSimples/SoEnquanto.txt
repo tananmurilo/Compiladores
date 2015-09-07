@@ -1,0 +1,10 @@
+constantes
+{
+}
+variaveis
+{
+}
+algoritmo
+{
+    enquanto (i>10) {}
+}
