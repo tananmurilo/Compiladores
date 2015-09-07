@@ -382,6 +382,8 @@ public class AnalizadorLexico {
                       temp = enviarToken(expressoes, temp, i, a);
                         
                     }else if(((a>=48)&&(a<=57)) && last_char!='.'){ 
+                        String b = String.valueOf(a);
+                        temp= temp+b;// concatenar com os caracteres;
                         numeroFloat=false;
                         
                     }else{  String b = String.valueOf(a);

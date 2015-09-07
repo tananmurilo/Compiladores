@@ -28,8 +28,8 @@ public class AnalizadorSintatico {
         this.linhaArquivo = linhaArquivo;
         String temp[];
         
-        
-        for(int i = 0; i < linhaArquivo.size(); i++) {
+        int tokenListSize = linhaArquivo.size();
+        for(int i = 0; i < tokenListSize; i++) {
             
             temp = formataTipo(i).split(" ");
             
@@ -39,6 +39,15 @@ public class AnalizadorSintatico {
                 linePositions.add(temp[2]);
             }
         }
+        //Indicador de fim de documento
+        tokenList.add("##");
+        valueList.add("##");
+        linePositions.add("final");
+        //Segurança caso o head tente ler à frente
+        tokenList.add("##");
+        valueList.add("##");
+        linePositions.add("final");
+        
         Producoes producoes = new Producoes(tokenList, valueList, linePositions);
         // Aqui abaixo é aonde começaria a valiação do código; Depois de adicionadas todas as produções, a primeira
         //função a ser chamada deveria ser a "algoritimo"; por enquanto está atribuicao, para testes.

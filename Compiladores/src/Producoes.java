@@ -62,32 +62,64 @@ public boolean algoritmo(){
     return false;
 }
 /*
-<CG>::= <Variaveis><C> | <Comandos><C> | <CF>;<C>| <Atr>;<C> | ƛ
+<CG>::= <Variaveis><C> | <Comandos><C> | <CF>;<C>| <Atr>;<C> |<Incremento>;<C>| ƛ
 <C>::= <CG> | ƛ
 */
 public boolean codigoGeral(){ // falta fazer + testes
     if(variaveis()){
-        return c();
+        if(c()) return true;
     }else if(comandos()){
-        return c();
-    }else if(chamadaFuncao()){//cf, nossa chamanda de função ja verifica se tem ;
-        return c();
-    }else if(atr()){
-        if(valueList.get(head).equals(";")){
-            head++;
-            return c();
-        }else return imprimeErro("falta delimitador ;");
+        if(c()) return true;
         
-    }else return false; 
-   
+    }else if(tokenList.get(head).equals("Identificador")){    
+        if(valueList.get(head+1).equals("(")){
+            if(chamadaFuncao()){
+                if(valueList.get(head).equals(";")){
+                    head++;
+                    if(c()) return true;
+                }else return imprimeErro("falta delimitador ;");
+            }
+        } else if(valueList.get(head+1).equals(".") || valueList.get(head+1).equals("=")){
+            if(atr()){
+                if(valueList.get(head).equals(";")){
+                    head++;
+                    if(c()) return true;
+                }else return imprimeErro("falta delimitador ;");
+            }
+        }
+        else if(valueList.get(head+1).equals("--") || valueList.get(head+1).equals("++")){
+            if(incremento()){
+                if(valueList.get(head).equals(";")){
+                    head++;
+                    if(c()) return true;
+                }else return imprimeErro("falta delimitador ;");
+            }
+        }
+        imprimeErro("Expressão inválida");
+    } else if(valueList.get(head).equals("##")){
+        return imprimeErro("Fim inesperado do documento");
+    } else if(valueList.get(head).equals("}")){
+        return true;
+    } 
+    return proxCodigo(); 
 }
+
+private boolean proxCodigo(){
+    while(!valueList.get(head).equals("}") && !valueList.get(head).equals(";") && !valueList.get(head).equals("##")){
+        head++;
+    }
+    if(valueList.get(head).equals(";")) {
+        head++;
+    }
+    return c();    
+}
+
 private boolean c(){
-    if(valueList.size()<head){//fim de arquivo
+    
         if(codigoGeral()){
              return true;
         }else return true; //lambda  
-    }   else return true;
-    
+       
 }
 
 public boolean inteiro(){
@@ -112,10 +144,10 @@ public boolean atr(){
             } 
         } else{
         head++;
-            if(valueList.get(head).equals("=")){
-                head++;
-                if(valorRetornado()) return true;
-            }
+        if(valueList.get(head).equals("=")){
+            head++;
+            if(valorRetornado()) return true;
+        }
         }
     }       
     
@@ -232,6 +264,16 @@ public boolean x(){
 <DC>::= <Tipo><Identificador>=<Valores>;<DCAcomp> 
 <DCAcomp> ::= <DC> | ƛ
 */
+private boolean proxCodigoCons(){
+    while(!valueList.get(head).equals("}") && !valueList.get(head).equals(";") && !valueList.get(head).equals("##")){
+        head++;
+    }
+    if(valueList.get(head).equals(";")) {
+        head++;
+    }
+    return declaraConstante();    
+}
+
 public boolean constantes(){
     if(valueList.get(head).equals("constantes")){
         head++;
@@ -258,11 +300,18 @@ public boolean declaraConstante(){
                         if(valueList.get(head).equals(";")){
                             head++;
                             return dCAcomp();
-                        }else return false;
-                    }else return false;
-                }else return false;  
-            }else return false;   
-      }else return false;
+                        }
+                    }
+                }
+            }   
+      }else if(valueList.get(head).equals("##")){
+        return imprimeErro("Fim inesperado do documento");
+    } else if(valueList.get(head).equals("}")){
+        return true;
+    } 
+     
+    imprimeErro("Erro ao declarar constantes"); 
+    return proxCodigoCons();
 }
 
 
@@ -297,6 +346,16 @@ public boolean tipo(){
 
 */
 
+private boolean proxCodigoReg(){
+    while(!valueList.get(head).equals("}") && !valueList.get(head).equals(";") && !valueList.get(head).equals("##")){
+        head++;
+    }
+    if(valueList.get(head).equals(";")) {
+        head++;
+    }
+    return a();    
+}
+
 public boolean registro(){
     if(valueList.get(head).equals("registro")){
         head++;
@@ -330,9 +389,16 @@ public boolean atributos(){
             if(valueList.get(head).equals(";")){
                 head++;
                 return a();
-            }else return false;
-        }else return false;
-    }else return false;
+            }
+        }
+    }else if(valueList.get(head).equals("##")){
+        return imprimeErro("Fim inesperado do documento");
+    } else if(valueList.get(head).equals("}")){
+        return true;
+    } 
+     
+    imprimeErro("Erro ao declarar atributos do registro"); 
+    return proxCodigoReg();
 }
 
 //<A>::= <atributos> | ƛ
@@ -362,8 +428,19 @@ public boolean variaveis(){
                 return true;
             }
         }
+        return imprimeErro("Erro: Bloco de variaveis mal formado");
     } 
     return false;
+}
+
+private boolean proxCodigoVar(){
+    while(!valueList.get(head).equals("}") && !valueList.get(head).equals(";") && !valueList.get(head).equals("##")){
+        head++;
+    }
+    if(valueList.get(head).equals(";")) {
+        head++;
+    }
+    return declaraVariaveis();    
 }
 
 public boolean declaraVariaveis(){
@@ -373,9 +450,14 @@ public boolean declaraVariaveis(){
                 if(AcompDV()) return true;
             }
                 
-      } else if(valueList.get(head).equals("}")) return true;
+      } else if(valueList.get(head).equals("##")){
+        return imprimeErro("Fim inesperado do documento");
+    } else if(valueList.get(head).equals("}")){
+        return true;
+    } 
      
-    return imprimeErro("Erro ao declarar variáveis");
+    imprimeErro("Erro ao declarar variáveis"); 
+    return proxCodigoVar();
 }
 
 public boolean AcompDV(){
@@ -477,7 +559,7 @@ private boolean funcao_tipoAcomp(){
             if(codigoGeral()){
                 if(valueList.get(head).equals("retorno")){
                    head++;
-                    if(valores())
+                    if(operando())
                         if(valueList.get(head).equals(";")){
                             head++;
                             if(valueList.get(head).equals("}")){
@@ -497,7 +579,7 @@ private boolean funcao_tipoAcomp(){
                  if(codigoGeral()){
                     if(valueList.get(head).equals("retorno")){
                         head++;
-                        if(valores())
+                        if(operacoes())
                             if(valueList.get(head).equals(";")){
                             head++;
                                 if(valueList.get(head).equals("}")){
@@ -604,10 +686,11 @@ public boolean chamadaFuncao(){//falta fazer
         head++;
         if(valueList.get(head).equals("(")){
             head++;
-            parametroCF();
             if(valueList.get(head).equals(")")){
                 head++;
-                if(valueList.get(head).equals(";")) {
+                return true;
+            } else if(parametroCF()){
+                if(valueList.get(head).equals(")")){
                     head++;
                     return true;
                 }
@@ -617,11 +700,11 @@ public boolean chamadaFuncao(){//falta fazer
     return imprimeErro("Erro: chamada de função mal formada");
 }
 
-private boolean parametroCF(){ // incompleto
+private boolean parametroCF(){ 
     if(operando()){
         if(valueList.get(head).equals(",")){
-        head++;
-        return parametroCF();
+            head++;
+            return parametroCF();
         }
     return true;    
     }
