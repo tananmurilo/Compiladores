@@ -32,18 +32,45 @@ public boolean iniciar(){
     if(registro()){
         return iniciar();
     } else if(constantes()){
-         if(variaveis()) return iniciar2();       
-         else imprimeErro("Bloco variaveis mal formatado");
-    } else  imprimeErro("Bloco constantes mal formatado");
-   return false;
+        if(variaveis()) {
+            return iniciar2();
+        } else {
+            proxBloco();
+            imprimeErro("Bloco variaveis mal fechado ou ausente");
+            return iniciar2();
+        }
+    } else  {
+        proxBloco();
+        imprimeErro("Bloco constantes mal fechado ou ausente");
+        if(variaveis()) {
+            return iniciar2();
+        } else {
+            proxBloco();
+            imprimeErro("Bloco variaveis mal fechado ou ausente");
+            return iniciar2();
+        }
+    }
 }
 
 public boolean iniciar2(){
-    if(algoritmo())return true;
-    else if(funcao()){
+    if(valueList.get(head).equals("algoritmo")){
+        return algoritmo();
+    }else if(funcao()){
         return iniciar2();
     }
     return false;
+}
+
+private void proxBloco(){
+    while(!bloco() && !valueList.get(head).equals("##")){
+        head++;
+    }
+}
+
+private boolean bloco(){
+    if(valueList.get(head).equals("algoritmo") || valueList.get(head).equals("constantes") || valueList.get(head).equals("funcao") || valueList.get(head).equals("variaveis") || valueList.get(head).equals("registro") || valueList.get(head).equals("##")){
+        return true;
+    } else return false;
 }
 
 public boolean algoritmo(){
@@ -100,12 +127,14 @@ public boolean codigoGeral(){ // falta fazer + testes
         return imprimeErro("Fim inesperado do documento");
     } else if(valueList.get(head).equals("}")){
         return true;
+    }  else if(valueList.get(head).equals("retorno")){
+        return true;
     } 
     return proxCodigo(); 
 }
 
 private boolean proxCodigo(){
-    while(!valueList.get(head).equals("}") && !valueList.get(head).equals(";") && !valueList.get(head).equals("##")){
+    while(!valueList.get(head).equals("}") && !valueList.get(head).equals(";") && !valueList.get(head).equals("##") && !valueList.get(head).equals("retorno")){
         head++;
     }
     if(valueList.get(head).equals(";")) {
@@ -245,7 +274,11 @@ public boolean declaraMatriz(){
 public boolean inicializacao(){
     if(valueList.get(head).equals("=")){
         head++;
-        return x(); 
+        if(x()){
+            return true;
+        } else{
+            return imprimeErro("Valor atribuido inválido");
+        }
     }else return true; // caso lambda
         
 }
@@ -265,7 +298,7 @@ public boolean x(){
 <DCAcomp> ::= <DC> | ƛ
 */
 private boolean proxCodigoCons(){
-    while(!valueList.get(head).equals("}") && !valueList.get(head).equals(";") && !valueList.get(head).equals("##")){
+    while(!bloco() && !valueList.get(head).equals("}") && !valueList.get(head).equals(";") && !valueList.get(head).equals("##")){
         head++;
     }
     if(valueList.get(head).equals(";")) {
@@ -308,6 +341,8 @@ public boolean declaraConstante(){
         return imprimeErro("Fim inesperado do documento");
     } else if(valueList.get(head).equals("}")){
         return true;
+    } else if(bloco()){
+        return false;
     } 
      
     imprimeErro("Erro ao declarar constantes"); 
@@ -347,7 +382,7 @@ public boolean tipo(){
 */
 
 private boolean proxCodigoReg(){
-    while(!valueList.get(head).equals("}") && !valueList.get(head).equals(";") && !valueList.get(head).equals("##")){
+    while(!bloco() && !valueList.get(head).equals("}") && !valueList.get(head).equals(";") && !valueList.get(head).equals("##")){
         head++;
     }
     if(valueList.get(head).equals(";")) {
@@ -369,6 +404,7 @@ public boolean registro(){
             }
         }
     }
+    proxBloco();
     return false;
 }
 
@@ -395,6 +431,8 @@ public boolean atributos(){
         return imprimeErro("Fim inesperado do documento");
     } else if(valueList.get(head).equals("}")){
         return true;
+    } else if(bloco()){
+        return false;
     } 
      
     imprimeErro("Erro ao declarar atributos do registro"); 
@@ -434,7 +472,7 @@ public boolean variaveis(){
 }
 
 private boolean proxCodigoVar(){
-    while(!valueList.get(head).equals("}") && !valueList.get(head).equals(";") && !valueList.get(head).equals("##")){
+    while(!bloco() && !valueList.get(head).equals("}") && !valueList.get(head).equals(";") && !valueList.get(head).equals("##")){
         head++;
     }
     if(valueList.get(head).equals(";")) {
@@ -444,16 +482,28 @@ private boolean proxCodigoVar(){
 }
 
 public boolean declaraVariaveis(){
-     if(tipo()){//chama o metodo de identificar tipo
+    if(tipo()){//chama o metodo de identificar tipo
             if(tokenList.get(head).equals("Identificador")){
                 head++;
                 if(AcompDV()) return true;
             }
                 
-      } else if(valueList.get(head).equals("##")){
+    } else if(tokenList.get(head).equals("Identificador")){
+        head++;
+        if(tokenList.get(head).equals("Identificador")){
+            head++;
+            if(valueList.get(head).equals(";")) {
+                head++;
+                declaraVariaveis();
+                return true;
+            }
+        }  
+    }else if(valueList.get(head).equals("##")){
         return imprimeErro("Fim inesperado do documento");
     } else if(valueList.get(head).equals("}")){
         return true;
+    } else if(bloco()){
+        return false;
     } 
      
     imprimeErro("Erro ao declarar variáveis"); 
@@ -519,6 +569,7 @@ public boolean funcao(){
             }  
         }
     }
+        proxBloco();
         return imprimeErro("Erro: Função mal formada");
 } 
 
@@ -597,8 +648,29 @@ private boolean funcao_tipoAcomp(){
     return false;
 }
 
-private boolean parametro(){ // incompleto
-    return true;
+private boolean parametro(){ 
+    if(tipo()){
+        if(tokenList.get(head).equals("Identificador")){
+            head++;
+            return parametro2();   
+        }
+    } else if(tokenList.get(head).equals("Identificador")){
+         if(tokenList.get(head).equals("Identificador")){
+            head++;
+            return parametro2();   
+        }
+    }
+    
+    return imprimeErro("Erro: parametro de declaração de função inválido");
+}
+
+private boolean parametro2(){ 
+    if(valueList.get(head).equals(",")){
+        head++;
+        return parametroCF();
+    } else {
+        return true;
+    }
 }
 /*
 <Condicao>::= <ExpC><X> |  (<Condicao>)
