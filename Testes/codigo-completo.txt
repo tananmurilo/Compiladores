@@ -1,4 +1,4 @@
-resgistro caixa{ //não obrigatorio
+registro caixa{ //não obrigatorio
 	inteiro valor;
 }
 

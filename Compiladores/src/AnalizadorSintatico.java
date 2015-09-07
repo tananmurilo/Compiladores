@@ -33,7 +33,7 @@ public class AnalizadorSintatico {
             
             temp = formataTipo(i).split(" ");
             
-            if(temp[0] != "Error") {
+            if((!"Error".equals(temp[0]))&&(!"Comentario".equals(temp[0]) )) {
                 tokenList.add(temp[0]);
                 valueList.add(temp[1]);
                 linePositions.add(temp[2]);
@@ -104,7 +104,7 @@ public class AnalizadorSintatico {
         }else if(temp[0].equals("Token")||temp[0].equals("Erro")){
             return "Error";
         }else{
-            return "Error ";
+            return "Error";
         } 
     }
 }
