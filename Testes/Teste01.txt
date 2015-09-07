@@ -1,0 +1,19 @@
+constantes
+{
+    inteiro max=10;
+    inteiro min=5;
+}
+variaveis
+{
+    cadeia nome;
+    inteiro idade;
+}
+algoritmo
+{
+    escreva ("Rafael");
+    leia (nome);
+    leia (idade);
+    se (idade>=max){
+	escreva ("ok");
+    }
+}

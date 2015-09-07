@@ -1,0 +1,9 @@
+constantes
+{
+}
+variaveis
+{
+}
+algoritmo
+{
+}

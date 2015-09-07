@@ -1,0 +1,28 @@
+constantes{
+}
+
+variaveis{
+}
+algoritmo{
+	variaveis{
+		inteiro valorUnitario = 10;
+		inteiro i=0;
+		inteiro pagamento;
+		inteiro qnt;	
+	}
+	
+	escreva("Quanto vai querer?");
+	leia(qnt);
+	se(qnt>=20 && qnt<=100){
+		pagamento = qnt*valorUnitario;
+		escreva("O valor e:",pagamento);
+		
+	}senao{
+		escreva("Voce pode so comprar no minimo 20 e no maximo 100");
+	}
+
+	para(i;i<10;i++){
+		escreva("Chega mais gente.");
+	}
+
+}//fim

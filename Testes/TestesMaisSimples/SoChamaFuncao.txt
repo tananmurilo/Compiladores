@@ -1,0 +1,10 @@
+constantes
+{
+}
+variaveis
+{
+}
+algoritmo
+{
+   soma("Rafael");
+}

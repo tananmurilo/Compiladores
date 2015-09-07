@@ -1,4 +1,4 @@
-resgistro caixa{ //não obrigatorio
+registro caixa{ //não obrigatorio
 	inteiro valor;
 }
 
@@ -19,7 +19,7 @@ funcao inteiro calcular(inteiro a, inteiro b){
 
 algoritmo{
 	variaveis{
-		valorUnitario = 10;
+		inteiro valorUnitario = 10;
 	}
 	caixa.valor=0;
 	escreva(msg," Quanto vai querer?");

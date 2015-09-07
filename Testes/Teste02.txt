@@ -1,0 +1,26 @@
+registro pessoa
+{
+    inteiro idade;
+    cadeia nome;
+}
+constantes
+{
+}
+variaveis
+{
+}
+algoritmo
+{
+    escreva ("Nome");
+    leia (pessoa.nome);
+    escreva ("Idade");
+    leia (pessoa.idade);
+    se (idade>=18)
+    {
+	escreva ("Maior");
+    }
+    senao
+    {
+	escreva ("menor");
+    } 
+}

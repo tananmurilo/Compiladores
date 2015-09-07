@@ -1,0 +1,8 @@
+constantes{
+}
+
+variaveis{
+}
+algoritmo{
+	escreva("exemplo codigo minimo");
+}

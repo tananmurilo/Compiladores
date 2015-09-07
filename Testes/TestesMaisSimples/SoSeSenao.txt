@@ -1,0 +1,12 @@
+constantes
+{
+}
+variaveis
+{
+}
+algoritmo
+{
+    se (idade>=max) {
+	
+    } senao { }
+}

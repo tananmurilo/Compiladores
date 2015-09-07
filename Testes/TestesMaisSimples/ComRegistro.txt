@@ -1,0 +1,14 @@
+registro pessoa
+{
+    inteiro idade;
+    cadeia nome;
+}
+constantes
+{
+}
+variaveis
+{
+}
+algoritmo
+{
+}
