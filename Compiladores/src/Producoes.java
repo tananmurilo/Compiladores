@@ -1,3 +1,4 @@
+import java.util.LinkedList;
 import java.util.List;
 /**
  *
@@ -9,17 +10,35 @@ public class Producoes {
    private List<String> tokenList;
    private List<String> valueList;
    private List<String> linePositions;
+   private List<String> erros;
+  
     
 public Producoes(List<String> tokens, List<String> values, List<String> lines){
     tokenList = tokens;
     valueList = values;
     linePositions = lines;
+    erros = new LinkedList<>();
 }  
 
 private boolean imprimeErro(String erro){
+    String temp=erro+" na linha " + linePositions.get(head).toString();
+    erros.add(temp);
     System.out.println(erro + " na linha " + linePositions.get(head));
     return false;
 };
+//transformar a lista em uma string
+public String getErros(){
+    String ret = "";
+    for(String p:erros){
+        ret= ret+p+"\n";
+    }
+    if (erros.isEmpty()){
+          ret= ret+"\nSucesso nenhum encontrado na análise Sintatica ";
+    }else{
+         ret= ret+"\nFalha erro(s) encontrado(s) na análise Sintatica ";
+    }
+    return ret;
+}
 
 /*
 <iniciar>::=<registro><iniciar> | <constantes><variaveis><iniciar2>

@@ -463,8 +463,8 @@ public class AnalizadorLexico {
         }
         
         if(!(textoFinal.contains("Token mal formado") || textoFinal.contains("Token não identificado") || textoFinal.contains("Erro de símbolo")   || textoFinal.contains("Comentário de bloco não fechado")))  {
-            textoFinal = textoFinal + "\n \n Sucesso! Nenhum erro encontrado";
-        } else  textoFinal = textoFinal + "\n \n Erros encontrados";
+            textoFinal = textoFinal + "\n Sucesso! Nenhum erro encontrado na analise léxica";
+        } else  textoFinal = textoFinal + "\nHá erros encontrados na analise léxica";
         /*Aqui serão separadas pelo espaço e pelos delimitadores cada esxpressao a ser traduzida em um token*/
         return expressoes;
     };

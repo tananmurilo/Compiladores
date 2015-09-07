@@ -20,8 +20,12 @@ public class AnalizadorSintatico {
     private List<String> tokenList =  new LinkedList<>();
     private List<String> valueList =  new LinkedList<>();
     private List<String> linePositions =  new LinkedList<>();
+    //private List<String> errosSintatico =  new LinkedList<>(); 
+    private String erros;
     
-    
+    public String getErros(){
+        return this.erros;
+    }
     //onde provavelmente vai ser nossa logida do analisador
     public List<String> IniciarSintatico(List<String> linhaArquivo){
         System.out.println("Analizador Iniciado");
@@ -53,6 +57,7 @@ public class AnalizadorSintatico {
         //função a ser chamada deveria ser a "algoritimo"; por enquanto está atribuicao, para testes.
         
         System.out.println(producoes.iniciar());
+        this.erros = producoes.getErros();//pegar os erros como string
         
        // System.out.println(producoes.codigoGeral());
         

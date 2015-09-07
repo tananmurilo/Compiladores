@@ -293,7 +293,10 @@ public class Interface extends javax.swing.JFrame {
             
             sintatico.IniciarSintatico(ListTokens);
             
-            this.painelSaida.setText("Falta fazer a analise sintatica ainda"); //add o texto ao painel
+            textoFinal = "Saída do léxico:\n"+lexico.getTexto();
+            textoFinal = textoFinal+"\n\nSaída do sintatico:"+sintatico.getErros()+"\n\n";
+            
+            this.painelSaida.setText(textoFinal); //add o texto ao painel
             
         }
     }//GEN-LAST:event_MenuSintaticoActionPerformed
