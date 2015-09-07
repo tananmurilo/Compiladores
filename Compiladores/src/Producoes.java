@@ -773,12 +773,15 @@ public boolean chamadaFuncao(){//falta fazer
 }
 
 private boolean parametroCF(){ 
-    if(operando()){
-        if(valueList.get(head).equals(",")){
-            head++;
-            return parametroCF();
+    if(tipo()){
+        if(operando()){
+            if(valueList.get(head).equals(",")){
+                head++;
+                return parametroCF();
+            }
+        return true;    
         }
-    return true;    
+        
     }
     return imprimeErro("Erro: parametro de chamada função inválido");
 }
