@@ -22,6 +22,11 @@ public class AnalizadorSintatico {
     private List<String> linePositions =  new LinkedList<>();
     //private List<String> errosSintatico =  new LinkedList<>(); 
     private String erros;
+    private boolean erro;
+    
+    public boolean getErro(){
+        return this.erro;
+    }
     
     public String getErros(){
         return this.erros;
@@ -58,7 +63,7 @@ public class AnalizadorSintatico {
         
         System.out.println(producoes.iniciar());
         this.erros = producoes.getErros();//pegar os erros como string
-        
+        this.erro=producoes.getErro();
        // System.out.println(producoes.codigoGeral());
         
         return null;

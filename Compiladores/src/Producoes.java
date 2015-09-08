@@ -11,6 +11,7 @@ public class Producoes {
    private List<String> valueList;
    private List<String> linePositions;
    private List<String> erros;
+   private boolean erro;
   
     
 public Producoes(List<String> tokens, List<String> values, List<String> lines){
@@ -18,6 +19,7 @@ public Producoes(List<String> tokens, List<String> values, List<String> lines){
     valueList = values;
     linePositions = lines;
     erros = new LinkedList<>();
+    erro=false;
 }  
 
 private boolean imprimeErro(String erro){
@@ -33,11 +35,17 @@ public String getErros(){
         ret= ret+p+"\n";
     }
     if (erros.isEmpty()){
+          erro=false;
           ret= ret+"\nSucesso nenhum encontrado na análise Sintatica ";
     }else{
+         erro=true;
          ret= ret+"\nFalha erro(s) encontrado(s) na análise Sintatica ";
     }
     return ret;
+}
+
+public boolean getErro(){
+    return this.erro;
 }
 
 /*

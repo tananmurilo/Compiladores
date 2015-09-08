@@ -294,7 +294,18 @@ public class Interface extends javax.swing.JFrame {
             sintatico.IniciarSintatico(ListTokens);
             
             textoFinal = "Saída do léxico:\n"+lexico.getTexto();
-            textoFinal = textoFinal+"\n\nSaída do sintatico:"+sintatico.getErros()+"\n\n";
+            textoFinal = textoFinal+"\n\nSaída do sintatico:\n"+sintatico.getErros()+"\n\n";
+            
+            if(!lexico.getErro()&&!sintatico.getErro()){
+                textoFinal=textoFinal+"Sucesso nenhum encontrado!!";
+            }else if(lexico.getErro()&&sintatico.getErro()){
+                textoFinal=textoFinal+"Há erro(s) léxico(s) e sintatico(s)";
+              
+            }else if(sintatico.getErro()){
+                 textoFinal=textoFinal+"Há erro(s) sintatico(s)";
+            }else if(lexico.getErro()){
+                  textoFinal=textoFinal+"Há erro(s) léxico(s)";
+            }
             
             this.painelSaida.setText(textoFinal); //add o texto ao painel
             

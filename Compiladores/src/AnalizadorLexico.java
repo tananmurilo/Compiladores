@@ -18,7 +18,11 @@ public class AnalizadorLexico {
      List<String> Tokens =  new LinkedList<>();
      String textoFinal="";//juntar todos os tokens em um texto só
      Boolean numeroFloat = false;
+     private boolean erro = false;
      
+     public boolean getErro(){
+         return this.erro;
+     }
      public String getTexto(){
          return this.textoFinal;
      }
@@ -464,7 +468,10 @@ public class AnalizadorLexico {
         
         if(!(textoFinal.contains("Token mal formado") || textoFinal.contains("Token não identificado") || textoFinal.contains("Erro de símbolo")   || textoFinal.contains("Comentário de bloco não fechado")))  {
             textoFinal = textoFinal + "\n Sucesso! Nenhum erro encontrado na analise léxica";
-        } else  textoFinal = textoFinal + "\nHá erros encontrados na analise léxica";
+            erro=false;
+        } else{  textoFinal = textoFinal + "\nHá erros encontrados na analise léxica";
+        erro=true;
+        }
         /*Aqui serão separadas pelo espaço e pelos delimitadores cada esxpressao a ser traduzida em um token*/
         return expressoes;
     };
