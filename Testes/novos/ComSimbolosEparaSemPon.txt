@@ -1,0 +1,15 @@
+constantes{ //obrigatorio- pode vazio
+}
+
+variaveis{//obrigatorio- pode vazio
+	inteiro qnt =10;
+}
+
+algoritmo{
+	inteiro = 50;
+	
+	escreva("Teste com símbolos $ &**?");
+	//para sem ;
+	para ( i =0 i > 10 ; i++) { }
+
+}//fim
