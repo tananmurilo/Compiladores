@@ -3,10 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/mateus/Documents/NetBeansProjects/compiladores/Compiladores/src/AnalizadorLexico.java</file>
-            <file>file:/C:/Users/mateus/Documents/NetBeansProjects/compiladores/Compiladores/src/Interface.java</file>
             <file>file:/C:/Users/mateus/Documents/NetBeansProjects/compiladores/Compiladores/src/Producoes.java</file>
             <file>file:/C:/Users/mateus/Documents/NetBeansProjects/compiladores/Compiladores/src/AnalizadorSintatico.java</file>
+            <file>file:/C:/Users/mateus/Documents/NetBeansProjects/compiladores/Compiladores/src/Automato.java</file>
         </group>
     </open-files>
 </project-private>

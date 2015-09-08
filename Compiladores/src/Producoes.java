@@ -74,9 +74,11 @@ public boolean iniciar(){
 public boolean iniciar2(){
     if(valueList.get(head).equals("algoritmo")){
         return algoritmo();
-    }else if(funcao()){
-        return iniciar2();
-    }
+    }else if(valueList.get(head).equals("funcao")){
+        if(funcao()) return iniciar2();
+    } else {
+         imprimeErro("Bloco algoritmo mal fechado ou ausente");
+    } 
     return false;
 }
 
@@ -123,14 +125,14 @@ public boolean codigoGeral(){ // falta fazer + testes
                 if(valueList.get(head).equals(";")){
                     head++;
                     if(c()) return true;
-                }else return imprimeErro("falta delimitador ;");
+                }
             }
         } else if(valueList.get(head+1).equals(".") || valueList.get(head+1).equals("=")){
             if(atr()){
                 if(valueList.get(head).equals(";")){
                     head++;
                     if(c()) return true;
-                }else return imprimeErro("falta delimitador ;");
+                }
             }
         }
         else if(valueList.get(head+1).equals("--") || valueList.get(head+1).equals("++")){
@@ -138,7 +140,7 @@ public boolean codigoGeral(){ // falta fazer + testes
                 if(valueList.get(head).equals(";")){
                     head++;
                     if(c()) return true;
-                }else return imprimeErro("falta delimitador ;");
+                }
             }
         }
         imprimeErro("Expressão inválida");
@@ -649,7 +651,7 @@ private boolean funcao_tipoAcomp(){
                  if(codigoGeral()){
                     if(valueList.get(head).equals("retorno")){
                         head++;
-                        if(operacoes())
+                        if(operando())
                             if(valueList.get(head).equals(";")){
                             head++;
                                 if(valueList.get(head).equals("}")){
@@ -1159,7 +1161,7 @@ public boolean para(){//falta testar
                                             if(valueList.get(head).equals("}")){
                                                 head++;
                                                 return true;
-                                            }
+                                            } 
                                         }
                                     }
                                 }
@@ -1170,7 +1172,14 @@ public boolean para(){//falta testar
             }
         }
     }
-    return imprimeErro("Erro: Comando para mal formado");
+    imprimeErro("Erro: Comando para mal formado");
+    while(!bloco() && !valueList.get(head).equals("}") && !valueList.get(head).equals("##")){
+        head++;
+    }
+    if(valueList.get(head).equals("}")) {
+        head++;
+    }
+    return false;
 }
 
 private boolean iniP(){
