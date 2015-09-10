@@ -36,10 +36,10 @@ public String getErros(){
     }
     if (erros.isEmpty()){
           erro=false;
-          ret= ret+"\nSucesso nenhum encontrado na análise Sintatica ";
+          ret= ret+"\nSucesso: Nenhum erro encontrado na análise Sintática ";
     }else{
          erro=true;
-         ret= ret+"\nFalha erro(s) encontrado(s) na análise Sintatica ";
+         ret= ret+"\nFalha: Erro(s) encontrado(s) na análise Sintática ";
     }
     return ret;
 }
