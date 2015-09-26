@@ -122,11 +122,14 @@ public boolean algoritmo(){
 <C>::= <CG> | ƛ
 */
 public boolean codigoGeral(){ // falta fazer + testes
+    if(valueList.get(head).equals("senao")) imprimeErro("senao deve vir após o término do se");
+    if(valueList.get(head).equals("variaveis") && !valueList.get(head-1).equals("{")) imprimeErro("variaveis devem ser declaradas somente no início do bloco");
     if(variaveis()){
         if(c()) return true;
     }else if(comandos()){
         if(c()) return true;
-        
+      
+            
     }else if(tokenList.get(head).equals("Identificador")){    
         if(valueList.get(head+1).equals("(")){
             if(chamadaFuncao()){
@@ -135,7 +138,7 @@ public boolean codigoGeral(){ // falta fazer + testes
                     if(c()) return true;
                 }
             }
-        } else if(valueList.get(head+1).equals(".") || valueList.get(head+1).equals("=")){
+        } else if(valueList.get(head+1).equals(".") || valueList.get(head+1).equals("=")|| valueList.get(head+1).equals("[")){
             if(atr()){
                 if(valueList.get(head).equals(";")){
                     head++;
@@ -200,6 +203,13 @@ public boolean atr(){
                     if(valorRetornado()) return true;
                 }
             } 
+        }else if(valueList.get(head+1).equals("[")){
+            if(aceVM()) {
+                if(valueList.get(head).equals("=")){
+                    head++;
+                    if(valorRetornado()) return true;
+                }
+            } 
         } else{
         head++;
         if(valueList.get(head).equals("=")){
@@ -218,13 +228,16 @@ public boolean valorRetornado(){
                 if(aceReg()) {
                     return true;
                 } 
-            } if(valueList.get(head+1).equals("+")|| valueList.get(head+1).equals("-")|| valueList.get(head+1).equals("*")|| valueList.get(head+1).equals("/")){
+            }else if(valueList.get(head+1).equals("+")|| valueList.get(head+1).equals("-")|| valueList.get(head+1).equals("*")|| valueList.get(head+1).equals("/")){
                 if(operacoes()) {
                     return true;
                 } 
-            }if(valueList.get(head+1).equals("(")){ // lendo à frente para decidir em qual função entrar
+            }else if(valueList.get(head+1).equals("(")){ // lendo à frente para decidir em qual função entrar
                 return chamadaFuncao();
-            } else{
+            } else if(valueList.get(head+1).equals("[")){ // lendo à frente para decidir em qual função entrar
+                return aceVM();
+            } else{ 
+                    head++;
                     return true;
             }
         } else if(tokenList.get(head).equals("Numero")) {  
@@ -902,10 +915,23 @@ private boolean de(){
             if(aceReg()) return e();
         } else if(valueList.get(head+1).equals("[")){//lendo à frente
             if(aceVM()) return e();
+        } else if(valueList.get(head+1).equals("+")|| valueList.get(head+1).equals("-")|| valueList.get(head+1).equals("*")|| valueList.get(head+1).equals("/")){
+            if(operacoes()) {
+                return e();
+            } 
         }else{
             head++;
             return e();
         }
+    } else if(tokenList.get(head).equals("Numero")) {  
+        if(valueList.get(head+1).equals("+")|| valueList.get(head+1).equals("-")|| valueList.get(head+1).equals("*")|| valueList.get(head+1).equals("/")){
+             if(operacoes()) {
+                return e();
+             } 
+         } else {
+             head++;
+            return e();
+         }
     }
     return false;
 }
@@ -982,6 +1008,7 @@ private boolean i(){
             head++;
             if(codigoGeral()){
                 if(valueList.get(head).equals("}")){
+                    head++;
                     return true;
                 }
             }
@@ -1079,14 +1106,27 @@ public boolean operacoes(){ // falta testa mais
             }
         }
     }
-    return false;
-            
+    return imprimeErro("Operação mal formatada");
 }
 private boolean valNum(){
-    if(tokenList.get(head).equals("Identificador")||tokenList.get(head).equals("Numero")){
+    if(tokenList.get(head).equals("Numero")) {
         head++;
         return true;
-    }else return false;
+    } else if(tokenList.get(head).equals("Identificador")){
+        if(valueList.get(head+1).equals(".")){
+          if(aceReg()){
+            return true;
+          }
+        } else if (valueList.get(head+1).equals("[")){
+             if(aceVM()){
+                return true;
+            }
+        } else{
+            head++;
+            return true;
+        }
+    } 
+    return false;
 }
 //<ValNumAcomp> ::= <operandoOperacoes> | ƛ
 private boolean valNumAcomp(){
@@ -1134,12 +1174,22 @@ private boolean opn(){
 
 
 
-private boolean operando(){ // incompleto
+private boolean operando(){ 
     if(valores()) return true;
     else if(tokenList.get(head).equals("Identificador")){
-        head++;
-        return true;
-    }
+        if(valueList.get(head+1).equals(".")){
+          if(aceReg()){
+            return true;
+          }
+        } else if (valueList.get(head+1).equals("[")){
+             if(aceVM()){
+                return true;
+            }
+        } else{
+            head++;
+            return true;
+        }
+    } 
     return false;
 }
 /*

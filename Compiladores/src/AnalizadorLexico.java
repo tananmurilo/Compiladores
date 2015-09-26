@@ -32,9 +32,11 @@ public class AnalizadorLexico {
      }
       
       public void setTextoFinal(String aunt, int i){
-        int linha = i+1;   
-        textoFinal = textoFinal+aunt+" "+linha+"\n";
-        Tokens.add(aunt+" "+linha);
+        if(!aunt.equals("")){
+            int linha = i+1;   
+            textoFinal = textoFinal+aunt+" "+linha+"\n";
+            Tokens.add(aunt+" "+linha);
+        }
      }
     
     public LinkedList<String> gerarTokens(LinkedList<String> linhas){

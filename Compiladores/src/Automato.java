@@ -343,6 +343,7 @@ public class Automato {
             case 21:
                 return "Comentário de bloco "+txt;
             case 97:
+                if (txt.trim().isEmpty()) return "";
                 return "Erro de símbolo "+txt;
                 
             case 98:
