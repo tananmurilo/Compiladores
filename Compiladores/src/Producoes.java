@@ -12,6 +12,8 @@ public class Producoes {
    private List<String> linePositions;
    private List<String> erros;
    private boolean erro;
+   
+   AnalizadorSemantico semantico =  new AnalizadorSemantico();
   
     
 public Producoes(List<String> tokens, List<String> values, List<String> lines){
@@ -357,6 +359,8 @@ public boolean constantes(){
             declaraConstante();
             if(valueList.get(head).equals("}")){//o } no caso as constantes vão ser vazias
                 head++;
+                System.out.println("Teste valores armazenados na estrutura");
+                semantico.imprimir();//teste
                 return true;
             }
         }
@@ -366,14 +370,32 @@ public boolean constantes(){
 
 //<DC>::= <Tipo><Identificador>=<Valores>;<DCAcomp> 
 public boolean declaraConstante(){
+    //testes para o semantico
+    String nome="";
+    String tipo="";
+    String valorTipo="";
+    
      if(tipo()){//chama o metodo de identificar tipo
+            if(valueList.get(head-1).equals("inteiro")){//inteiros ou real na tokenlist é Numero
+                tipo = "Numero";
+            }else tipo=valueList.get(head-1);//salvar o tipo do identificador
+            
             if(tokenList.get(head).equals("Identificador")){
+                 nome=valueList.get(head);//salvar nome do identificador
                 head++;
                 if(valueList.get(head).equals("=")){
                     head++;
                     if(valores()){//chama o metodo de valores
+                        valorTipo= tokenList.get(head-1);
                         if(valueList.get(head).equals(";")){
                             head++;
+                            //teste semantico
+                            if(semantico.procurar(nome, tipo)==null){//verificar se ja esta na lista
+                                semantico.addNaTabela(nome, "constante", tipo, 0, 0);
+                                
+                            }else{
+                                System.out.println("Error Semantico: "+tipo+" "+nome+" linha"+linePositions.get(head)+ " já foi declarado");
+                            }
                             return dCAcomp();
                         }
                     }
