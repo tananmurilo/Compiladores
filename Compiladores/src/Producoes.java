@@ -387,15 +387,16 @@ public boolean declaraConstante(){
                     head++;
                     if(valores()){//chama o metodo de valores
                         valorTipo= tokenList.get(head-1);
-                        if(valueList.get(head).equals(";")){
-                            head++;
+                        if(valueList.get(head).equals(";")){//teste semantico
+                            
                             //teste semantico
                             if(semantico.procurar(nome, tipo)==null){//verificar se ja esta na lista
                                 semantico.addNaTabela(nome, "constante", tipo, 0, 0);
                                 
                             }else{
-                                System.out.println("Error Semantico: "+tipo+" "+nome+" linha"+linePositions.get(head)+ " já foi declarado");
+                                System.out.println("Error Semantico: "+tipo+" "+nome+" linha "+linePositions.get(head)+ " já foi declarado");
                             }
+                            head++;
                             return dCAcomp();
                         }
                     }
