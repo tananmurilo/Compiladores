@@ -1,9 +1,13 @@
 constantes{
 	inteiro a = 20;
-	inteiro b = "eita";
+	inteiro a = 30;
+	inteiro c = verdadeiro;
 }
 
 variaveis{
+	casa d;
+	casal a;
+
 }
 algoritmo{
 	

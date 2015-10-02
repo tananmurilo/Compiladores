@@ -24,7 +24,7 @@ public Producoes(List<String> tokens, List<String> values, List<String> lines){
     erro=false;
 }  
 
-private boolean imprimeErro(String erro){
+public boolean imprimeErro(String erro){
     String temp=erro+" na linha " + linePositions.get(head).toString();
     erros.add(temp);
     System.out.println(erro + " na linha " + linePositions.get(head));
@@ -251,7 +251,7 @@ public boolean valorRetornado(){
                 head++;
                 return true;
             }
-        } else if(valores()) {
+        } else if(!valores().equals("Erro")) {
                 return true;
         }
         return imprimeErro("Erro: um valor deve ser atribuido");
@@ -291,24 +291,24 @@ public boolean declaraMatriz(){
 }
 
 
-    public boolean valores(){ //Incompleto
+    public String valores(){ 
         if(tokenList.get(head).equals("Numero")) {
-            head++;            
-            return true;
+            head++;
+            return "numero";
         } else if(tokenList.get(head).equals("Caracter")) {
             head++;            
-            return true;
+            return "char";
         } else if(tokenList.get(head).equals("Cadeia")) {
             head++;            
-            return true;
+            return "cadeia";
         } else if(valueList.get(head).equals("verdadeiro")) {
             head++;            
-            return true;
+            return "booleano";
         } else if(valueList.get(head).equals("falso")) {
             head++;            
-            return true;
+            return "booleano";
         } 
-        return false;
+        return "Erro";
     }
 
 /*<Inicialização>::= <ƛ> | =<X>
@@ -331,7 +331,7 @@ public boolean x(){
     if(tokenList.get(head).equals("Identificador")){
         head++;
         return true;
-    }else return(valores());
+    }else return(!valores().equals("Erro"));
 }
 
 /* produção das constanttes no doc
@@ -373,11 +373,10 @@ public boolean declaraConstante(){
     //testes para o semantico
     String nome="";
     String tipo="";
-    String valorTipo="";
     
-     if(tipo()){//chama o metodo de identificar tipo
-            if(valueList.get(head-1).equals("inteiro")){//inteiros ou real na tokenlist é Numero
-                tipo = "Numero";
+     if(!tipo().equals("Erro")){//chama o metodo de identificar tipo
+            if(valueList.get(head-1).equals("inteiro") || valueList.get(head-1).equals("real")){//inteiros ou real na tokenlist é Numero
+                tipo = "numero";
             }else tipo=valueList.get(head-1);//salvar o tipo do identificador
             
             if(tokenList.get(head).equals("Identificador")){
@@ -385,17 +384,11 @@ public boolean declaraConstante(){
                 head++;
                 if(valueList.get(head).equals("=")){
                     head++;
-                    if(valores()){//chama o metodo de valores
-                        valorTipo= tokenList.get(head-1);
+                    String tipoAtribuido = valores();
+                    if(!tipoAtribuido.equals("Erro")){//chama o metodo de valores
                         if(valueList.get(head).equals(";")){//teste semantico
-                            
                             //teste semantico
-                            if(semantico.procurar(nome, tipo)==null){//verificar se ja esta na lista
-                                semantico.addNaTabela(nome, "constante", tipo, 0, 0);
-                                
-                            }else{
-                                System.out.println("Error Semantico: "+tipo+" "+nome+" linha "+linePositions.get(head)+ " já foi declarado");
-                            }
+                            semantico.inicializaPalavra(nome, "constante", tipo, tipoAtribuido, this);
                             head++;
                             return dCAcomp();
                         }
@@ -426,13 +419,13 @@ public boolean dCAcomp(){//pode gerar outra declaração de constante ou encontr
 /*
 <Tipo>::= inteiro | booleano | real | char | cadeia
 */
-public boolean tipo(){
+public String tipo(){
      if(valueList.get(head).equals("inteiro")||valueList.get(head).equals("booleano")||valueList.get(head).equals("real")||
         valueList.get(head).equals("char")||valueList.get(head).equals("cadeia")){
          head++;
-         return true;
+         return valueList.get(head);
          
-     }else return false;
+     }else return "Erro";
 }
 
 
@@ -484,7 +477,7 @@ public boolean f (){
 
 //<atributos>::= <Tipo><Identificador>;<A>
 public boolean atributos(){
-    if(tipo()){
+    if(!tipo().equals("Erro")){
         if(tokenList.get(head).equals("Identificador")){
             head++;
             if(valueList.get(head).equals(";")){
@@ -528,7 +521,8 @@ public boolean variaveis(){
             declaraVariaveis();          
             if(valueList.get(head).equals("}")){//o } no caso as constantes vão ser vazias
                 head++;
-                return true;
+                semantico.imprimir();
+                return true;                
             }
         }
         return imprimeErro("Erro: Bloco de variaveis mal formado");
@@ -547,32 +541,44 @@ private boolean proxCodigoVar(){
 }
 
 public boolean declaraVariaveis(){
-    if(tipo()){//chama o metodo de identificar tipo
-            if(tokenList.get(head).equals("Identificador")){
-                head++;
-                if(AcompDV()) return true;
-            }
-                
-    } else if(tokenList.get(head).equals("Identificador")){
-        head++;
+    String nome="";
+    String tipo="";
+    
+    if(!tipo().equals("Erro")){//chama o metodo de identificar tipo
+        
+        if(valueList.get(head-1).equals("inteiro") || valueList.get(head-1).equals("real")){//inteiros ou real na tokenlist é Numero
+            tipo = "numero";
+        }else tipo=valueList.get(head-1);//salvar o tipo do identificador
+        
         if(tokenList.get(head).equals("Identificador")){
+            nome=valueList.get(head);//salvar nome do identificador
             head++;
-            if(valueList.get(head).equals(";")) {
+            if(AcompDV()) return true;
+        }
+                
+        } else if(tokenList.get(head).equals("Identificador")){
+            tipo=valueList.get(head);//salvar o tipo do identificador
+            head++;
+            if(tokenList.get(head).equals("Identificador")){
+                nome=valueList.get(head);//salvar nome do identificador
                 head++;
-                declaraVariaveis();
-                return true;
-            }
-        }  
-    }else if(valueList.get(head).equals("##")){
-        return imprimeErro("Fim inesperado do documento");
-    } else if(valueList.get(head).equals("}")){
-        return true;
-    } else if(bloco()){
-        return false;
-    } 
-     
-    imprimeErro("Erro ao declarar variáveis"); 
-    return proxCodigoVar();
+                if(valueList.get(head).equals(";")) {
+                    semantico.inicializaPalavra(nome, "variavel", tipo, this);
+                    head++;
+                    declaraVariaveis();
+                    return true;
+                }
+            }  
+        }else if(valueList.get(head).equals("##")){
+            return imprimeErro("Fim inesperado do documento");
+        } else if(valueList.get(head).equals("}")){
+            return true;
+        } else if(bloco()){
+            return false;
+        } 
+
+        imprimeErro("Erro ao declarar variáveis"); 
+        return proxCodigoVar();
 }
 
 public boolean AcompDV(){
@@ -624,7 +630,7 @@ public boolean funcao(){
                     if(funcao_vazioAcomp()) return true;
                 }   
             }    
-        } else if(tipo()){
+        } else if(!tipo().equals("Erro")){
             if(tokenList.get(head).equals("Identificador")){
                 head++;
                 if(valueList.get(head).equals("(")){
@@ -714,7 +720,7 @@ private boolean funcao_tipoAcomp(){
 }
 
 private boolean parametro(){ 
-    if(tipo()){
+    if(!tipo().equals("Erro")){
         if(tokenList.get(head).equals("Identificador")){
             head++;
             return parametro2();   
@@ -1198,7 +1204,7 @@ private boolean opn(){
 
 
 private boolean operando(){ 
-    if(valores()) return true;
+    if(!valores().equals("Erro")) return true;
     else if(tokenList.get(head).equals("Identificador")){
         if(valueList.get(head+1).equals(".")){
           if(aceReg()){
