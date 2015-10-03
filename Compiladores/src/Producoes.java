@@ -315,10 +315,10 @@ public boolean declaraMatriz(){
 <X>::= <Identificador> | <Valores>
 */
 // teste para =342; ou ;
-public boolean inicializacao(){
+public boolean inicializacao(String nome, String tipo){
     if(valueList.get(head).equals("=")){
         head++;
-        if(x()){
+        if(x(nome, tipo)){
             return true;
         } else{
             return imprimeErro("Valor atribuido inválido");
@@ -327,11 +327,18 @@ public boolean inicializacao(){
         
 }
 //<X>::= <Identificador> | <Valores>
-public boolean x(){
+public boolean x(String nome, String tipo){
     if(tokenList.get(head).equals("Identificador")){
+        semantico.inicializaPalavraAtribuida(nome, "variavel", tipo, valueList.get(head), this);
         head++;
         return true;
-    }else return(!valores().equals("Erro"));
+    }else {
+        String tipoAtribuido = valores();  
+        if(!tipoAtribuido.equals("Erro")){
+        semantico.inicializaPalavra(nome, "variavel", tipo, tipoAtribuido, this);
+        return true;  
+      } else return false;
+    } 
 }
 
 /* produção das constanttes no doc
@@ -360,7 +367,6 @@ public boolean constantes(){
             if(valueList.get(head).equals("}")){//o } no caso as constantes vão ser vazias
                 head++;
                 System.out.println("Teste valores armazenados na estrutura");
-                semantico.imprimir();//teste
                 return true;
             }
         }
@@ -521,7 +527,6 @@ public boolean variaveis(){
             declaraVariaveis();          
             if(valueList.get(head).equals("}")){//o } no caso as constantes vão ser vazias
                 head++;
-                semantico.imprimir();
                 return true;                
             }
         }
@@ -553,7 +558,7 @@ public boolean declaraVariaveis(){
         if(tokenList.get(head).equals("Identificador")){
             nome=valueList.get(head);//salvar nome do identificador
             head++;
-            if(AcompDV()) return true;
+            if(AcompDV(nome, tipo)) return true;
         }
                 
         } else if(tokenList.get(head).equals("Identificador")){
@@ -581,14 +586,15 @@ public boolean declaraVariaveis(){
         return proxCodigoVar();
 }
 
-public boolean AcompDV(){
+public boolean AcompDV(String nome, String tipo){
     if (declaraVetor()){
         if(valueList.get(head).equals(";")){
+            semantico.inicializaPalavra(nome, "variavel", tipo, this);
             head++;
             declaraVariaveis();
             return true;
         }
-    } else if(inicializacao()){
+    } else if(inicializacao(nome, tipo)){
         if(valueList.get(head).equals(";")){
             head++;
             declaraVariaveis();

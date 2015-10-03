@@ -18,12 +18,12 @@ import java.util.Iterator;
 public class AnalizadorSemantico {
     
     private List<Map> listaEscopos =  new LinkedList<>();
+    private PalavrasReservadas palavrasReservadas =  new PalavrasReservadas();
 
     public AnalizadorSemantico() {
         Map<String, Estrutura> escopoGlobal = new HashMap<String, Estrutura>();
         listaEscopos.add(escopoGlobal);
-    }   
-    
+    }  
     
     //cria e adiciona a lista de escopo nova
     public void criaNovoEscopo(){
@@ -33,7 +33,7 @@ public class AnalizadorSemantico {
     
     // adicionar na estrutura da tabela (falta implementar atributos e parametros)
     public void addNaTabela(String nome,String token, String tipo,int tam1,int tam2){
-       
+            
             Estrutura temp = new Estrutura();
             temp.setNome(nome);
             temp.setToken(token);
@@ -67,39 +67,68 @@ public class AnalizadorSemantico {
     
     //procura somente no escopo mais próximo
     public Estrutura procurarPalavraEscopo(String nome){
-   
-        Map<String, Estrutura> escopo = listaEscopos.get(listaEscopos.size()-1);
+        
+        //prucurar de escopo em escopo
+        int i=listaEscopos.size()-1; 
+        Map<String, Estrutura> escopo = listaEscopos.get(i);
         //prucurar se tem esse mesmo nome na lista
         if ( escopo.containsKey( nome ) ) { 
             Estrutura estrutura = escopo.get(nome);
-            
+
             return estrutura;
-                                
+
         }else{ 
 
-        }   
+        }                       
+        
         return null;
     }
     
     public void inicializaPalavra(String nome, String token, String tipo, String tipoAtribuido, Producoes sintatico){
         
         if(this.procurarPalavra(nome)==null){//verificar se ja esta na lista
-            if(tipoAtribuido.equals(tipo)) {
-                this.addNaTabela(nome, token, tipo, 0, 0); 
+            if(palavrasReservadas.buscarPalavra(nome)){ //verifica se é uma palavra reservada
+                sintatico.imprimeErro("Error Semantico: a palavra "+nome+" é uma palavra reservada");
             } else {
-                sintatico.imprimeErro("Tipos incompatíveis: "+tipoAtribuido+" sendo atribuído à "+tipo);
-            }                                                              
+                if(tipoAtribuido.equals(tipo)) {
+                    this.addNaTabela(nome, token, tipo, 0, 0); 
+                } else {
+                    sintatico.imprimeErro("Tipos incompatíveis: "+tipoAtribuido+" sendo atribuído à "+tipo);
+                }    
+            }
         }else{
                 sintatico.imprimeErro("Error Semantico: a palavra "+nome+" já foi declarada e não pode ser re-declarada");
         }
+        
     }
     //Neste caso não há comparação de tipos pois não há atribuição
     public void inicializaPalavra(String nome, String token, String tipo, Producoes sintatico){
         
-        if(this.procurarPalavraEscopo(nome)==null){//verificar se ja esta na lista
-            
-            this.addNaTabela(nome, token, tipo, 0, 0); 
-                                                                       
+        if(this.procurarPalavra(nome)==null){//verificar se ja esta na lista
+            if(palavrasReservadas.buscarPalavra(nome)){ //verifica se é uma palavra reservada
+                sintatico.imprimeErro("Error Semantico: a palavra "+nome+" é uma palavra reservada");
+            } else {
+                this.addNaTabela(nome, token, tipo, 0, 0); 
+            }                                                           
+        }else{
+            sintatico.imprimeErro("Error Semantico: a palavra "+nome+" já foi declarada e não pode ser re-declarada");
+        }
+    }
+    
+    public void inicializaPalavraAtribuida(String nome, String token, String tipo, String nomeAtr, Producoes sintatico){
+        if(this.procurarPalavra(nome)==null){//verificar se ja esta na lista
+            if(palavrasReservadas.buscarPalavra(nome)){ //verifica se é uma palavra reservada
+                sintatico.imprimeErro("Error Semantico: a palavra "+nome+" é uma palavra reservada");
+            } else {
+                Estrutura simboloAtribuido = this.procurarPalavra(nomeAtr);
+                if(simboloAtribuido==null){
+                    sintatico.imprimeErro("Error Semantico: a palavra "+nomeAtr+" não foi encontrada");
+                } else if(simboloAtribuido.getToken().equals("variavel") || simboloAtribuido.getToken().equals("constante")){
+                    if(simboloAtribuido.getTipo().equals(tipo)){
+                        this.addNaTabela(nome, token, tipo, 0, 0);
+                    } else sintatico.imprimeErro("Tipos incompatíveis: "+simboloAtribuido.getTipo()+" sendo atribuído à "+tipo);          
+                } else sintatico.imprimeErro("Error Semantico: somente constantes e variaveis podem ser atribuidas na inicialização");   
+            }                                                           
         }else{
             sintatico.imprimeErro("Error Semantico: a palavra "+nome+" já foi declarada e não pode ser re-declarada");
         }
@@ -107,6 +136,7 @@ public class AnalizadorSemantico {
     
     public void imprimir(){
         for(int i=0; i<this.listaEscopos.size(); i++){
+                
             Iterator it = listaEscopos.get(i).entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry)it.next();

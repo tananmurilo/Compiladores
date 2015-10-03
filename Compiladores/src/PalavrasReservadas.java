@@ -52,5 +52,9 @@ public class PalavrasReservadas {
         return lista.contains(palavra);
     }
     
+    public boolean adicionarPalavra(String palavra){
+        return lista.add(palavra);
+    }
+    
     
 }
