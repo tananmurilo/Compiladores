@@ -15,13 +15,31 @@ public class Estrutura {
     private String tipo;
     private int tamanho1;
     private int tamanho2;
+    private String parametros[]; // cada posição é um parametro e a ordem das posições é a ordem dos parametros
+    private String atributos[][]; // cada linha é um atributo, as colunas são as infomações deles (nome, tipo)
     //atributos e parametros são outra estrutura
-    //private String atributos;
-    //private String parametros;
 
+    public String[] getParametros() {
+        return parametros;
+    }
+
+    public String[][] getAtributos() {
+        return atributos;
+    }
+
+    public void setParametros(String[] parametros) {
+        this.parametros = parametros;
+    }
+
+    public void setAtributos(String[][] atributos) {
+        this.atributos = atributos;
+    }
+    
+    
     /**
      * @return the nome
      */
+    
     public String getNome() {
         return nome;
     }
