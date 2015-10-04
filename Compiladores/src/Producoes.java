@@ -214,35 +214,46 @@ public boolean inteiro(){
     return imprimeErro("Tipos incompatíveis: ineteiro esperado");
 }
 
-public boolean atr(){  
+public boolean atr(){ 
+    String nome="";
+    String tipo="";
     if(tokenList.get(head).equals("Identificador")){
         if(valueList.get(head+1).equals(".")){
             if(aceReg()) {
                 if(valueList.get(head).equals("=")){
                     head++;
-                    if(valorRetornado()) return true;
+                    if(valorRetornado(nome, tipo)) return true;
                 }
             } 
         }else if(valueList.get(head+1).equals("[")){
             if(aceVM()) {
                 if(valueList.get(head).equals("=")){
                     head++;
-                    if(valorRetornado()) return true;
+                    if(valorRetornado(nome,tipo)) return true;
                 }
             } 
         } else{
-        head++;
-        if(valueList.get(head).equals("=")){
+            nome = valueList.get(head);
+            System.out.println(nome);
+            if(semantico.procurarPalavra(nome)!=null){ // se ja foi declarado
+                Estrutura s =  new Estrutura();
+                s = semantico.procurarPalavra(nome);
+                tipo=s.getTipo();
+            }else{
+                imprimeErroSemantico("Erro "+nome+" não foi declarado");
+            }
             head++;
-            if(valorRetornado()) return true;
-        }
+            if(valueList.get(head).equals("=")){
+                head++;
+                if(valorRetornado(nome, tipo)) return true;
+            }
         }
     }       
     
     return imprimeErro("Erro: atribuição mal formada");
 }
 
-public boolean valorRetornado(){ 
+public boolean valorRetornado(String nome, String tipo){ 
         if(tokenList.get(head).equals("Identificador")) {
             if(valueList.get(head+1).equals(".")){ // lendo à frente para decidir em qual função entrar
                 if(aceReg()) {
@@ -779,6 +790,7 @@ private boolean parametro2(){
 
 */
 public boolean condicao(){//falta testar
+    
     if(expC()){
         
         return xCond();
@@ -810,7 +822,30 @@ private boolean opl(){
 private boolean expC(){
     
     if(operando()){
-        if(opCond()){
+        String nome="";
+        String tipo="";
+            
+            if(tokenList.get(head-1).equals("Numero")){
+                nome = valueList.get(head-1);
+                tipo = "numero";
+            }else {
+               
+                nome = valueList.get(head-1);
+                 System.out.println(nome);
+                 System.out.println(tokenList.get(head-1));
+                Estrutura s = new Estrutura();
+                if(semantico.procurarPalavra(nome)!=null){// verifica se ta na lista
+                    s = semantico.procurarPalavra(nome);
+                    tipo = s.getTipo();  
+                }else{
+
+                    imprimeErroSemantico("Erro "+nome+" não foi declarado");
+
+                }
+            }
+           
+        if(opCond(nome, tipo)){
+            
             return operando();
         }
     }
@@ -818,9 +853,29 @@ private boolean expC(){
 }
 //<OpCond>::= ><Z> | <<Z> | == | !=
 //<Z>::=      = | ƛ
-private boolean opCond(){
+private boolean opCond(String nome, String tipo){
     
     if(valueList.get(head).equals(">")||valueList.get(head).equals("<")){
+        if(tokenList.get(head+1).equals("Identificador")){//ver o prox token depois < e > para saber se é identificador
+            Estrutura b = new Estrutura();
+            if(semantico.procurarPalavra(valueList.get(head+1))!=null){// verifica se ta na lista
+                b = semantico.procurarPalavra(valueList.get(head+1));
+                if(tipo.equals("numero")&& b.getTipo().equals("numero")){//operações < > <= >= so podem ser feitas por inteiro e real e anbos iguais concertar isso ainda
+                    //ok bateu, mas tem que corrigir pq tem q ser real < real ou inteiro < inteiro
+                }else{
+                    imprimeErroSemantico("Erro tipos incompativeis de operandos");
+                } 
+            }else{
+                imprimeErroSemantico("Erro "+nome+" não foi declarado");
+             }
+            
+        }else if(tokenList.get(head+1).equals("Numero")){
+            if(tipo.equals("numero")&& tokenList.get(head+1).equals("Numero")){//operações < > <= >= so podem ser feitas por inteiro e real e anbos iguais concertar isso ainda
+                    //ok bateu, mas tem que corrigir pq tem q ser real < real ou inteiro < inteiro não pode ser real > inteiro
+            }else{
+                    imprimeErroSemantico("Erro tipos incompativeis de operandos");
+            } 
+        }
         head++;
         return true;
         //return zCond();
@@ -830,10 +885,27 @@ private boolean opCond(){
     }else if(valueList.get(head).equals("!=")){
         head++;
         return true;
-    }else if(valueList.get(head).equals("<=")){
-        head++;
-        return true;
-    }else if(valueList.get(head).equals(">=")){
+    }else if(valueList.get(head).equals("<=")||valueList.get(head).equals(">=")){
+        if(tokenList.get(head+1).equals("Identificador")){//ver o prox token depois < e > para saber se é identificador
+            Estrutura b = new Estrutura();
+            if(semantico.procurarPalavra(valueList.get(head+1))!=null){// verifica se ta na lista
+                b = semantico.procurarPalavra(valueList.get(head+1));
+                if(tipo.equals("numero")&& b.getTipo().equals("numero")){//operações < > <= >= so podem ser feitas por inteiro e real e anbos iguais concertar isso ainda
+                    //ok bateu, mas tem que corrigir pq tem q ser real < real ou inteiro < inteiro
+                }else{
+                    imprimeErroSemantico("Erro tipos incompativeis de operandos");
+                } 
+            }else{
+                imprimeErroSemantico("Erro "+nome+" não foi declarado");
+             }
+            
+        }else if(tokenList.get(head+1).equals("Numero")){
+            if(tipo.equals("numero")&& tokenList.get(head+1).equals("Numero")){//operações < > <= >= so podem ser feitas por inteiro e real e anbos iguais concertar isso ainda
+                    //ok bateu, mas tem que corrigir pq tem q ser real < real ou inteiro < inteiro não pode ser real > inteiro
+            }else{
+                    imprimeErroSemantico("Erro tipos incompativeis de operandos");
+            } 
+        }
         head++;
         return true;
     }
@@ -1146,7 +1218,7 @@ public boolean operacoes(){ // falta testa mais
     
     if(valNum()){
         if(valNumAcomp()){
-            System.out.println("head parou no "+head);
+            //System.out.println("head parou no "+head);
             return true;
         }
     }else if(valueList.get(head).equals("(")){
