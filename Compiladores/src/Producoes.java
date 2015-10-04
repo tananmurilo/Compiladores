@@ -889,6 +889,7 @@ private boolean opCond(String nome, String tipo){
         head++;
         return true;
         //return zCond();
+        
     }else if(valueList.get(head).equals("==")||valueList.get(head).equals("!=")){
         //operações == ou != podem ser feitas com inteiro real char ou cadeia mas ambos operando tem q ser do mesmo tipo
         //verifica se ja foi declarado
@@ -917,7 +918,7 @@ private boolean opCond(String nome, String tipo){
             } 
         }else if(tokenList.get(head+1).equals("Caracter")){
              if((tipo.equals("Caracter")||tipo.equals("char"))&& (tokenList.get(head+1).equals("Caracter")|| tokenList.get(head+1).equals("char"))){
-                   
+              //fiz a procura por Caracter ou char pq dependendo de onde eu pego pode ser um dos dois já n lembro em que lugar usa um em qual usa outro
             }else{
                     imprimeErroSemantico("Erro tipos incompativeis de operandos");
             } 
