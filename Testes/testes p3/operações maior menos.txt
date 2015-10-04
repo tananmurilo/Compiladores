@@ -1,0 +1,34 @@
+constantes
+{
+	real k=0;	
+	inteiro j=3;
+}
+variaveis
+{
+	inteiro cont = 0;
+	real cont2 = 2.5;
+	inteiro i = 4;
+	real muauau = 10;
+	cadeia let= "awdawds";
+
+}
+algoritmo
+{	
+	se(k<cont2){
+	}
+	se(4.5<cont2){
+	}
+	se(3>5){
+	}
+	se(let>i){
+	}
+	se(k<=cont2){
+	}
+	se(4.5>=cont2){
+	}
+	se(3>=5){
+	}
+	se(let>=i){
+	}
+
+}

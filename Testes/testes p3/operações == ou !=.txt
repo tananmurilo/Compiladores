@@ -1,0 +1,41 @@
+constantes
+{
+	real k=0;	
+	inteiro j=3;
+	cadeia sorte = "adasdasdas";
+	char ch ='a';
+}
+variaveis
+{
+	inteiro cont = 0;
+	real cont2 = 2.5;
+	char cara = 'h';
+	cadeia let= "awdawds";
+
+}
+algoritmo
+{	
+	se(cara=='h'){
+	}
+	se("adasdasdas"!= sorte){
+	}
+	se(3==5){
+	}
+	se(cont2!=3.5){
+	}
+	se('a' =='b'){
+	}
+	se(sorte==let){
+	}
+	se(2 != 5.6){
+	}
+	se(let==cont){
+	}
+	se(sorte=='a'){
+	}
+	se(2 != "huuheueueu"){
+	}
+	se(cont == 0){
+	}
+
+}
