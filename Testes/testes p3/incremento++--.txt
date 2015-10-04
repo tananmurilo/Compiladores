@@ -1,0 +1,28 @@
+constantes
+{
+	real k=0;	
+	inteiro j=3;
+}
+variaveis
+{
+	inteiro cont = 0;
+	real cont2= 2;
+	inteiro i = 5;
+	real muauau = 10;
+
+}
+algoritmo
+{	
+	cont ++;
+	-- cont;
+	rock--;
+	j++;
+	++ rock;
+	para (i=0; i<10; i++) {
+		escreva ("Testando o para");
+    	}
+	para (rock=0; rock<10; ++rock) {
+		escreva ("Testando o para");
+    	}
+
+}

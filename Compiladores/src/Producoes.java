@@ -11,6 +11,7 @@ public class Producoes {
    private List<String> valueList;
    private List<String> linePositions;
    private List<String> erros;
+   private List<String> errosSemanticos;
    private boolean erro;
    
    AnalizadorSemantico semantico =  new AnalizadorSemantico();
@@ -21,6 +22,7 @@ public Producoes(List<String> tokens, List<String> values, List<String> lines){
     valueList = values;
     linePositions = lines;
     erros = new LinkedList<>();
+    errosSemanticos = new LinkedList<>();
     erro=false;
 }  
 
@@ -30,11 +32,21 @@ public boolean imprimeErro(String erro){
     System.out.println(erro + " na linha " + linePositions.get(head));
     return false;
 };
+
+public void imprimeErroSemantico(String erro){
+    String temp=erro+" na linha " + linePositions.get(head).toString();
+    errosSemanticos.add(temp);
+    System.out.println(erro + " na linha " + linePositions.get(head));
+   
+}
 //transformar a lista em uma string
 public String getErros(){
     String ret = "";
     for(String p:erros){
         ret= ret+p+"\n";
+    }
+    for(String k:errosSemanticos){
+        ret= ret+k+"\n";
     }
     if (erros.isEmpty()){
           erro=false;
@@ -42,6 +54,12 @@ public String getErros(){
     }else{
          erro=true;
          ret= ret+"\nFalha: Erro(s) encontrado(s) na análise Sintática ";
+    }
+    if(errosSemanticos.isEmpty()){
+        ret= ret+"\nSucesso: Nenhum erro encontrado na análise Semantica ";
+    }else{
+         erro=true;
+         ret= ret+"\nFalha: Erro(s) encontrado(s) na análise Semantica ";
     }
     return ret;
 }
@@ -366,7 +384,7 @@ public boolean constantes(){
             declaraConstante();
             if(valueList.get(head).equals("}")){//o } no caso as constantes vão ser vazias
                 head++;
-                System.out.println("Teste valores armazenados na estrutura");
+                //System.out.println("Teste valores armazenados na estrutura");
                 return true;
             }
         }
@@ -1300,10 +1318,60 @@ private boolean opFor(){
 //<Incremento>::=<ValNum><Z> | <Z><ValNum> 
 //<Z>::= ++ | --
 private boolean incremento(){
+    boolean valido =false;
+    //semantico.imprimir();
     if(valNum()){
-       if(z()) return true;
+        if(tokenList.get(head-1).equals("Identificador")&&!valueList.get(head-2).equals(".")){//se for identificador antes do ++
+            Estrutura s =  new Estrutura();
+           
+            //System.out.println(s.getTipo());
+            // System.out.println(valueList.get(head-1)); //ver palavra pesquisada
+            if(semantico.procurarPalavra(valueList.get(head-1))!=null){// verifica se ta na lista
+                s = semantico.procurarPalavra(valueList.get(head-1));
+               
+                if(s.getToken().equals("constante")){
+                     imprimeErroSemantico("Erro constante não pode receber atribuições fora do bloco constantes");
+                }
+                if( s.getTipo().equals("numero")){
+                    valido=true;
+                }  
+           }else{
+                
+                imprimeErroSemantico("Erro variavel não declarada");
+                
+            }
+        }
+       
+       if(z()){
+           if(!valido){
+              imprimeErroSemantico("Erro operações ++ ou -- só podem ser feitos com inteiro ou real"); 
+              
+           }
+           return true;
+       }
     }else if(z()){
-        if(valNum()) return true;
+        int headPos = head;
+        if(valNum()){
+            if(tokenList.get(headPos).equals("Identificador")&&!valueList.get(headPos+1).equals(".")){
+                Estrutura s =  new Estrutura();
+                if(semantico.procurarPalavra(valueList.get(headPos))!=null){// verifica se ta na lista
+                    s = semantico.procurarPalavra(valueList.get(headPos));
+
+                    if(s.getToken().equals("constante")){
+                         imprimeErroSemantico("Erro constante não pode receber atribuições fora do bloco constantes");
+                    }
+                    if( s.getTipo().equals("numero")){
+                        valido=true;
+                    }  
+               }else{
+                    imprimeErroSemantico("Erro variavel não declarada");
+                }
+                if(!valido){
+                  imprimeErroSemantico("Erro operações ++ ou -- só podem ser feitos com inteiro ou real"); 
+               }
+            }
+            return true;
+        }
     }
     return false;
 }

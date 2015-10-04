@@ -1,0 +1,20 @@
+constantes
+{
+	real i=0;	
+	inteiro i=3;
+}
+variaveis
+{
+	inteiro i[3];
+	inteiro t = 'f';
+	inteiro a = f;
+	inteiro b = i;
+	inteiro c[3];
+	inteiro d = c;
+	booleano e = d;
+	real real = d;
+}
+algoritmo
+{
+    
+}
