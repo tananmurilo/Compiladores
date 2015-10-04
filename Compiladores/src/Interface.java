@@ -299,7 +299,7 @@ public class Interface extends javax.swing.JFrame {
                 textoFinal=textoFinal+"Há erro(s) léxico(s) e sintático(s)";
               
             }else if(sintatico.getErro()){
-                 textoFinal=textoFinal+"Há erro(s) sintático(s)";
+                 textoFinal=textoFinal+"Há erro(s) sintático(s) ou semantico(s)";
             }else if(lexico.getErro()){
                   textoFinal=textoFinal+"Há erro(s) léxico(s)";
             }

@@ -828,15 +828,23 @@ private boolean expC(){
             if(tokenList.get(head-1).equals("Numero")){
                 nome = valueList.get(head-1);
                 tipo = "numero";
-            }else {
-               
+            }else if(tokenList.get(head-1).equals("Caracter")){
+                nome = valueList.get(head-1);
+                tipo = "char";
+            }else if(tokenList.get(head-1).equals("Cadeia")){
+                nome = valueList.get(head-1);
+                tipo = "cadeia";
+            }else if(tokenList.get(head-1).equals("Identificador")){
+                //se for identificador verificar se ja foi declarado
                 nome = valueList.get(head-1);
                  System.out.println(nome);
-                 System.out.println(tokenList.get(head-1));
+                 //System.out.println(tokenList.get(head-1));
                 Estrutura s = new Estrutura();
                 if(semantico.procurarPalavra(nome)!=null){// verifica se ta na lista
                     s = semantico.procurarPalavra(nome);
-                    tipo = s.getTipo();  
+                    tipo = s.getTipo(); 
+                    System.out.println("tipo "+tipo);
+                    System.out.println("token "+s.getToken());
                 }else{
 
                     imprimeErroSemantico("Erro "+nome+" não foi declarado");
@@ -858,6 +866,7 @@ private boolean opCond(String nome, String tipo){
     if(valueList.get(head).equals(">")||valueList.get(head).equals("<")){
         if(tokenList.get(head+1).equals("Identificador")){//ver o prox token depois < e > para saber se é identificador
             Estrutura b = new Estrutura();
+            //verifica se ja foi declarado 
             if(semantico.procurarPalavra(valueList.get(head+1))!=null){// verifica se ta na lista
                 b = semantico.procurarPalavra(valueList.get(head+1));
                 if(tipo.equals("numero")&& b.getTipo().equals("numero")){//operações < > <= >= so podem ser feitas por inteiro e real e anbos iguais concertar isso ainda
@@ -870,6 +879,7 @@ private boolean opCond(String nome, String tipo){
              }
             
         }else if(tokenList.get(head+1).equals("Numero")){
+            //no case não é identificador é valor logo n verifica se ja foi declarada
             if(tipo.equals("numero")&& tokenList.get(head+1).equals("Numero")){//operações < > <= >= so podem ser feitas por inteiro e real e anbos iguais concertar isso ainda
                     //ok bateu, mas tem que corrigir pq tem q ser real < real ou inteiro < inteiro não pode ser real > inteiro
             }else{
@@ -879,13 +889,51 @@ private boolean opCond(String nome, String tipo){
         head++;
         return true;
         //return zCond();
-    }else if(valueList.get(head).equals("==")){
-        head++;
-        return true;
-    }else if(valueList.get(head).equals("!=")){
+    }else if(valueList.get(head).equals("==")||valueList.get(head).equals("!=")){
+        //operações == ou != podem ser feitas com inteiro real char ou cadeia mas ambos operando tem q ser do mesmo tipo
+        //verifica se ja foi declarado
+        if(tokenList.get(head+1).equals("Identificador")){//ver o prox token depois < e > para saber se é identificador
+            Estrutura b = new Estrutura();
+            if(semantico.procurarPalavra(valueList.get(head+1))!=null){// verifica se ta na lista
+                b = semantico.procurarPalavra(valueList.get(head+1));
+                if(tipo.equals("numero")&& b.getTipo().equals("numero")){//operações < > <= >= so podem ser feitas por inteiro e real e anbos iguais concertar isso ainda
+                    //ok bateu,numero com numero mas mas tem q consertar inteiro tem q ser diferente de real
+                }else if((tipo.equals("Caracter")||tipo.equals("char"))&& (b.getTipo().equals("char")||b.getTipo().equals("Caracter"))){
+                   //se os 2 é char 
+                }else if((tipo.equals("Cadeia")||tipo.equals("cadeia"))&& (b.getTipo().equals("Cadeia")||b.getTipo().equals("cadeia"))){
+                   //se os 2 é cadeia
+                }else{
+                    imprimeErroSemantico("Erro tipos incompativeis de operandos");
+                } 
+            }else{
+                imprimeErroSemantico("Erro "+nome+" não foi declarado");
+             }
+        // no case de serem tokens do tipo "ads" 34 "a" 5.4 ou seja n verifica se ja foi declara pq n é variavel   
+        }else if(tokenList.get(head+1).equals("Numero")){
+            if(tipo.equals("numero")&& tokenList.get(head+1).equals("Numero")){
+                 //numero com numero
+            }else{
+                    imprimeErroSemantico("Erro tipos incompativeis de operandos");
+            } 
+        }else if(tokenList.get(head+1).equals("Caracter")){
+             if((tipo.equals("Caracter")||tipo.equals("char"))&& (tokenList.get(head+1).equals("Caracter")|| tokenList.get(head+1).equals("char"))){
+                   
+            }else{
+                    imprimeErroSemantico("Erro tipos incompativeis de operandos");
+            } 
+        }else if(tokenList.get(head+1).equals("Cadeia")){
+             if((tipo.equals("Cadeia")||tipo.equals("cadeia"))&& (tokenList.get(head+1).equals("Cadeia")||tokenList.get(head+1).equals("cadeia"))){
+                   
+            }else{
+                    imprimeErroSemantico("Erro tipos incompativeis de operandos");
+            } 
+        }
+        
         head++;
         return true;
     }else if(valueList.get(head).equals("<=")||valueList.get(head).equals(">=")){
+        //operações <= ou >=
+        //verifica se ja foi declarado
         if(tokenList.get(head+1).equals("Identificador")){//ver o prox token depois < e > para saber se é identificador
             Estrutura b = new Estrutura();
             if(semantico.procurarPalavra(valueList.get(head+1))!=null){// verifica se ta na lista
@@ -898,7 +946,7 @@ private boolean opCond(String nome, String tipo){
             }else{
                 imprimeErroSemantico("Erro "+nome+" não foi declarado");
              }
-            
+         //se não for variavel, valor bruto 4 ou 4.3   
         }else if(tokenList.get(head+1).equals("Numero")){
             if(tipo.equals("numero")&& tokenList.get(head+1).equals("Numero")){//operações < > <= >= so podem ser feitas por inteiro e real e anbos iguais concertar isso ainda
                     //ok bateu, mas tem que corrigir pq tem q ser real < real ou inteiro < inteiro não pode ser real > inteiro
