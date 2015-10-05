@@ -31,8 +31,9 @@ public class AnalizadorSemantico {
         listaEscopos.add(novoEscopo);
     }
     
-    // adicionar na estrutura da tabela (falta implementar atributos e parametros)
+    // adicionar na estrutura da tabela ( parametros)
     public void addNaTabela(String nome,String token, String tipo,int tam1,int tam2){
+                  
             
             Estrutura temp = new Estrutura();
             temp.setNome(nome);
@@ -43,6 +44,53 @@ public class AnalizadorSemantico {
 
             Map escopo = listaEscopos.get(listaEscopos.size() - 1);
             escopo.put(nome, temp); 
+    }
+    /*
+    
+    */
+     // adicionar registro na estrutura da tabela 
+    public void addNaTabelaRegistro(String nome, List<String[]> atributos){
+            
+            String[][] atr = new String[atributos.size()][2];
+            for(int i=0; i<atributos.size(); i++){
+                atr[i] = atributos.get(i);
+                addNaTabela(nome+"."+atr[i][1], "variavel" , atr[i][0], 0, 0);// adiciona os atributos como variaveis na tabela com o nome: registro.atributo
+            }
+        
+            Estrutura temp = new Estrutura();
+            temp.setNome(nome);
+            temp.setToken("registro");
+            temp.setTipo("registro");
+            temp.setTamanho1(0);
+            temp.setTamanho2(0);
+            temp.setAtributos(atr);
+            
+            Map escopo = listaEscopos.get(listaEscopos.size() - 1);
+            escopo.put(nome, temp); 
+            
+    }
+    /*
+    
+    */
+     // adicionar funcao na estrutura da tabela 
+    public void addNaTabelaFuncao(String nome, String tipo,  List<String> atributos){
+            
+            String[] atr = new String[atributos.size()];
+            for(int i=0; i<atributos.size(); i++){
+                atr[i] = atributos.get(i);
+            }
+        
+            Estrutura temp = new Estrutura();
+            temp.setNome(nome);
+            temp.setToken("funcao");
+            temp.setTipo(tipo);
+            temp.setTamanho1(0);
+            temp.setTamanho2(0);
+            temp.setParametros(atr);
+            
+            Map escopo = listaEscopos.get(listaEscopos.size() - 1);
+            escopo.put(nome, temp); 
+            
     }
     /**
      * @return Null se não encontrar e a estrutura se encontrar
@@ -84,7 +132,11 @@ public class AnalizadorSemantico {
         return null;
     }
     
-    public void inicializaPalavra(String nome, String token, String tipo, String tipoAtribuido, Producoes sintatico){
+    public void inicializaPalavra(String nome, String token, String tipo, String tipoAtribuido, String valor, Producoes sintatico){
+        
+        if((tipo.equals("inteiro") || tipo.equals("real")) && !valor.equals("")) {
+            tipoAtribuido = inteiro_real(valor);
+        } 
         
         if(this.procurarPalavra(nome)==null){//verificar se ja esta na lista
             if(palavrasReservadas.buscarPalavra(nome)){ //verifica se é uma palavra reservada
@@ -114,7 +166,7 @@ public class AnalizadorSemantico {
             sintatico.imprimeErro("Error Semantico: a palavra "+nome+" já foi declarada e não pode ser re-declarada");
         }
     }
-    
+    //Quando a palavra é inicializada e o valor de outro identificador é atribuido a ela
     public void inicializaPalavraAtribuida(String nome, String token, String tipo, String nomeAtr, Producoes sintatico){
         if(this.procurarPalavra(nome)==null){//verificar se ja esta na lista
             if(palavrasReservadas.buscarPalavra(nome)){ //verifica se é uma palavra reservada
@@ -124,7 +176,7 @@ public class AnalizadorSemantico {
                 if(simboloAtribuido==null){
                     sintatico.imprimeErro("Error Semantico: a palavra "+nomeAtr+" não foi encontrada");
                 } else if(simboloAtribuido.getToken().equals("variavel") || simboloAtribuido.getToken().equals("constante")){
-                    if(simboloAtribuido.getTipo().equals(tipo)){
+                     if(simboloAtribuido.getTipo().equals(tipo)){
                         this.addNaTabela(nome, token, tipo, 0, 0);
                     } else sintatico.imprimeErro("Tipos incompatíveis: "+simboloAtribuido.getTipo()+" sendo atribuído à "+tipo);          
                 } else sintatico.imprimeErro("Error Semantico: somente constantes e variaveis podem ser atribuidas na inicialização");   
@@ -132,6 +184,45 @@ public class AnalizadorSemantico {
         }else{
             sintatico.imprimeErro("Error Semantico: a palavra "+nome+" já foi declarada e não pode ser re-declarada");
         }
+    }
+    /*
+    
+    */
+    public void inicializaRegistro(String nome, List<String[]> atributos, Producoes sintatico){
+        
+        if(this.procurarPalavra(nome)==null){//verificar se ja esta na lista
+            if(palavrasReservadas.buscarPalavra(nome)){ //verifica se é uma palavra reservada
+                sintatico.imprimeErro("Error Semantico: a palavra "+nome+" é uma palavra reservada");
+            } else {
+                this.addNaTabelaRegistro(nome, atributos); 
+            }                                                           
+        }else{
+            sintatico.imprimeErro("Error Semantico: a palavra "+nome+" já foi declarada e não pode ser re-declarada");
+        }
+    }
+    /*
+    
+    */
+    public void inicializaFuncao(String nome, String tipo, List<String> atributos, Producoes sintatico){
+        
+        if(this.procurarPalavra(nome)==null){//verificar se ja esta na lista
+            if(palavrasReservadas.buscarPalavra(nome)){ //verifica se é uma palavra reservada
+                sintatico.imprimeErro("Error Semantico: a palavra "+nome+" é uma palavra reservada");
+            } else {
+                this.addNaTabelaFuncao(nome, tipo, atributos); 
+            }                                                           
+        }else{
+            sintatico.imprimeErro("Error Semantico: a palavra "+nome+" já foi declarada e não pode ser re-declarada");
+        }
+    }
+    /*
+    
+    */
+    public String inteiro_real(String numero){
+       
+        if((numero.indexOf('.')) < 0){
+            return "inteiro";
+        } else return "real";
     }
     
     public void imprimir(){

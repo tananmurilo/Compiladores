@@ -12,6 +12,8 @@ public class Producoes {
    private List<String> linePositions;
    private List<String> erros;
    private List<String> errosSemanticos;
+   private List<String[]> listaAtributos;
+   private List<String> listaParametros;
    private boolean erro;
    
    AnalizadorSemantico semantico =  new AnalizadorSemantico();
@@ -352,7 +354,10 @@ public boolean inicializacao(String nome, String tipo){
         } else{
             return imprimeErro("Valor atribuido inválido");
         }
-    }else return true; // caso lambda
+    }else {
+        semantico.inicializaPalavra(nome, "varavel", tipo, this);
+        return true;
+    } // caso lambda
         
 }
 //<X>::= <Identificador> | <Valores>
@@ -364,7 +369,7 @@ public boolean x(String nome, String tipo){
     }else {
         String tipoAtribuido = valores();  
         if(!tipoAtribuido.equals("Erro")){
-        semantico.inicializaPalavra(nome, "variavel", tipo, tipoAtribuido, this);
+        semantico.inicializaPalavra(nome, "variavel", tipo, tipoAtribuido,valueList.get(head-1), this);
         return true;  
       } else return false;
     } 
@@ -410,9 +415,7 @@ public boolean declaraConstante(){
     String tipo="";
     
      if(!tipo().equals("Erro")){//chama o metodo de identificar tipo
-            if(valueList.get(head-1).equals("inteiro") || valueList.get(head-1).equals("real")){//inteiros ou real na tokenlist é Numero
-                tipo = "numero";
-            }else tipo=valueList.get(head-1);//salvar o tipo do identificador
+            tipo=valueList.get(head-1);//salvar o tipo do identificador
             
             if(tokenList.get(head).equals("Identificador")){
                  nome=valueList.get(head);//salvar nome do identificador
@@ -423,7 +426,7 @@ public boolean declaraConstante(){
                     if(!tipoAtribuido.equals("Erro")){//chama o metodo de valores
                         if(valueList.get(head).equals(";")){//teste semantico
                             //teste semantico
-                            semantico.inicializaPalavra(nome, "constante", tipo, tipoAtribuido, this);
+                            semantico.inicializaPalavra(nome, "constante", tipo, tipoAtribuido,valueList.get(head-1), this);
                             head++;
                             return dCAcomp();
                         }
@@ -485,13 +488,16 @@ private boolean proxCodigoReg(){
 }
 
 public boolean registro(){
+    String nome;
+    
     if(valueList.get(head).equals("registro")){
         head++;
         if(tokenList.get(head).equals("Identificador")){
+            nome = valueList.get(head);
             head++;
             if(valueList.get(head).equals("{")){
                 head++;
-                if(f()){
+                if(f(nome)){
                     return true;
                 }
             }
@@ -502,9 +508,11 @@ public boolean registro(){
 }
 
 //<F>::=  <atributos> | ƛ
-public boolean f (){
+public boolean f (String nome){
+    listaAtributos =  new LinkedList<>();
     atributos();
     if(valueList.get(head).equals("}")){
+        semantico.inicializaRegistro(nome, listaAtributos, this);
         head++;
         return true;
     }else return false;
@@ -512,10 +520,15 @@ public boolean f (){
 
 //<atributos>::= <Tipo><Identificador>;<A>
 public boolean atributos(){
+    String atributo[] = new String[2];
+    
     if(!tipo().equals("Erro")){
+        atributo[0] = valueList.get(head-1);
         if(tokenList.get(head).equals("Identificador")){
+            atributo[1] = valueList.get(head);
             head++;
             if(valueList.get(head).equals(";")){
+                listaAtributos.add(atributo);
                 head++;
                 return a();
             }
@@ -580,9 +593,7 @@ public boolean declaraVariaveis(){
     
     if(!tipo().equals("Erro")){//chama o metodo de identificar tipo
         
-        if(valueList.get(head-1).equals("inteiro") || valueList.get(head-1).equals("real")){//inteiros ou real na tokenlist é Numero
-            tipo = "numero";
-        }else tipo=valueList.get(head-1);//salvar o tipo do identificador
+        tipo=valueList.get(head-1);//salvar o tipo do identificador
         
         if(tokenList.get(head).equals("Identificador")){
             nome=valueList.get(head);//salvar nome do identificador
@@ -654,23 +665,30 @@ Função:
 */
 
 public boolean funcao(){
+    String nome;
+    String retorno;
+    listaParametros =  new LinkedList<>();
+    
     if(valueList.get(head).equals("funcao")){
         head++;
         if(valueList.get(head).equals("vazio")){
             head++;
             if(tokenList.get(head).equals("Identificador")){
+                nome = valueList.get(head);
                 head++;
                 if(valueList.get(head).equals("(")){
                     head++;
-                    if(funcao_vazioAcomp()) return true;
+                    if(funcao_vazioAcomp(nome)) return true;
                 }   
             }    
         } else if(!tipo().equals("Erro")){
+            retorno = valueList.get(head-1);
             if(tokenList.get(head).equals("Identificador")){
+                nome = valueList.get(head);
                 head++;
                 if(valueList.get(head).equals("(")){
                     head++;
-                    if(funcao_tipoAcomp()) return true;
+                    if(funcao_tipoAcomp(nome,retorno)) return true;
                 }
             }  
         }
@@ -679,13 +697,14 @@ public boolean funcao(){
         return imprimeErro("Erro: Função mal formada");
 } 
 
-private boolean funcao_vazioAcomp(){
+private boolean funcao_vazioAcomp(String nome){
     if(valueList.get(head).equals(")")){
         head++;
          if(valueList.get(head).equals("{")){
              head++;
              if(codigoGeral()){
                  if(valueList.get(head).equals("}")){
+                    semantico.inicializaFuncao(nome, "vazio", listaParametros, this);
                     head++;
                     return true;
                  }
@@ -698,6 +717,7 @@ private boolean funcao_vazioAcomp(){
                  head++;
                  if(codigoGeral()){
                      if(valueList.get(head).equals("}")){
+                        semantico.inicializaFuncao(nome, "vazio", listaParametros, this);
                         head++;
                         return true;
                      }
@@ -708,7 +728,9 @@ private boolean funcao_vazioAcomp(){
     return false;
 }
 
-private boolean funcao_tipoAcomp(){
+private boolean funcao_tipoAcomp(String nome, String retorno){
+    String tipo;
+    
     if(valueList.get(head).equals(")")){
         head++;
         if(valueList.get(head).equals("{")){
@@ -716,14 +738,18 @@ private boolean funcao_tipoAcomp(){
             if(codigoGeral()){
                 if(valueList.get(head).equals("retorno")){
                    head++;
-                    if(operando())
+                    tipo=operando();
+                    if(!tipo.equals("Erro")){ 
+                        if(!tipo.equals(retorno)) imprimeErroSemantico("Variável retornada não é do tipo esperado: retornando "+tipo+" onde se esperava "+retorno);
                         if(valueList.get(head).equals(";")){
                             head++;
                             if(valueList.get(head).equals("}")){
+                                semantico.inicializaFuncao(nome, retorno, listaParametros, this);
                                 head++;
                                 return true;
                             }
                         }
+                    }
                 }  
             }
             return imprimeErro("Erro: função sem retorno");
@@ -736,14 +762,18 @@ private boolean funcao_tipoAcomp(){
                  if(codigoGeral()){
                     if(valueList.get(head).equals("retorno")){
                         head++;
-                        if(operando())
+                        tipo=operando();
+                        if(!tipo.equals("Erro")){
+                            if(!tipo.equals(retorno)) imprimeErroSemantico("Variável retornada não é do tipo esperado: retornando "+tipo+" onde se esperava "+retorno);
                             if(valueList.get(head).equals(";")){
                             head++;
                                 if(valueList.get(head).equals("}")){
+                                    semantico.inicializaFuncao(nome, retorno, listaParametros, this);
                                     head++;
                                     return true;
                                 }
                             }
+                        }
                     }
                     
                 }
@@ -754,13 +784,16 @@ private boolean funcao_tipoAcomp(){
     return false;
 }
 
-private boolean parametro(){ 
+private boolean parametro(){
+    
     if(!tipo().equals("Erro")){
+        listaParametros.add(valueList.get(head));
         if(tokenList.get(head).equals("Identificador")){
             head++;
             return parametro2();   
         }
     } else if(tokenList.get(head).equals("Identificador")){
+         listaParametros.add(valueList.get(head));
          if(tokenList.get(head).equals("Identificador")){
             head++;
             return parametro2();   
@@ -820,48 +853,51 @@ private boolean opl(){
     }else return true; //lambda
 }
 private boolean expC(){
+    String nome="";
+    String tipo="";
     
-    if(operando()){
-        String nome="";
-        String tipo="";
+    tipo = operando();
+    if(!tipo.equals("Erro")){
+       
             
-            if(tokenList.get(head-1).equals("Numero")){
-                nome = valueList.get(head-1);
-                tipo = "numero";
-            }else if(tokenList.get(head-1).equals("Caracter")){
-                nome = valueList.get(head-1);
-                tipo = "char";
-            }else if(tokenList.get(head-1).equals("Cadeia")){
-                nome = valueList.get(head-1);
-                tipo = "cadeia";
-            }else if(tokenList.get(head-1).equals("Identificador")){
-                //se for identificador verificar se ja foi declarado
-                nome = valueList.get(head-1);
-                 System.out.println(nome);
-                 //System.out.println(tokenList.get(head-1));
-                Estrutura s = new Estrutura();
-                if(semantico.procurarPalavra(nome)!=null){// verifica se ta na lista
-                    s = semantico.procurarPalavra(nome);
-                    tipo = s.getTipo(); 
-                    System.out.println("tipo "+tipo);
-                    System.out.println("token "+s.getToken());
-                }else{
-
-                    imprimeErroSemantico("Erro "+nome+" não foi declarado");
-
-                }
-            }
+//            if(tokenList.get(head-1).equals("Numero")){
+//                nome = valueList.get(head-1);
+//                tipo = "numero";
+//            }else if(tokenList.get(head-1).equals("Caracter")){
+//                nome = valueList.get(head-1);
+//                tipo = "char";
+//            }else if(tokenList.get(head-1).equals("Cadeia")){
+//                nome = valueList.get(head-1);
+//                tipo = "cadeia";
+//            }else if(tokenList.get(head-1).equals("Identificador")){
+//                //se for identificador verificar se ja foi declarado
+//                nome = valueList.get(head-1);
+//                 System.out.println(nome);
+//                 //System.out.println(tokenList.get(head-1));
+//                Estrutura s = new Estrutura();
+//                if(semantico.procurarPalavra(nome)!=null){// verifica se ta na lista
+//                    s = semantico.procurarPalavra(nome);
+//                    tipo = s.getTipo(); 
+//                    System.out.println("tipo "+tipo);
+//                    System.out.println("token "+s.getToken());
+//                }else{
+//
+//                    imprimeErroSemantico("Erro "+nome+" não foi declarado");
+//
+//                }
+//            }
+        
            
-        if(opCond(nome, tipo)){
+        if(opCond(tipo)){
             
-            return operando();
+            return (!operando().equals("Erro"));
         }
     }
     return false;
 }
 //<OpCond>::= ><Z> | <<Z> | == | !=
 //<Z>::=      = | ƛ
-private boolean opCond(String nome, String tipo){
+private boolean opCond(String tipo){
     
     if(valueList.get(head).equals(">")||valueList.get(head).equals("<")){
         if(tokenList.get(head+1).equals("Identificador")){//ver o prox token depois < e > para saber se é identificador
@@ -869,13 +905,13 @@ private boolean opCond(String nome, String tipo){
             //verifica se ja foi declarado 
             if(semantico.procurarPalavra(valueList.get(head+1))!=null){// verifica se ta na lista
                 b = semantico.procurarPalavra(valueList.get(head+1));
-                if(tipo.equals("numero")&& b.getTipo().equals("numero")){//operações < > <= >= so podem ser feitas por inteiro e real e anbos iguais concertar isso ainda
-                    //ok bateu, mas tem que corrigir pq tem q ser real < real ou inteiro < inteiro
+                if(tipo.equals("real")&& b.getTipo().equals("real") || tipo.equals("inteiro")&& b.getTipo().equals("inteiro")){//operações < > <= >= so podem ser feitas por inteiro e real e anbos iguais concertar isso ainda
+                    
                 }else{
-                    imprimeErroSemantico("Erro tipos incompativeis de operandos");
+                    imprimeErroSemantico("Erro tipos incompativeis de operandos: "+tipo+" e "+b.getTipo());
                 } 
             }else{
-                imprimeErroSemantico("Erro "+nome+" não foi declarado");
+                imprimeErroSemantico("Erro "+valueList.get(head+1)+" não foi declarado");
              }
             
         }else if(tokenList.get(head+1).equals("Numero")){
@@ -883,7 +919,7 @@ private boolean opCond(String nome, String tipo){
             if(tipo.equals("numero")&& tokenList.get(head+1).equals("Numero")){//operações < > <= >= so podem ser feitas por inteiro e real e anbos iguais concertar isso ainda
                     //ok bateu, mas tem que corrigir pq tem q ser real < real ou inteiro < inteiro não pode ser real > inteiro
             }else{
-                    imprimeErroSemantico("Erro tipos incompativeis de operandos");
+                    imprimeErroSemantico("Erro tipos incompativeis de operandos: "+tipo+" e "+tokenList.get(head+1));
             } 
         }
         head++;
@@ -904,29 +940,29 @@ private boolean opCond(String nome, String tipo){
                 }else if((tipo.equals("Cadeia")||tipo.equals("cadeia"))&& (b.getTipo().equals("Cadeia")||b.getTipo().equals("cadeia"))){
                    //se os 2 é cadeia
                 }else{
-                    imprimeErroSemantico("Erro tipos incompativeis de operandos");
+                    imprimeErroSemantico("Erro tipos incompativeis de operandos:" + tipo + " e "+ b.getTipo());
                 } 
             }else{
-                imprimeErroSemantico("Erro "+nome+" não foi declarado");
+                imprimeErroSemantico("Erro "+valueList.get(head+1)+" não foi declarado");
              }
         // no case de serem tokens do tipo "ads" 34 "a" 5.4 ou seja n verifica se ja foi declara pq n é variavel   
         }else if(tokenList.get(head+1).equals("Numero")){
             if(tipo.equals("numero")&& tokenList.get(head+1).equals("Numero")){
                  //numero com numero
             }else{
-                    imprimeErroSemantico("Erro tipos incompativeis de operandos");
+                    imprimeErroSemantico("Erro tipos incompativeis de operandos: "+ tipo + " e "+ tokenList.get(head+1));
             } 
         }else if(tokenList.get(head+1).equals("Caracter")){
              if((tipo.equals("Caracter")||tipo.equals("char"))&& (tokenList.get(head+1).equals("Caracter")|| tokenList.get(head+1).equals("char"))){
               //fiz a procura por Caracter ou char pq dependendo de onde eu pego pode ser um dos dois já n lembro em que lugar usa um em qual usa outro
             }else{
-                    imprimeErroSemantico("Erro tipos incompativeis de operandos");
+                    imprimeErroSemantico("Erro tipos incompativeis de operandos: "+ tipo + " e "+ tokenList.get(head+1));
             } 
         }else if(tokenList.get(head+1).equals("Cadeia")){
              if((tipo.equals("Cadeia")||tipo.equals("cadeia"))&& (tokenList.get(head+1).equals("Cadeia")||tokenList.get(head+1).equals("cadeia"))){
                    
             }else{
-                    imprimeErroSemantico("Erro tipos incompativeis de operandos");
+                    imprimeErroSemantico("Erro tipos incompativeis de operandos: "+ tipo + " e "+ tokenList.get(head+1));
             } 
         }
         
@@ -942,17 +978,17 @@ private boolean opCond(String nome, String tipo){
                 if(tipo.equals("numero")&& b.getTipo().equals("numero")){//operações < > <= >= so podem ser feitas por inteiro e real e anbos iguais concertar isso ainda
                     //ok bateu, mas tem que corrigir pq tem q ser real < real ou inteiro < inteiro
                 }else{
-                    imprimeErroSemantico("Erro tipos incompativeis de operandos");
+                    imprimeErroSemantico("Erro tipos incompativeis de operandos: "+ tipo + " e "+ b.getTipo());
                 } 
             }else{
-                imprimeErroSemantico("Erro "+nome+" não foi declarado");
+                imprimeErroSemantico("Erro "+valueList.get(head+1)+" não foi declarado");
              }
          //se não for variavel, valor bruto 4 ou 4.3   
         }else if(tokenList.get(head+1).equals("Numero")){
             if(tipo.equals("numero")&& tokenList.get(head+1).equals("Numero")){//operações < > <= >= so podem ser feitas por inteiro e real e anbos iguais concertar isso ainda
                     //ok bateu, mas tem que corrigir pq tem q ser real < real ou inteiro < inteiro não pode ser real > inteiro
             }else{
-                    imprimeErroSemantico("Erro tipos incompativeis de operandos");
+                    imprimeErroSemantico("Erro tipos incompativeis de operandos: "+ tipo + " e "+ tokenList.get(head+1));
             } 
         }
         head++;
@@ -989,7 +1025,7 @@ public boolean chamadaFuncao(){//falta fazer
 }
 
 private boolean parametroCF(){ 
-        if(operando()){
+        if(!operando().equals("Erro")){
             if(valueList.get(head).equals(",")){
                 head++;
                 return parametroCF();
@@ -1348,23 +1384,40 @@ private boolean opn(){
 
 
 
-private boolean operando(){ 
-    if(!valores().equals("Erro")) return true;
+private String operando(){ 
+    String tipo = valores();
+    
+    if(!tipo.equals("Erro")) return tipo;
     else if(tokenList.get(head).equals("Identificador")){
         if(valueList.get(head+1).equals(".")){
           if(aceReg()){
-            return true;
+            String nomeReg = valueList.get(head-3)+valueList.get(head-2)+valueList.get(head-1);
+            tipo = semantico.procurarPalavra(nomeReg).getTipo();
+            if(tipo == null){
+                imprimeErroSemantico("Erro "+valueList.get(head-3)+" não foi declarado ou não têm o atributo "+valueList.get(head-1));
+                return "Variavel não inicializada";
+            } else return tipo;
           }
         } else if (valueList.get(head+1).equals("[")){
-             if(aceVM()){
-                return true;
+            tipo = semantico.procurarPalavra(valueList.get(head)).getTipo();
+            String nome =valueList.get(head);
+            if(aceVM()){                
+                if(tipo == null){
+                    imprimeErroSemantico("Erro "+nome+" não foi declarado");
+                    return "Variavel não inicializada";
+                } else return tipo;
             }
         } else{
             head++;
-            return true;
+            tipo = semantico.procurarPalavra(valueList.get(head-1)).getTipo();
+            if(tipo == null){
+                    imprimeErroSemantico("Erro "+valueList.get(head-1)+" não foi declarado");
+                    return "Variavel não inicializada";
+            } else return tipo;
+                        
         }
     } 
-    return false;
+    return "Erro";
 }
 /*
 <para>::=para(<IniP>;<Condicao>;<OpFor>){<CG>}

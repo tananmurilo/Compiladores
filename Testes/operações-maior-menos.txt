@@ -1,0 +1,49 @@
+registro casa{
+	inteiro largura;
+	real altura;
+}
+
+registro carro{
+	cadeia marca;
+	real km;
+}
+constantes
+{
+	real m=0;	
+	real k=0.0;
+
+	inteiro j=3;
+	inteiro l=3.3;
+}
+variaveis
+{	
+	
+	real a;
+	real a = 3.0;
+
+	inteiro cont3 = k;
+	inteiro cont = 0;
+	real cont2 = 2.5;
+	inteiro i = 4;
+	real muauau = 10;
+	cadeia let= "awdawds";
+
+}
+
+funcao inteiro soma(inteiro a, inteiro b) {
+    
+    retorno 23;
+}
+
+funcao inteiro soma(inteiro a, inteiro b) {
+    
+    retorno 23.3;
+}
+
+funcao vazio escrever(cadeia nome) {
+    escreva(nome);
+}
+algoritmo
+{	
+
+}

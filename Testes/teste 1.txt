@@ -1,18 +1,14 @@
 registro casa{
-	inteiro largura;	
+	inteiro largura;
+	real altura;
 }
 
 constantes{
-inteiro d = 23;
 
 }
 
 variaveis{
 
-char c[3][4];
-inteiro x=3;
-real a;
-booleano b[2];
 
 
 }
