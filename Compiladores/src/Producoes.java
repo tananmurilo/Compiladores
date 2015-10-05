@@ -325,7 +325,7 @@ public boolean declaraMatriz(){
     public String valores(){ 
         if(tokenList.get(head).equals("Numero")) {
             head++;
-            return "numero";
+            return semantico.inteiro_real(valueList.get(head-1));
         } else if(tokenList.get(head).equals("Caracter")) {
             head++;            
             return "char";
