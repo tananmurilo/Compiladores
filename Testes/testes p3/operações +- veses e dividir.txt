@@ -1,0 +1,43 @@
+registro casa{
+	inteiro largura;
+	real altura;
+}
+constantes
+{
+	real k=1.6;	
+	inteiro j=3;
+	cadeia sorte = "adasdasdas";
+	char ch ='a';
+}
+variaveis
+{
+	inteiro cont = 0;
+	real cont2 = 2.5;
+	char cara = 'h';
+	cadeia let= "awdawds";
+
+}
+funcao inteiro teste(){
+	retorno 23;
+}
+
+algoritmo
+{	
+	/*
+	testes feitos para operações, as atribuição ainda n foi verificado o tipo
+	ou seja cont = é a atribuição e 50+4 é a operação
+	*/
+	gg = j+2*10;
+	cont = 50+4;
+	casa.largura = casa.fake +1;
+	j = j+2*ch;
+	k = j+cont2-2.7;
+	cont2 = gg +2;
+	j = 5+ 7- 2* 4/10;
+	teste = a +b;
+	x = testando+a;
+	cont = k - cont2 + 5.7;
+	cont2 = cara - 3.3 * 10;
+	k = vetor[5] + mat[10][20];
+	vet[50] = 3+6+cont;
+}
