@@ -1,14 +1,14 @@
 constantes
 {
-	real k=0;	
+	real k=1.6;	
 	inteiro j=3;
 }
 variaveis
 {
 	inteiro cont = 0;
-	real cont2= 2;
+	real cont2= 2.0;
 	inteiro i = 5;
-	real muauau = 10;
+	real muauau = 10.1;
 
 }
 algoritmo

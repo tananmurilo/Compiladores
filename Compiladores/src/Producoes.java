@@ -916,10 +916,12 @@ private boolean opCond(String tipo){
             
         }else if(tokenList.get(head+1).equals("Numero")){
             //no case não é identificador é valor logo n verifica se ja foi declarada
-            if(tipo.equals("numero")&& tokenList.get(head+1).equals("Numero")){//operações < > <= >= so podem ser feitas por inteiro e real e anbos iguais concertar isso ainda
+            String num = semantico.inteiro_real(valueList.get(head+1));
+            if(tipo.equals("real")&& num.equals("real") || tipo.equals("inteiro")&& num.equals("inteiro")){
+            //operações < > <= >= so podem ser feitas por inteiro e real e anbos iguais concertar isso ainda
                     //ok bateu, mas tem que corrigir pq tem q ser real < real ou inteiro < inteiro não pode ser real > inteiro
             }else{
-                    imprimeErroSemantico("Erro tipos incompativeis de operandos: "+tipo+" e "+tokenList.get(head+1));
+                    imprimeErroSemantico("Erro tipos incompativeis de operandos: "+tipo+" e "+num);
             } 
         }
         head++;
@@ -933,7 +935,7 @@ private boolean opCond(String tipo){
             Estrutura b = new Estrutura();
             if(semantico.procurarPalavra(valueList.get(head+1))!=null){// verifica se ta na lista
                 b = semantico.procurarPalavra(valueList.get(head+1));
-                if(tipo.equals("numero")&& b.getTipo().equals("numero")){//operações < > <= >= so podem ser feitas por inteiro e real e anbos iguais concertar isso ainda
+                if(tipo.equals("real")&& b.getTipo().equals("real") || tipo.equals("inteiro")&& b.getTipo().equals("inteiro")){//operações < > <= >= so podem ser feitas por inteiro e real e anbos iguais concertar isso ainda
                     //ok bateu,numero com numero mas mas tem q consertar inteiro tem q ser diferente de real
                 }else if((tipo.equals("Caracter")||tipo.equals("char"))&& (b.getTipo().equals("char")||b.getTipo().equals("Caracter"))){
                    //se os 2 é char 
@@ -947,10 +949,12 @@ private boolean opCond(String tipo){
              }
         // no case de serem tokens do tipo "ads" 34 "a" 5.4 ou seja n verifica se ja foi declara pq n é variavel   
         }else if(tokenList.get(head+1).equals("Numero")){
-            if(tipo.equals("numero")&& tokenList.get(head+1).equals("Numero")){
+            String num = semantico.inteiro_real(valueList.get(head+1));
+            if(tipo.equals("real")&& num.equals("real") || tipo.equals("inteiro")&& num.equals("inteiro")){
                  //numero com numero
             }else{
-                    imprimeErroSemantico("Erro tipos incompativeis de operandos: "+ tipo + " e "+ tokenList.get(head+1));
+                    
+                    imprimeErroSemantico("Erro tipos incompativeis de operandos: "+ tipo + " e "+ num);
             } 
         }else if(tokenList.get(head+1).equals("Caracter")){
              if((tipo.equals("Caracter")||tipo.equals("char"))&& (tokenList.get(head+1).equals("Caracter")|| tokenList.get(head+1).equals("char"))){
@@ -972,23 +976,25 @@ private boolean opCond(String tipo){
         //operações <= ou >=
         //verifica se ja foi declarado
         if(tokenList.get(head+1).equals("Identificador")){//ver o prox token depois < e > para saber se é identificador
-            Estrutura b = new Estrutura();
+             Estrutura b = new Estrutura();
+            //verifica se ja foi declarado 
             if(semantico.procurarPalavra(valueList.get(head+1))!=null){// verifica se ta na lista
                 b = semantico.procurarPalavra(valueList.get(head+1));
-                if(tipo.equals("numero")&& b.getTipo().equals("numero")){//operações < > <= >= so podem ser feitas por inteiro e real e anbos iguais concertar isso ainda
-                    //ok bateu, mas tem que corrigir pq tem q ser real < real ou inteiro < inteiro
+                if(tipo.equals("real")&& b.getTipo().equals("real") || tipo.equals("inteiro")&& b.getTipo().equals("inteiro")){//operações < > <= >= so podem ser feitas por inteiro e real e anbos iguais concertar isso ainda
+                    
                 }else{
-                    imprimeErroSemantico("Erro tipos incompativeis de operandos: "+ tipo + " e "+ b.getTipo());
+                    imprimeErroSemantico("Erro tipos incompativeis de operandos: "+tipo+" e "+b.getTipo());
                 } 
             }else{
                 imprimeErroSemantico("Erro "+valueList.get(head+1)+" não foi declarado");
              }
          //se não for variavel, valor bruto 4 ou 4.3   
         }else if(tokenList.get(head+1).equals("Numero")){
-            if(tipo.equals("numero")&& tokenList.get(head+1).equals("Numero")){//operações < > <= >= so podem ser feitas por inteiro e real e anbos iguais concertar isso ainda
+            String num = semantico.inteiro_real(valueList.get(head+1));
+            if(tipo.equals("real")&& num.equals("real") || tipo.equals("inteiro")&& num.equals("inteiro")){//operações < > <= >= so podem ser feitas por inteiro e real e anbos iguais concertar isso ainda
                     //ok bateu, mas tem que corrigir pq tem q ser real < real ou inteiro < inteiro não pode ser real > inteiro
             }else{
-                    imprimeErroSemantico("Erro tipos incompativeis de operandos: "+ tipo + " e "+ tokenList.get(head+1));
+                    imprimeErroSemantico("Erro tipos incompativeis de operandos: "+ tipo + " e "+ valueList.get(head+1));
             } 
         }
         head++;
@@ -1409,7 +1415,12 @@ private String operando(){
             }
         } else{
             head++;
-            tipo = semantico.procurarPalavra(valueList.get(head-1)).getTipo();
+            if(semantico.procurarPalavra(valueList.get(head-1))!=null){
+                //não sei pq mas tava dando null point exception aqui e som isso n ta dando meis
+                tipo = semantico.procurarPalavra(valueList.get(head-1)).getTipo();
+            }else{
+                tipo = null;
+            }
             if(tipo == null){
                     imprimeErroSemantico("Erro "+valueList.get(head-1)+" não foi declarado");
                     return "Variavel não inicializada";
@@ -1506,7 +1517,7 @@ private boolean incremento(){
                 if(s.getToken().equals("constante")){
                      imprimeErroSemantico("Erro constante não pode receber atribuições fora do bloco constantes");
                 }
-                if( s.getTipo().equals("numero")){
+                if( s.getTipo().equals("inteiro")|| s.getTipo().equals("real")){
                     valido=true;
                 }  
            }else{
@@ -1534,7 +1545,7 @@ private boolean incremento(){
                     if(s.getToken().equals("constante")){
                          imprimeErroSemantico("Erro constante não pode receber atribuições fora do bloco constantes");
                     }
-                    if( s.getTipo().equals("numero")){
+                    if( s.getTipo().equals("inteiro")|| s.getTipo().equals("real")){
                         valido=true;
                     }  
                }else{

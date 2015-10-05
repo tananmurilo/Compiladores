@@ -1,6 +1,6 @@
 constantes
 {
-	real k=0;	
+	real k=1.6;	
 	inteiro j=3;
 	cadeia sorte = "adasdasdas";
 	char ch ='a';
