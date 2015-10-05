@@ -1,5 +1,6 @@
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.SpringLayout;
 /**
  *
  * @author mateus
@@ -47,6 +48,7 @@ public String getErros(){
     for(String p:erros){
         ret= ret+p+"\n";
     }
+    ret= ret+"\n"+"Saída do Semantico:\n";
     for(String k:errosSemanticos){
         ret= ret+k+"\n";
     }
@@ -222,21 +224,55 @@ public boolean atr(){
         
         if(valueList.get(head+1).equals(".")){
             if(aceReg()) {
+                //semantico verificar tipo
+                String nome= valueList.get(head-3)+"."+valueList.get(head-1); 
+                System.out.println(nome);
+                
+                 //sintatico
                 if(valueList.get(head).equals("=")){
+                    //semantico
+                    if(semantico.procurarPalavra(nome)!=null){
+                        tipo = semantico.procurarPalavra(nome).getTipo();
+                    }else{
+                         imprimeErroSemantico("Erro "+nome+" não foi declarado.");
+
+                    }
                     head++;
                     if(valorRetornado(tipo)) return true;
                 }
             } 
         }else if(valueList.get(head+1).equals("[")){
+            String nome= valueList.get(head);
             if(aceVM()) {
+                 
                 if(valueList.get(head).equals("=")){
+                    //semantico verificar tipo
+                    
+                    System.out.println(nome);
+                    
+                    if(semantico.procurarPalavra(nome)!=null){
+                        tipo = semantico.procurarPalavra(nome).getTipo();
+                    }else{
+                         imprimeErroSemantico("Erro "+nome+" não foi declarado.");
+
+                    }
                     head++;
                     if(valorRetornado(tipo)) return true;
                 }
             } 
         } else{
+           String nome= valueList.get(head);
             head++;
             if(valueList.get(head).equals("=")){
+                //semantico verificar tipo
+                    System.out.println(nome);
+                
+                    if(semantico.procurarPalavra(nome)!=null){
+                        tipo = semantico.procurarPalavra(nome).getTipo();
+                    }else{
+                         imprimeErroSemantico("Erro "+nome+" não foi declarado.");
+
+                    }
                 head++;
                 if(valorRetornado(tipo)) return true;
             }
@@ -250,16 +286,63 @@ public boolean valorRetornado(String tipo){
         if(tokenList.get(head).equals("Identificador")) {
             if(valueList.get(head+1).equals(".")){ // lendo à frente para decidir em qual função entrar
                 if(aceReg()) {
+                    //semantico verificar tipo
+                    String nome =valueList.get(head-3)+"."+valueList.get(head-1);
+                    String tipoAt="nulo";
+                    //System.out.println("acereg depois da atr "+nome);
+                    if(semantico.procurarPalavra(nome)!=null){
+                        tipoAt = semantico.procurarPalavra(nome).getTipo();
+                    }else{
+                        //else if pq se mostar q n foi declarada n aparece tipos incompativeis
+                        imprimeErroSemantico("Erro "+nome+" não foi declarado.");
+                    }
+                    if(!tipo.equals(tipoAt)){
+                        imprimeErroSemantico("Erro tipos incompativeis de atribuição, "+tipo+" e "+tipoAt);
+                    }
                     return true;
                 } 
             }else if(valueList.get(head+1).equals("+")|| valueList.get(head+1).equals("-")|| valueList.get(head+1).equals("*")|| valueList.get(head+1).equals("/")){
+                //falta fazer o semantico
                 if(operacoes()) {
                     return true;
                 } 
             }else if(valueList.get(head+1).equals("(")){ // lendo à frente para decidir em qual função entrar
+                 //semantico verificar tipo
+                    String nome =valueList.get(head);
+                    String tipoAt="nulo";
+                    System.out.println("funcao depois da atr "+nome);
+                    if(semantico.procurarPalavra(nome)!=null){
+                        System.out.println(semantico.procurarPalavra(nome));
+                        tipoAt = semantico.procurarPalavra(nome).getTipo();
+                        System.out.println(tipoAt);
+                    }else {
+                        //else if pq se mostar q n foi declarada n aparece tipos incompativeis
+                        imprimeErroSemantico("Erro "+nome+" não foi declarado.");
+                    }
+                    if(!tipo.equals(tipoAt)){
+                        imprimeErroSemantico("Erro tipos incompativeis de atribuição,"+tipo+" e "+tipoAt);
+                    }
                 return chamadaFuncao();
             } else if(valueList.get(head+1).equals("[")){ // lendo à frente para decidir em qual função entrar
-                return aceVM();
+                String nome =valueList.get(head);
+                if(aceVM()){
+                    //semantico verificar tipo
+                   
+                    //System.out.println("vet/mat depois da atr "+nome);
+                    String tipoAt="nulo";
+                   
+                    if(semantico.procurarPalavra(nome)!=null){
+                        tipoAt = semantico.procurarPalavra(nome).getTipo();
+                    }else{
+                        //else if pq se mostar q n foi declarada n aparece tipos incompativeis
+                        imprimeErroSemantico("Erro "+nome+" não foi declarado.");
+                    }
+                    if(!tipo.equals(tipoAt)){
+                        imprimeErroSemantico("Erro tipos incompativeis de atribuição, "+tipo+" e "+tipoAt);
+                    }
+                   return true; 
+                }else return false;
+                
             } else{ 
                     head++;
                     return true;
@@ -267,9 +350,16 @@ public boolean valorRetornado(String tipo){
         } else if(tokenList.get(head).equals("Numero")) {  
            if(valueList.get(head+1).equals("+")|| valueList.get(head+1).equals("-")|| valueList.get(head+1).equals("*")|| valueList.get(head+1).equals("/")){
                 if(operacoes()) {
+                    //falta fazer
                     return true;
                 } 
             } else {
+               //semantico verificar tipo
+                    //System.out.println("numeros depois de atr"+valueList.get(head));
+                    String tipoAt=semantico.inteiro_real(valueList.get(head));
+                    if(!tipo.equals(tipoAt)){
+                        imprimeErroSemantico("Erro tipos incompativeis de atribuição, "+tipo+" e "+tipoAt);
+                    }
                 head++;
                 return true;
             }
@@ -1323,11 +1413,11 @@ private boolean valNum(){
         return true;
     } else if(tokenList.get(head).equals("Identificador")){
         String nome="";
-        System.out.println("identificador  numerico");
+        //System.out.println("identificador  numerico");
         if(valueList.get(head+1).equals(".")){
            
           if(aceReg()){
-            System.out.println("aceRegist");
+            //System.out.println("aceRegist");
             nome= valueList.get(head)+"."+valueList.get(head+2); 
             System.out.println(nome);
             if(nome!=""){
@@ -1342,7 +1432,7 @@ private boolean valNum(){
                        }else if(tipo.equals("inteiro")||tipo.equals("real")){
                             //System.out.println("real ou inteiro");
                        }else{
-                           imprimeErroSemantico("Erro esperado inteiro ou real. "+nome+" é "+tipo);
+                           imprimeErroSemantico("Erro esperado inteiro ou real na operação. "+nome+" é "+tipo);
                        }
              }
             return true;
@@ -1362,7 +1452,7 @@ private boolean valNum(){
                        }else if(tipo.equals("inteiro")||tipo.equals("real")){
                             //System.out.println("real ou inteiro");
                        }else{
-                           imprimeErroSemantico("Erro esperado inteiro ou real. "+nome+" é "+tipo);
+                           imprimeErroSemantico("Erro esperado inteiro ou real na operação. "+nome+" é "+tipo);
                        }
                 }
                 return true;
@@ -1382,7 +1472,7 @@ private boolean valNum(){
                        }else if(tipo.equals("inteiro")||tipo.equals("real")){
                             //System.out.println("real ou inteiro");
                        }else{
-                           imprimeErroSemantico("Erro esperado inteiro ou real. "+nome+" é "+tipo);
+                           imprimeErroSemantico("Erro esperado inteiro ou real na operação. "+nome+" é "+tipo);
                        }
                 }
             head++;
