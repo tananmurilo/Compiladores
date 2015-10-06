@@ -249,12 +249,16 @@ public boolean atr(){
                     //semantico verificar tipo
                     
                     System.out.println(nome);
-                    
+                    String token = "";
                     if(semantico.procurarPalavra(nome)!=null){
                         tipo = semantico.procurarPalavra(nome).getTipo();
+                        token = semantico.procurarPalavra(nome).getToken();
                     }else{
                          imprimeErroSemantico("Erro "+nome+" não foi declarado.");
 
+                    }
+                    if(token.equals("constante")){
+                        imprimeErroSemantico("Erro Constante não pode receber atribuição fora do seu bloco.");
                     }
                     head++;
                     if(valorRetornado(tipo)) return true;
@@ -266,12 +270,16 @@ public boolean atr(){
             if(valueList.get(head).equals("=")){
                 //semantico verificar tipo
                     System.out.println(nome);
-                
+                    String token = "";
                     if(semantico.procurarPalavra(nome)!=null){
                         tipo = semantico.procurarPalavra(nome).getTipo();
+                        token = semantico.procurarPalavra(nome).getToken();
                     }else{
                          imprimeErroSemantico("Erro "+nome+" não foi declarado.");
 
+                    }
+                    if(token.equals("constante")){
+                        imprimeErroSemantico("Erro Constanta não pode receber atribuição fora do seu bloco.");
                     }
                 head++;
                 if(valorRetornado(tipo)) return true;
