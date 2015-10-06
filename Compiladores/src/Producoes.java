@@ -209,9 +209,11 @@ private boolean c(){
 
 public boolean inteiro(){
     if(tokenList.get(head).equals("Numero")) {
-        float valor = Float.parseFloat(valueList.get(head));
-        if((valor%1) == 0){
-            head++;
+        String valor = semantico.inteiro_real(valueList.get(head));
+        //float valor = Float.parseFloat(valueList.get(head));
+        head++;
+        if(valor.equals("inteiro")){
+            
             return true;
         } else return imprimeErro("Tipos incompatíveis: flutuante aonde deveria ser inteiro");
     }
@@ -279,7 +281,7 @@ public boolean atr(){
 
                     }
                     if(token.equals("constante")){
-                        imprimeErroSemantico("Erro Constanta não pode receber atribuição fora do seu bloco.");
+                        imprimeErroSemantico("Erro Constante não pode receber atribuição fora do seu bloco.");
                     }
                 head++;
                 if(valorRetornado(tipo)) return true;
@@ -1385,6 +1387,135 @@ private boolean aceVM(){
     }
     return false;
 }
+
+private String valorNumericoTipo(int headPos){
+    String tipo=null;
+    if(tokenList.get(headPos).equals("Numero")) {
+        //inteiro ou real n precisa verificar 
+        tipo = semantico.inteiro_real(valueList.get(headPos));
+        
+        headPos++;
+        
+    } else if(tokenList.get(headPos).equals("Identificador")){
+        String nome="";
+        //System.out.println("identificador  numerico");
+        if(valueList.get(headPos+1).equals(".")){
+            
+            //acesso a registrador
+            if(tokenList.get(headPos).equals("Identificador")){
+                headPos++;
+                if(valueList.get(headPos).equals(".")){
+                    headPos++;
+                    if(tokenList.get(headPos).equals("Identificador")){
+                         //System.out.println("aceRegist");
+                            nome= valueList.get(headPos-2)+"."+valueList.get(headPos); 
+                            System.out.println(nome);
+                            if(nome!=""){
+
+                                       if(semantico.procurarPalavra(nome)!=null){
+                                            tipo = semantico.procurarPalavra(nome).getTipo();
+                                       }
+
+                                       if(tipo == null){
+                                           imprimeErroSemantico("Erro "+nome+" não foi declarado.");
+
+                                       }else if(tipo.equals("inteiro")||tipo.equals("real")){
+                                            //System.out.println("real ou inteiro");
+                                       }else{
+                                           imprimeErroSemantico("Erro esperado inteiro ou real na operação. "+nome+" é "+tipo);
+                                       }
+                             }
+                        
+                        headPos++;
+                       
+                    }
+                }
+            }
+
+        } else if (valueList.get(headPos+1).equals("[")){
+            if(tokenList.get(headPos).equals("Identificador")){//aceVM
+                nome = valueList.get(headPos);
+                headPos++;
+                if(valueList.get(headPos).equals("[")){//acessVet
+                    headPos++;
+                    String num = semantico.inteiro_real(valueList.get(headPos));
+                    if(num.equals("inteiro")){//inteiro
+                        headPos++;
+                        if(valueList.get(headPos).equals("]")){
+                            headPos++;//dedasd
+                            if(valueList.get(headPos).equals("[")){//declaraMatriz
+                                headPos++;
+                                 String num2 = semantico.inteiro_real(valueList.get(headPos));
+                                 if(num2.equals("inteiro")){//inteiro
+                                        headPos++;
+                                    if(valueList.get(headPos).equals("]")){//matriz ok
+                                        
+                                        if(nome!=""){
+
+                                               if(semantico.procurarPalavra(nome)!=null){
+                                                    tipo = semantico.procurarPalavra(nome).getTipo();
+                                               }
+
+                                               if(tipo == null){
+                                                   imprimeErroSemantico("Erro "+nome+" não foi declarado.");
+
+                                               }else if(tipo.equals("inteiro")||tipo.equals("real")){
+                                                    //System.out.println("real ou inteiro");
+                                               }else{
+                                                   imprimeErroSemantico("Erro esperado inteiro ou real na operação. "+nome+" é "+tipo);
+                                               }
+                                        }
+                                        
+                                        headPos++;
+                                        //chamar verificação tipo para mat
+                                    }
+                                }
+                              
+                            }else{//vetor
+                                 if(nome!=""){
+
+                                               if(semantico.procurarPalavra(nome)!=null){
+                                                    tipo = semantico.procurarPalavra(nome).getTipo();
+                                               }
+
+                                               if(tipo == null){
+                                                   imprimeErroSemantico("Erro "+nome+" não foi declarado.");
+
+                                               }else if(tipo.equals("inteiro")||tipo.equals("real")){
+                                                    //System.out.println("real ou inteiro");
+                                               }else{
+                                                   imprimeErroSemantico("Erro esperado inteiro ou real na operação. "+nome+" é "+tipo);
+                                               }
+                                        }
+                            }
+                        }
+                    }
+                }
+            }
+        } else{
+            
+             nome = valueList.get(headPos);
+                if(nome!=""){
+                       
+                       if(semantico.procurarPalavra(nome)!=null){
+                            tipo = semantico.procurarPalavra(nome).getTipo();
+                       }
+                      
+                       if(tipo == null){
+                           imprimeErroSemantico("Erro "+nome+" não foi declarado.");
+
+                       }else if(tipo.equals("inteiro")||tipo.equals("real")){
+                            //System.out.println("real ou inteiro");
+                       }else{
+                           imprimeErroSemantico("Erro esperado inteiro ou real na operação. "+nome+" é "+tipo);
+                       }
+                }
+            headPos++;
+            
+        }
+    } 
+    return tipo;
+}
 /*
 <Operacoes> ::= <ValNum><ValNumAcomp> |   (<ValNum><operandoOperacoes2> 
 <ValNumAcomp> ::= <operandoOperacoes> | ƛ
@@ -1395,17 +1526,21 @@ private boolean aceVM(){
 <ValNum>::= <Identificador> | <Número>
 */
 public boolean operacoes(){ // falta testa mais
-    
+    int headPos =  head;
+    String tipo="";
     if(valNum()){
-        
-        if(valNumAcomp()){
+        //System.out.println("tipo do valor numerico "+valorNumericoTipo(headPos));
+        tipo = valorNumericoTipo(headPos);//verificação de tipos para valores numericos usar o indice do head com o valor antes de antes de entrar na função valNum()
+        if(valNumAcomp(tipo)){
             //System.out.println("head parou no "+head);
             return true;
         }
     }else if(valueList.get(head).equals("(")){
         head++;
+        headPos = head;
         if(valNum()){
-            if(operandoOperacoes2()){
+            tipo = valorNumericoTipo(headPos);
+            if(operandoOperacoes2(tipo)){
                 System.out.println("head parou no "+head);
                 return true;
                 
@@ -1416,73 +1551,23 @@ public boolean operacoes(){ // falta testa mais
 }
 private boolean valNum(){
     if(tokenList.get(head).equals("Numero")) {
-        //inteiro ou real n precisa verificar 
+        
         head++;
         return true;
     } else if(tokenList.get(head).equals("Identificador")){
-        String nome="";
+       
         //System.out.println("identificador  numerico");
         if(valueList.get(head+1).equals(".")){
            
           if(aceReg()){
-            //System.out.println("aceRegist");
-            nome= valueList.get(head)+"."+valueList.get(head+2); 
-            System.out.println(nome);
-            if(nome!=""){
-                       String tipo=null;
-                       if(semantico.procurarPalavra(nome)!=null){
-                            tipo = semantico.procurarPalavra(nome).getTipo();
-                       }
-                      
-                       if(tipo == null){
-                           imprimeErroSemantico("Erro "+nome+" não foi declarado.");
-
-                       }else if(tipo.equals("inteiro")||tipo.equals("real")){
-                            //System.out.println("real ou inteiro");
-                       }else{
-                           imprimeErroSemantico("Erro esperado inteiro ou real na operação. "+nome+" é "+tipo);
-                       }
-             }
+           
             return true;
           }
         } else if (valueList.get(head+1).equals("[")){
              if(aceVM()){
-                nome = valueList.get(head);
-                if(nome!=""){
-                       String tipo=null;
-                       if(semantico.procurarPalavra(nome)!=null){
-                            tipo = semantico.procurarPalavra(nome).getTipo();
-                       }
-                      
-                       if(tipo == null){
-                           imprimeErroSemantico("Erro "+nome+" não foi declarado.");
-
-                       }else if(tipo.equals("inteiro")||tipo.equals("real")){
-                            //System.out.println("real ou inteiro");
-                       }else{
-                           imprimeErroSemantico("Erro esperado inteiro ou real na operação. "+nome+" é "+tipo);
-                       }
-                }
                 return true;
             }
         } else{
-            
-             nome = valueList.get(head);
-                if(nome!=""){
-                       String tipo=null;
-                       if(semantico.procurarPalavra(nome)!=null){
-                            tipo = semantico.procurarPalavra(nome).getTipo();
-                       }
-                      
-                       if(tipo == null){
-                           imprimeErroSemantico("Erro "+nome+" não foi declarado.");
-
-                       }else if(tipo.equals("inteiro")||tipo.equals("real")){
-                            //System.out.println("real ou inteiro");
-                       }else{
-                           imprimeErroSemantico("Erro esperado inteiro ou real na operação. "+nome+" é "+tipo);
-                       }
-                }
             head++;
             return true;
         }
@@ -1492,24 +1577,24 @@ private boolean valNum(){
     return false;
 }
 //<ValNumAcomp> ::= <operandoOperacoes> | ƛ
-private boolean valNumAcomp(){
+private boolean valNumAcomp(String tipo){
     if(valueList.get(head).equals("+") || valueList.get(head).equals("-") || valueList.get(head).equals("*") || valueList.get(head).equals("/")){
-        return operandoOperacoes();
+        return operandoOperacoes(tipo);
     }else {
         return true;
     }
 }
-private boolean operandoOperacoes(){
-    if(opn()){
+private boolean operandoOperacoes(String tipo){
+    if(opn(tipo)){
         return operacoes();
     }else return false;
 }
 //<operandoOperacoes2>::= <operandoOperacoes>) <operandoOperacoesAcomp>  | )
-private boolean operandoOperacoes2(){
-    if(operandoOperacoes()){
+private boolean operandoOperacoes2(String tipo){
+    if(operandoOperacoes(tipo)){
         if(valueList.get(head).equals(")")){
            head++;
-           if(operandoOperacoesAcomp()){
+           if(operandoOperacoesAcomp(tipo)){
                return true;
            }
         }
@@ -1520,17 +1605,96 @@ private boolean operandoOperacoes2(){
     return false;
 }
 //<operandoOperacoesAcomp>::= <operandoOperacoes> |  ƛ
-private boolean operandoOperacoesAcomp(){
+private boolean operandoOperacoesAcomp(String tipo){
     if(valueList.get(head).equals("+") || valueList.get(head).equals("-") || valueList.get(head).equals("*") || valueList.get(head).equals("/")){
-        return operandoOperacoes();
+        return operandoOperacoes(tipo);
     }else {
         return true;
     }
 }
 
-private boolean opn(){
+private boolean opn(String tipo){
     //verificar o valor anterior e seguinte de opn pra ver se é real ou inteiro;
     if(valueList.get(head).equals("+")||valueList.get(head).equals("-")||valueList.get(head).equals("*")||valueList.get(head).equals("/")){
+        if(tokenList.get(head+1).equals("Numero")){
+            String n = semantico.inteiro_real(valueList.get(head+1));
+            if((n.equals("inteiro")&&tipo.equals("inteiro"))||(n.equals("real")&&tipo.equals("real"))){
+                //iguais
+            }else{
+                imprimeErroSemantico("Erro tipos incompativeis em operações. "+tipo+" e "+n);
+            }
+        }else if(tokenList.get(head+1).equals("Identificador")){
+               String nome = valueList.get(head+1);
+               String tipo2=null;
+               if(semantico.procurarPalavra(nome)!=null){
+                    tipo2 = semantico.procurarPalavra(nome).getTipo();
+                    
+               }
+
+               if(tipo2 == null){
+                   //não precisa mostrar isso para n gerar duplicação do mesmo erro, ele é verificado em outros lugares em operações
+                   //imprimeErroSemantico("Erro "+nome+" não foi declarado.");
+
+               }else if((tipo2.equals("inteiro")&&tipo.equals("inteiro"))||(tipo2.equals("real")&&tipo.equals("real"))){
+                    //ok
+               }else{
+                   imprimeErroSemantico("Erro tipos incompativeis em operações. "+tipo+" e "+tipo2);
+               }
+        }else if(valueList.get(head+1).equals("(")){//operações do tipo a + (5+6)+4; verificar tipo do a com 5
+            if(tokenList.get(head+2).equals("Numero")){
+                String n = semantico.inteiro_real(valueList.get(head+2));
+                if((n.equals("inteiro")&&tipo.equals("inteiro"))||(n.equals("real")&&tipo.equals("real"))){
+                    //iguais
+                }else{
+                    imprimeErroSemantico("Erro tipos incompativeis em operações. "+tipo+" e "+n);
+                }
+            }else if(tokenList.get(head+2).equals("Identificador")){
+                   String nome = valueList.get(head+2);
+                   String tipo2=null;
+                   if(semantico.procurarPalavra(nome)!=null){
+                        tipo2 = semantico.procurarPalavra(nome).getTipo();
+
+                   }
+
+                   if(tipo2 == null){
+                       //não precisa mostrar isso para n gerar duplicação do mesmo erro, ele é verificado em outros lugares em operações
+                       //imprimeErroSemantico("Erro "+nome+" não foi declarado.");
+
+                   }else if((tipo2.equals("inteiro")&&tipo.equals("inteiro"))||(tipo2.equals("real")&&tipo.equals("real"))){
+                        //ok
+                   }else{
+                       imprimeErroSemantico("Erro tipos incompativeis em operações. "+tipo+" e "+tipo2);
+                   }
+             }
+        }
+            if(valueList.get(head-1).equals(")")){
+                if(tokenList.get(head-2).equals("Numero")){
+                    String n = semantico.inteiro_real(valueList.get(head-2));
+                    if((n.equals("inteiro")&&tipo.equals("inteiro"))||(n.equals("real")&&tipo.equals("real"))){
+                        //iguais
+                    }else{
+                        imprimeErroSemantico("Erro tipos incompativeis em operações. "+n+" e "+tipo);
+                    }
+                }else if(tokenList.get(head-2).equals("Identificador")){
+                       String nome = valueList.get(head+2);
+                       String tipo2=null;
+                       if(semantico.procurarPalavra(nome)!=null){
+                            tipo2 = semantico.procurarPalavra(nome).getTipo();
+
+                       }
+
+                       if(tipo2 == null){
+                           //não precisa mostrar isso para n gerar duplicação do mesmo erro, ele é verificado em outros lugares em operações
+                           //imprimeErroSemantico("Erro "+nome+" não foi declarado.");
+
+                       }else if((tipo2.equals("inteiro")&&tipo.equals("inteiro"))||(tipo2.equals("real")&&tipo.equals("real"))){
+                            //ok
+                       }else{
+                           imprimeErroSemantico("Erro tipos incompativeis em operações. "+tipo2+" e "+tipo);
+                       }
+                 }
+            }
+        
         head++;
         return true;
     }else return false;
