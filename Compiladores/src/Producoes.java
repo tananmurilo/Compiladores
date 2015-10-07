@@ -1090,6 +1090,11 @@ private boolean opCond(String tipo){
             }else{
                     imprimeErroSemantico("Erro tipos incompativeis de operandos: "+tipo+" e "+num);
             } 
+        }else{
+            String num = tokenList.get(head+1);
+            
+            imprimeErroSemantico("Erro tipos incompativeis de operandos: "+tipo+" e "+num);
+            
         }
         head++;
         return true;
