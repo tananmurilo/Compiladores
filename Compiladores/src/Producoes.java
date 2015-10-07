@@ -312,7 +312,19 @@ public boolean valorRetornado(String tipo){
                     return true;
                 } 
             }else if(valueList.get(head+1).equals("+")|| valueList.get(head+1).equals("-")|| valueList.get(head+1).equals("*")|| valueList.get(head+1).equals("/")){
-                //falta fazer o semantico
+                ////semantico
+                 String nome =valueList.get(head);
+                 String tipoAt="nulo";
+                   
+                    if(semantico.procurarPalavra(nome)!=null){
+                        tipoAt = semantico.procurarPalavra(nome).getTipo();
+                    }else{
+                        //Não precisa dizer q n foi declarada pq la em operações vai fazer isso
+                        //imprimeErroSemantico("Erro "+nome+" não foi declarado.");
+                    }
+                    if(!tipo.equals(tipoAt)){
+                        imprimeErroSemantico("Erro tipos incompativeis de atribuição, "+tipo+" e "+tipoAt);
+                    }
                 if(operacoes()) {
                     return true;
                 } 
@@ -359,7 +371,14 @@ public boolean valorRetornado(String tipo){
             }
         } else if(tokenList.get(head).equals("Numero")) {  
            if(valueList.get(head+1).equals("+")|| valueList.get(head+1).equals("-")|| valueList.get(head+1).equals("*")|| valueList.get(head+1).equals("/")){
-                if(operacoes()) {
+                ////semantico
+                
+                    String tipoAt=semantico.inteiro_real(valueList.get(head));
+                    if(!tipo.equals(tipoAt)){
+                        imprimeErroSemantico("Erro tipos incompativeis de atribuição, "+tipo+" e "+tipoAt);
+                    }
+               
+               if(operacoes()) {
                     //falta fazer
                     return true;
                 } 
