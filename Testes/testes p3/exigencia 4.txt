@@ -12,6 +12,12 @@ funcao inteiro x(inteiro a, real b){
 	retorno 33;
 }
 
+
+funcao inteiro y(inteiro a, real b){
+
+	retorno 3.3;
+}
+
 algoritmo
 {
     		

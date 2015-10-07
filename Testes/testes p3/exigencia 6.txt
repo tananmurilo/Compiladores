@@ -9,6 +9,7 @@ variaveis
 
 algoritmo
 {
-    se((3>4) && (4<5))	{
-	}	
+    se(3>4 && 4<5)	{
+	} senao {
+}	
 }

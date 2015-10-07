@@ -9,7 +9,7 @@ constantes
 }
 variaveis
 {
-	inteiro cont = 0;
+	inteiro valor= 0;
 	real valor = 4.6;
 	real ch= 4.6;
 
@@ -18,8 +18,8 @@ variaveis
 algoritmo
 {	
 	variaveis{
-		char k= "ola";
-		char k= "ola mundo";
+		cadeia a= "ola";
+		cadeia a= "ola mundo";
 		inteiro j = 4.6;
 	}
 	

@@ -18,13 +18,13 @@ algoritmo
 {	
 	variaveis{
 		char cont2 = "ola";
-		inteiro valor = 4.6;
+		inteiro valor = 4;
 	}
 	valor = valor + 3.0; // tem que dar erro pois a variável 'valor' mais próxima é inteiro
 	
 	se(valor<10){
 		variaveis{
-			real cont2 = 0;
+			real cont2 = 0.3;
 			real x = 4.6;
 			real teste = cont2; // cont 2 tem que ser real e não pode dar erro aqui
 			
@@ -32,5 +32,6 @@ algoritmo
 		
 	}
 	
+	valor = valor + 2; // tem que voltar a ser inteiro e nao dar erro aqui
 
 }

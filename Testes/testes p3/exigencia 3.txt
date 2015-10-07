@@ -12,6 +12,7 @@ funcao vazio x(inteiro a, real b){
 
 algoritmo
 {
-    	a (23, 30);
-	a (2.3, 3);
+    	x (23, 30);
+	x (2.3, 3);
+	x (2, 3.3);
 }
