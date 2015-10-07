@@ -323,7 +323,19 @@ public boolean valorRetornado(String tipo){
                     return true;
                 } 
             }else if(valueList.get(head+1).equals("+")|| valueList.get(head+1).equals("-")|| valueList.get(head+1).equals("*")|| valueList.get(head+1).equals("/")){
-                //falta fazer o semantico
+                ////semantico
+                 String nome =valueList.get(head);
+                 String tipoAt="nulo";
+                   
+                    if(semantico.procurarPalavra(nome)!=null){
+                        tipoAt = semantico.procurarPalavra(nome).getTipo();
+                    }else{
+                        //Não precisa dizer q n foi declarada pq la em operações vai fazer isso
+                        //imprimeErroSemantico("Erro "+nome+" não foi declarado.");
+                    }
+                    if(!tipo.equals(tipoAt)){
+                        imprimeErroSemantico("Erro tipos incompativeis de atribuição, "+tipo+" e "+tipoAt);
+                    }
                 if(operacoes()) {
                     return true;
                 } 
@@ -364,13 +376,36 @@ public boolean valorRetornado(String tipo){
                    return true; 
                 }else return false;
                 
-            } else{ 
+            } else{
+                //semantico verificar tipo
+                    String nome =valueList.get(head);
+                    String tipoAt="nulo";
+                    //System.out.println("atribui"+nome);
+                    if(semantico.procurarPalavra(nome)!=null){
+                        System.out.println(semantico.procurarPalavra(nome));
+                        tipoAt = semantico.procurarPalavra(nome).getTipo();
+                        System.out.println(tipoAt);
+                    }else {
+                        //else if pq se mostar q n foi declarada n aparece tipos incompativeis
+                        imprimeErroSemantico("Erro "+nome+" não foi declarado.");
+                    }
+                    if(!tipo.equals(tipoAt)){
+                        imprimeErroSemantico("Erro tipos incompativeis de atribuição,"+tipo+" e "+tipoAt);
+                    }
+                
                     head++;
                     return true;
             }
         } else if(tokenList.get(head).equals("Numero")) {  
            if(valueList.get(head+1).equals("+")|| valueList.get(head+1).equals("-")|| valueList.get(head+1).equals("*")|| valueList.get(head+1).equals("/")){
-                if(operacoes()) {
+                ////semantico
+                
+                    String tipoAt=semantico.inteiro_real(valueList.get(head));
+                    if(!tipo.equals(tipoAt)){
+                        imprimeErroSemantico("Erro tipos incompativeis de atribuição, "+tipo+" e "+tipoAt);
+                    }
+               
+               if(operacoes()) {
                     //falta fazer
                     return true;
                 } 
@@ -385,6 +420,16 @@ public boolean valorRetornado(String tipo){
                 return true;
             }
         } else if(!valores().equals("Erro")) {
+                //semantico verificar tipo
+                    //String nome =valueList.get(head);
+                    String tipoAt=tokenList.get(head);
+                    //System.out.println("atribui"+nome);
+                    
+                    if(!tipo.equals(tipoAt)){
+                        imprimeErroSemantico("Erro tipos incompativeis de atribuição,"+tipo+" e "+tipoAt);
+                    }
+                
+                    
                 return true;
         }
         return imprimeErro("Erro: um valor deve ser atribuido");
@@ -1663,10 +1708,17 @@ private boolean opn(String tipo){
                 imprimeErroSemantico("Erro tipos incompativeis em operações. "+tipo+" e "+n);
             }
         }else if(tokenList.get(head+1).equals("Identificador")){
-               String nome = valueList.get(head+1);
+            String nome="";
+            if(valueList.get(head+2).equals(".")&&tokenList.get(head+3).equals("Identificador")){
+                 nome = valueList.get(head+1)+"."+valueList.get(head+3);
+            }else{
+                 nome = valueList.get(head+1);
+            }
+              
                String tipo2=null;
                if(semantico.procurarPalavra(nome)!=null){
                     tipo2 = semantico.procurarPalavra(nome).getTipo();
+                    //System.out.println(semantico.procurarPalavra(nome).getToken());
                     
                }
 
@@ -1688,7 +1740,13 @@ private boolean opn(String tipo){
                     imprimeErroSemantico("Erro tipos incompativeis em operações. "+tipo+" e "+n);
                 }
             }else if(tokenList.get(head+2).equals("Identificador")){
-                   String nome = valueList.get(head+2);
+                    String nome="";
+                    if(valueList.get(head+3).equals(".")&&tokenList.get(head+4).equals("Identificador")){
+                         nome = valueList.get(head+2)+"."+valueList.get(head+4);
+                    }else{
+                         nome = valueList.get(head+2);
+                    }
+                   //String nome = valueList.get(head+2);
                    String tipo2=null;
                    if(semantico.procurarPalavra(nome)!=null){
                         tipo2 = semantico.procurarPalavra(nome).getTipo();
@@ -1715,7 +1773,13 @@ private boolean opn(String tipo){
                         imprimeErroSemantico("Erro tipos incompativeis em operações. "+n+" e "+tipo);
                     }
                 }else if(tokenList.get(head-2).equals("Identificador")){
-                       String nome = valueList.get(head+2);
+                       String nome="";
+                        if(valueList.get(head-4).equals(".")&&tokenList.get(head-2).equals("Identificador")){
+                             nome = valueList.get(head-4)+"."+valueList.get(head-2);
+                        }else{ 
+                             nome = valueList.get(head-2);
+                        }
+                      // String nome = valueList.get(head+2);
                        String tipo2=null;
                        if(semantico.procurarPalavra(nome)!=null){
                             tipo2 = semantico.procurarPalavra(nome).getTipo();

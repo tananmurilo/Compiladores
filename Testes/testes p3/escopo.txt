@@ -1,0 +1,43 @@
+registro casa{
+	inteiro largura;
+	real altura;
+}
+constantes
+{
+	real k=1.6;	
+	inteiro j=3;
+	cadeia sorte = "adasdasdas";
+	char ch ='a';
+}
+variaveis
+{
+	inteiro cont = 0;
+	real valor = 4.6;
+
+
+}
+funcao inteiro teste(){
+	retorno 23;
+}
+funcao real ler(){
+	retorno 4.5;
+}
+
+algoritmo
+{	
+	variaveis{
+		inteiro cont2 = 0;
+		real valor = 4.6;
+	}
+	valor = valor + 3.0;
+	
+	se(valor<10){
+		variaveis{
+			inteiro cont2 = 0;
+			real x = 4.6;
+		}
+		
+	}
+	
+
+}
