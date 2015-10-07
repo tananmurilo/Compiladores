@@ -422,10 +422,13 @@ public boolean valorRetornado(String tipo){
         } else if(!valores().equals("Erro")) {
                 //semantico verificar tipo
                     //String nome =valueList.get(head);
-                    String tipoAt=tokenList.get(head);
+                    String tipoAt=tokenList.get(head-1);
                     //System.out.println("atribui"+nome);
-                    
-                    if(!tipo.equals(tipoAt)){
+                    if(tipo.equalsIgnoreCase(tipoAt)){
+                        //imprimeErroSemantico("Erro tipos incompativeis de atribuição,"+tipo+" e "+tipoAt);
+                    }else if((tipo.equals("char")||tipo.equals("Caracter"))&&(tipoAt.equals("char")||tipoAt.equals("Caracter"))){
+                       
+                    }else {
                         imprimeErroSemantico("Erro tipos incompativeis de atribuição,"+tipo+" e "+tipoAt);
                     }
                 
