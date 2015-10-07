@@ -4,7 +4,7 @@ constantes
 }
 variaveis
 {
-	int a;
+	inteiro a;
 	real b;
 	cadeia h;
 }

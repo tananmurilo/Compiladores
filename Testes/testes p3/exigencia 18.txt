@@ -4,9 +4,9 @@ constantes
 }
 variaveis
 {
-	int a;
-	int b[3];
-	int c[3][3];
+	inteiro a;
+	inteiro b[3];
+	inteiro c[3][3];
 }
 
 algoritmo

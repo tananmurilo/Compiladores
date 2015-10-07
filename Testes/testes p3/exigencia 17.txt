@@ -4,7 +4,7 @@ constantes
 }
 variaveis
 {
-	int a;
+	inteiro a;
 }
 
 funcao vazio x(inteiro a, real b){
