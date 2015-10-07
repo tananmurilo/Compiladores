@@ -365,7 +365,23 @@ public boolean valorRetornado(String tipo){
                    return true; 
                 }else return false;
                 
-            } else{ 
+            } else{
+                //semantico verificar tipo
+                    String nome =valueList.get(head);
+                    String tipoAt="nulo";
+                    //System.out.println("atribui"+nome);
+                    if(semantico.procurarPalavra(nome)!=null){
+                        System.out.println(semantico.procurarPalavra(nome));
+                        tipoAt = semantico.procurarPalavra(nome).getTipo();
+                        System.out.println(tipoAt);
+                    }else {
+                        //else if pq se mostar q n foi declarada n aparece tipos incompativeis
+                        imprimeErroSemantico("Erro "+nome+" não foi declarado.");
+                    }
+                    if(!tipo.equals(tipoAt)){
+                        imprimeErroSemantico("Erro tipos incompativeis de atribuição,"+tipo+" e "+tipoAt);
+                    }
+                
                     head++;
                     return true;
             }
@@ -393,6 +409,16 @@ public boolean valorRetornado(String tipo){
                 return true;
             }
         } else if(!valores().equals("Erro")) {
+                //semantico verificar tipo
+                    //String nome =valueList.get(head);
+                    String tipoAt=tokenList.get(head);
+                    //System.out.println("atribui"+nome);
+                    
+                    if(!tipo.equals(tipoAt)){
+                        imprimeErroSemantico("Erro tipos incompativeis de atribuição,"+tipo+" e "+tipoAt);
+                    }
+                
+                    
                 return true;
         }
         return imprimeErro("Erro: um valor deve ser atribuido");
