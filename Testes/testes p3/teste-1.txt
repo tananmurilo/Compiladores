@@ -2,6 +2,7 @@ constantes
 {
 	real i=0;	
 	inteiro i=3;
+	inteiro t=3;
 }
 variaveis
 {
@@ -13,6 +14,14 @@ variaveis
 	inteiro d = c;
 	booleano e = d;
 	real real = d;
+}
+funcao vazio teste (){
+variaveis
+{
+	inteiro t=3;
+	inteiro t=3;
+}
+
 }
 algoritmo
 {

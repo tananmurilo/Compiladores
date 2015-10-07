@@ -14,7 +14,8 @@ public class Producoes {
    private List<String> erros;
    private List<String> errosSemanticos;
    private List<String[]> listaAtributos;
-   private List<String> listaParametros;
+   private List<String[]> listaParametros;
+   private List<String> listaParametrosChamada;
    private boolean erro;
    
    AnalizadorSemantico semantico =  new AnalizadorSemantico();
@@ -131,7 +132,7 @@ public boolean algoritmo(){
         head++;
         if(valueList.get(head).equals("{")){
             head++;
-            codigoGeral();
+            IniciaBloco();
             if(valueList.get(head).equals("}")){//o } no caso as constantes vão ser vazias
                 head++;
                 return true;
@@ -145,6 +146,16 @@ public boolean algoritmo(){
 <CG>::= <Variaveis><C> | <Comandos><C> | <CF>;<C>| <Atr>;<C> |<Incremento>;<C>| ƛ
 <C>::= <CG> | ƛ
 */
+
+//função para criar e remover escopos
+public boolean IniciaBloco(){
+    semantico.criaNovoEscopo();
+    boolean retorno = codigoGeral();
+    semantico.removeNovoEscopo();
+    return retorno;
+}
+
+
 public boolean codigoGeral(){ // falta fazer + testes
     if(valueList.get(head).equals("senao")) imprimeErro("senao deve vir após o término do se");
     if(valueList.get(head).equals("variaveis") && !valueList.get(head-1).equals("{")) imprimeErro("variaveis devem ser declaradas somente no início do bloco");
@@ -791,29 +802,36 @@ public boolean funcao(){
 private boolean funcao_vazioAcomp(String nome){
     if(valueList.get(head).equals(")")){
         head++;
-         if(valueList.get(head).equals("{")){
-             head++;
-             if(codigoGeral()){
+        semantico.inicializaFuncao(nome, "vazio", listaParametros, this);
+        if(valueList.get(head).equals("{")){
+            head++;
+            if(codigoGeral()){
                  if(valueList.get(head).equals("}")){
-                    semantico.inicializaFuncao(nome, "vazio", listaParametros, this);
+                    semantico.removeNovoEscopo();
                     head++;
                     return true;
                  }
-             }
-         }   
+            
+            }
+        }   
+        semantico.removeNovoEscopo();
+        
     }   else if(parametro()){
         if(valueList.get(head).equals(")")){
             head++;
-             if(valueList.get(head).equals("{")){
-                 head++;
-                 if(codigoGeral()){
+            semantico.inicializaFuncao(nome, "vazio", listaParametros, this);
+            if(valueList.get(head).equals("{")){
+                head++;
+                if(codigoGeral()){
                      if(valueList.get(head).equals("}")){
-                        semantico.inicializaFuncao(nome, "vazio", listaParametros, this);
+                        semantico.removeNovoEscopo();
                         head++;
                         return true;
                      }
-                 }
-             }   
+                
+                }
+            }  
+            semantico.removeNovoEscopo();
         }   
     }
     return false;
@@ -824,8 +842,9 @@ private boolean funcao_tipoAcomp(String nome, String retorno){
     
     if(valueList.get(head).equals(")")){
         head++;
+        semantico.inicializaFuncao(nome, retorno, listaParametros, this);
         if(valueList.get(head).equals("{")){
-            head++;
+            head++;            
             if(codigoGeral()){
                 if(valueList.get(head).equals("retorno")){
                    head++;
@@ -835,7 +854,7 @@ private boolean funcao_tipoAcomp(String nome, String retorno){
                         if(valueList.get(head).equals(";")){
                             head++;
                             if(valueList.get(head).equals("}")){
-                                semantico.inicializaFuncao(nome, retorno, listaParametros, this);
+                                semantico.removeNovoEscopo();
                                 head++;
                                 return true;
                             }
@@ -843,14 +862,18 @@ private boolean funcao_tipoAcomp(String nome, String retorno){
                     }
                 }  
             }
+            semantico.removeNovoEscopo();
             return imprimeErro("Erro: função sem retorno");
-         }   
+        } 
+        semantico.removeNovoEscopo();
+        
     }   else if(parametro()){
         if(valueList.get(head).equals(")")){
             head++;
-            if(valueList.get(head).equals("{")){
-                 head++;
-                 if(codigoGeral()){
+            semantico.inicializaFuncao(nome, retorno, listaParametros, this);
+            if(valueList.get(head).equals("{")){                
+                head++;
+                if(codigoGeral()){
                     if(valueList.get(head).equals("retorno")){
                         head++;
                         tipo=operando();
@@ -858,8 +881,8 @@ private boolean funcao_tipoAcomp(String nome, String retorno){
                             if(!tipo.equals(retorno)) imprimeErroSemantico("Variável retornada não é do tipo esperado: retornando "+tipo+" onde se esperava "+retorno);
                             if(valueList.get(head).equals(";")){
                             head++;
-                                if(valueList.get(head).equals("}")){
-                                    semantico.inicializaFuncao(nome, retorno, listaParametros, this);
+                                if(valueList.get(head).equals("}")){ 
+                                    semantico.removeNovoEscopo();
                                     head++;
                                     return true;
                                 }
@@ -868,24 +891,32 @@ private boolean funcao_tipoAcomp(String nome, String retorno){
                     }
                     
                 }
+                semantico.removeNovoEscopo();
                 return imprimeErro("Erro: função sem retorno");
-             }   
+            } 
+            semantico.removeNovoEscopo();
         }   
     }
     return false;
 }
 
 private boolean parametro(){
+    String[] parametro = new String[2]; 
     
     if(!tipo().equals("Erro")){
-        listaParametros.add(valueList.get(head));
+        parametro[0]=valueList.get(head-1);
         if(tokenList.get(head).equals("Identificador")){
+            parametro[1]=valueList.get(head);
+            listaParametros.add(parametro);
             head++;
             return parametro2();   
         }
     } else if(tokenList.get(head).equals("Identificador")){
-         listaParametros.add(valueList.get(head));
+         head++;
+         parametro[0]=valueList.get(head-1);
          if(tokenList.get(head).equals("Identificador")){
+            parametro[1]=valueList.get(head);
+            listaParametros.add(parametro);
             head++;
             return parametro2();   
         }
@@ -1103,15 +1134,21 @@ private boolean zCond(){
 */
 
 public boolean chamadaFuncao(){//falta fazer
+    listaParametrosChamada = new LinkedList<>();
+    String nome;
+    
     if(tokenList.get(head).equals("Identificador")){
+        nome = valueList.get(head);
         head++;
         if(valueList.get(head).equals("(")){
             head++;
             if(valueList.get(head).equals(")")){
+                semantico.verificaChamadaFuncao(nome, listaParametrosChamada, this);
                 head++;
                 return true;
             } else if(parametroCF()){
                 if(valueList.get(head).equals(")")){
+                    semantico.verificaChamadaFuncao(nome, listaParametrosChamada, this);
                     head++;
                     return true;
                 }
@@ -1122,7 +1159,9 @@ public boolean chamadaFuncao(){//falta fazer
 }
 
 private boolean parametroCF(){ 
-        if(!operando().equals("Erro")){
+        String tipo = operando();
+        if(!tipo.equals("Erro")){
+            listaParametrosChamada.add(tipo);
             if(valueList.get(head).equals(",")){
                 head++;
                 return parametroCF();
@@ -1263,7 +1302,7 @@ public boolean enquanto(){
                     head++;
                     if(valueList.get(head).equals("{")){
                         head++;
-                        if(codigoGeral()){
+                        if(IniciaBloco()){
                             if(valueList.get(head).equals("}")){
                                 head++;
                                 return true;
@@ -1293,7 +1332,7 @@ public boolean se(){
                     head++;
                     if(valueList.get(head).equals("{")){
                         head++;
-                        if(codigoGeral()){
+                        if(IniciaBloco()){
                             if(valueList.get(head).equals("}")){
                                 head++;
                                 return i();
@@ -1313,7 +1352,7 @@ private boolean i(){
         head++;
         if(valueList.get(head).equals("{")){
             head++;
-            if(codigoGeral()){
+            if(IniciaBloco()){
                 if(valueList.get(head).equals("}")){
                     head++;
                     return true;
@@ -1766,7 +1805,7 @@ public boolean para(){//falta testar
                                     head++;
                                     if(valueList.get(head).equals("{")){
                                         head++;
-                                        if(codigoGeral()){//falta fazer o cg
+                                        if(IniciaBloco()){//falta fazer o cg
                                             if(valueList.get(head).equals("}")){
                                                 head++;
                                                 return true;

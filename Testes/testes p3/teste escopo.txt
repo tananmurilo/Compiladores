@@ -1,0 +1,37 @@
+constantes
+{
+	real i=0;	
+	inteiro i=3;
+	
+}
+variaveis
+{
+	inteiro t=3;
+	real realeza = 2.2;
+}
+funcao vazio teste (){
+variaveis
+{
+	inteiro t=4;
+	inteiro t=5;
+inteiro df = 90;
+}
+
+}
+funcao real teste2 (inteiro t, inteiro r){
+variaveis
+{
+	inteiro f=4;
+	real df = 90.0;	
+
+}
+
+	retorno df;
+}
+algoritmo
+{
+    teste();
+    teste(23);	
+	teste2(23, "oi");
+	t = teste2(23, 23);	
+}

@@ -31,6 +31,12 @@ public class AnalizadorSemantico {
         listaEscopos.add(novoEscopo);
     }
     
+    //remove ultimo da lista de escopo nova
+    public void removeNovoEscopo(){
+        int i=listaEscopos.size()-1; 
+        listaEscopos.remove(i);
+    }
+    
     // adicionar na estrutura da tabela ( parametros)
     public void addNaTabela(String nome,String token, String tipo,int tam1,int tam2){
                   
@@ -72,12 +78,12 @@ public class AnalizadorSemantico {
     /*
     
     */
-     // adicionar funcao na estrutura da tabela 
-    public void addNaTabelaFuncao(String nome, String tipo,  List<String> atributos){
+    // adicionar funcao na estrutura da tabela 
+    public void addNaTabelaFuncao(String nome, String tipo,  List<String[]> atributos){
             
             String[] atr = new String[atributos.size()];
             for(int i=0; i<atributos.size(); i++){
-                atr[i] = atributos.get(i);
+                atr[i] = atributos.get(i)[0];
             }
         
             Estrutura temp = new Estrutura();
@@ -88,7 +94,7 @@ public class AnalizadorSemantico {
             temp.setTamanho2(0);
             temp.setParametros(atr);
             
-            Map escopo = listaEscopos.get(listaEscopos.size() - 1);
+            Map escopo = listaEscopos.get(0);
             escopo.put(nome, temp); 
             
     }
@@ -116,7 +122,7 @@ public class AnalizadorSemantico {
     //procura somente no escopo mais próximo
     public Estrutura procurarPalavraEscopo(String nome){
         
-        //prucurar de escopo em escopo
+        
         int i=listaEscopos.size()-1; 
         Map<String, Estrutura> escopo = listaEscopos.get(i);
         //prucurar se tem esse mesmo nome na lista
@@ -132,58 +138,79 @@ public class AnalizadorSemantico {
         return null;
     }
     
+     //procura se existe constante com este nome
+    public boolean procurarConstantes(String nome){
+        
+        Map<String, Estrutura> escopo = listaEscopos.get(0);
+        //prucurar se tem esse mesmo nome na lista
+        if(escopo.containsKey( nome )){
+            Estrutura estrutura = escopo.get(nome);
+            if(estrutura.getToken().equals("constante")) return false;
+        }
+        
+        return true;
+    }
+    
     public void inicializaPalavra(String nome, String token, String tipo, String tipoAtribuido, String valor, Producoes sintatico){
         
         if((tipo.equals("inteiro") || tipo.equals("real")) && !valor.equals("")) {
             tipoAtribuido = inteiro_real(valor);
         } 
-        
-        if(this.procurarPalavra(nome)==null){//verificar se ja esta na lista
-            if(palavrasReservadas.buscarPalavra(nome)){ //verifica se é uma palavra reservada
-                sintatico.imprimeErro("Error Semantico: a palavra "+nome+" é uma palavra reservada");
-            } else {
-                if(tipoAtribuido.equals(tipo)) {
-                    this.addNaTabela(nome, token, tipo, 0, 0); 
+        if(procurarConstantes(nome)){
+            if(this.procurarPalavraEscopo(nome)==null){//verificar se ja esta na lista
+                if(palavrasReservadas.buscarPalavra(nome)){ //verifica se é uma palavra reservada
+                    sintatico.imprimeErroSemantico("Error Semantico: a palavra "+nome+" é uma palavra reservada");
                 } else {
-                    sintatico.imprimeErro("Tipos incompatíveis: "+tipoAtribuido+" sendo atribuído à "+tipo);
-                }    
+                    if(tipoAtribuido.equals(tipo)) {
+                        this.addNaTabela(nome, token, tipo, 0, 0); 
+                    } else {
+                        sintatico.imprimeErroSemantico("Tipos incompatíveis: "+tipoAtribuido+" sendo atribuído à "+tipo);
+                    }    
+                }
+            }else{
+                    sintatico.imprimeErroSemantico("Error Semantico: a palavra "+nome+" já foi declarada neste escopo e não pode ser re-declarada");
             }
-        }else{
-                sintatico.imprimeErro("Error Semantico: a palavra "+nome+" já foi declarada e não pode ser re-declarada");
-        }
+        } else sintatico.imprimeErroSemantico("Error Semantico: a palavra "+nome+" é uma constante declarada e não pode ser re-declarada");
         
     }
     //Neste caso não há comparação de tipos pois não há atribuição
     public void inicializaPalavra(String nome, String token, String tipo, Producoes sintatico){
         
-        if(this.procurarPalavra(nome)==null){//verificar se ja esta na lista
-            if(palavrasReservadas.buscarPalavra(nome)){ //verifica se é uma palavra reservada
-                sintatico.imprimeErro("Error Semantico: a palavra "+nome+" é uma palavra reservada");
-            } else {
-                this.addNaTabela(nome, token, tipo, 0, 0); 
-            }                                                           
-        }else{
-            sintatico.imprimeErro("Error Semantico: a palavra "+nome+" já foi declarada e não pode ser re-declarada");
-        }
+        if(procurarConstantes(nome)){
+            if(this.procurarPalavraEscopo(nome)==null){//verificar se ja esta na lista
+                if(palavrasReservadas.buscarPalavra(nome)){ //verifica se é uma palavra reservada
+                    sintatico.imprimeErroSemantico("Error Semantico: a palavra "+nome+" é uma palavra reservada");
+                } else {
+                    this.addNaTabela(nome, token, tipo, 0, 0); 
+                }                                                           
+            }else{
+                sintatico.imprimeErroSemantico("Error Semantico: a palavra "+nome+" já foi declarada neste escopo e não pode ser re-declarada");
+            }
+        } else sintatico.imprimeErroSemantico("Error Semantico: a palavra "+nome+" é uma constante declarada e não pode ser re-declarada");
+        
     }
     //Quando a palavra é inicializada e o valor de outro identificador é atribuido a ela
     public void inicializaPalavraAtribuida(String nome, String token, String tipo, String nomeAtr, Producoes sintatico){
-        if(this.procurarPalavra(nome)==null){//verificar se ja esta na lista
-            if(palavrasReservadas.buscarPalavra(nome)){ //verifica se é uma palavra reservada
-                sintatico.imprimeErro("Error Semantico: a palavra "+nome+" é uma palavra reservada");
-            } else {
-                Estrutura simboloAtribuido = this.procurarPalavra(nomeAtr);
-                if(simboloAtribuido==null){
-                    sintatico.imprimeErro("Error Semantico: a palavra "+nomeAtr+" não foi encontrada");
-                } else if(simboloAtribuido.getToken().equals("variavel") || simboloAtribuido.getToken().equals("constante")){
-                     if(simboloAtribuido.getTipo().equals(tipo)){
-                        this.addNaTabela(nome, token, tipo, 0, 0);
-                    } else sintatico.imprimeErro("Tipos incompatíveis: "+simboloAtribuido.getTipo()+" sendo atribuído à "+tipo);          
-                } else sintatico.imprimeErro("Error Semantico: somente constantes e variaveis podem ser atribuidas na inicialização");   
-            }                                                           
-        }else{
-            sintatico.imprimeErro("Error Semantico: a palavra "+nome+" já foi declarada e não pode ser re-declarada");
-        }
+           
+        if(procurarConstantes(nome)){
+            if(this.procurarPalavraEscopo(nome)==null){//verificar se ja esta na lista
+                if(palavrasReservadas.buscarPalavra(nome)){ //verifica se é uma palavra reservada
+                    sintatico.imprimeErroSemantico("Error Semantico: a palavra "+nome+" é uma palavra reservada");
+                } else {
+                    Estrutura simboloAtribuido = this.procurarPalavra(nomeAtr);
+                    if(simboloAtribuido==null){
+                        sintatico.imprimeErroSemantico("Error Semantico: a palavra "+nomeAtr+" não foi encontrada");
+                    } else if(simboloAtribuido.getToken().equals("variavel") || simboloAtribuido.getToken().equals("constante")){
+                         if(simboloAtribuido.getTipo().equals(tipo)){
+                            this.addNaTabela(nome, token, tipo, 0, 0);
+                        } else sintatico.imprimeErroSemantico("Tipos incompatíveis: "+simboloAtribuido.getTipo()+" sendo atribuído à "+tipo);          
+                    } else sintatico.imprimeErroSemantico("Error Semantico: somente constantes e variaveis podem ser atribuidas na inicialização");   
+                }                                                           
+            }else{
+                sintatico.imprimeErroSemantico("Error Semantico: a palavra "+nome+" já foi declarada neste escopo e não pode ser re-declarada");
+            }
+        } else sintatico.imprimeErroSemantico("Error Semantico: a palavra "+nome+" é uma constante declarada e não pode ser re-declarada");
+        
     }
     /*
     
@@ -192,28 +219,74 @@ public class AnalizadorSemantico {
         
         if(this.procurarPalavra(nome)==null){//verificar se ja esta na lista
             if(palavrasReservadas.buscarPalavra(nome)){ //verifica se é uma palavra reservada
-                sintatico.imprimeErro("Error Semantico: a palavra "+nome+" é uma palavra reservada");
+                sintatico.imprimeErroSemantico("Error Semantico: a palavra "+nome+" é uma palavra reservada");
             } else {
                 this.addNaTabelaRegistro(nome, atributos); 
             }                                                           
         }else{
-            sintatico.imprimeErro("Error Semantico: a palavra "+nome+" já foi declarada e não pode ser re-declarada");
+            sintatico.imprimeErroSemantico("Error Semantico: a palavra "+nome+" já foi declarada e não pode ser re-declarada");
         }
     }
     /*
     
     */
-    public void inicializaFuncao(String nome, String tipo, List<String> atributos, Producoes sintatico){
+    public void inicializaFuncao(String nome, String tipo, List<String[]> atributos, Producoes sintatico){
+        
+        this.criaNovoEscopo();
         
         if(this.procurarPalavra(nome)==null){//verificar se ja esta na lista
             if(palavrasReservadas.buscarPalavra(nome)){ //verifica se é uma palavra reservada
-                sintatico.imprimeErro("Error Semantico: a palavra "+nome+" é uma palavra reservada");
+                sintatico.imprimeErroSemantico("Error Semantico: a palavra "+nome+" é uma palavra reservada");
             } else {
-                this.addNaTabelaFuncao(nome, tipo, atributos); 
+                this.addNaTabelaFuncao(nome, tipo, atributos);
+                for (String[] atributo : atributos) {
+                    addNaTabela(atributo[1], "variavel", atributo[0], 0, 0);
+                }
             }                                                           
         }else{
-            sintatico.imprimeErro("Error Semantico: a palavra "+nome+" já foi declarada e não pode ser re-declarada");
+            sintatico.imprimeErroSemantico("Error Semantico: a palavra "+nome+" já foi declarada e não pode ser re-declarada");
         }
+    }
+    /*
+    
+    */
+    public void verificaChamadaFuncao(String nome, List<String> entrada, Producoes sintatico){
+        
+        Estrutura funcao = this.procurarPalavra(nome);
+        
+        String parametrosEsperado =nome+"(";
+        String parametrosInseridos = nome+"("; 
+        
+        if(funcao!=null){
+            if(funcao.getToken().equals("funcao")){
+                String[] parametros = funcao.getParametros();
+                
+                for (int i = 0; i < parametros.length; i++) { //concateno os parametros esperados
+                    if(i==0) parametrosEsperado = parametrosEsperado+parametros[i];
+                    else parametrosEsperado = parametrosEsperado+", "+parametros[i];
+                }
+                
+                for (int i = 0; i < entrada.size(); i++) { //concateno os parametros inseridos
+                    if(i==0) parametrosInseridos = parametrosInseridos+entrada.get(i);
+                    else parametrosInseridos = parametrosInseridos+", "+entrada.get(i);
+                }
+                
+                parametrosEsperado = parametrosEsperado+(")");
+                parametrosInseridos = parametrosInseridos+(")");
+                
+                if(parametros.length == entrada.size()){
+                
+                    boolean erro = false;
+                    for (int i = 0; i < entrada.size(); i++) {
+                        if(!parametros[i].equals(entrada.get(i))){
+                            erro = true;
+                            break;
+                        }
+                    }
+                    if(erro) sintatico.imprimeErroSemantico("Parametros não batem: esperado: "+parametrosEsperado+", inserido: "+parametrosInseridos);
+                } else sintatico.imprimeErroSemantico("Parametros não batem: esperado: "+parametrosEsperado+", inserido: "+parametrosInseridos);
+            } else sintatico.imprimeErroSemantico("Error Semantico: a função "+nome+" não foi declarada");
+        } else sintatico.imprimeErroSemantico("Error Semantico: a função "+nome+" não foi declarada");
     }
     /*
     
