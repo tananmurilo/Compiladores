@@ -1,0 +1,47 @@
+registro casa{
+	inteiro largura;
+	real altura;
+}
+constantes
+{
+	real realAConst = 99.88;	
+	inteiro inteiroAConst = 8;
+	cadeia Kad = "constante";
+	char ch ='c';
+}
+variaveis
+{
+	real realA = 1.6;
+	real realB;	
+	inteiro inteiroA = 3;
+	inteiro inteiroB;
+	cadeia KadVeriavel = "adasdasdas";
+	cadeia nn;
+	char chVearivel ='a';
+	inteiro vet[10];
+	inteiro mat[10][10];
+
+}
+funcao inteiro teste(){
+	retorno 23;
+}
+funcao real valor(){
+	retorno 23.8;
+}
+
+algoritmo
+{	
+	realA = 10.9+realB+ 7.7;
+	realA = realB*realAConst/5.6+casa.altura;
+	realA = valor();
+	inteiroB = inteiroA-inteiroB+(4-5)+99;
+	inteiroA = 30-4+44*inteiroA;
+	inteiroA = inteiroA-casa.largura;
+	inteiroA = vet[3]+casa.largura-mat[4][4];//Erro sintatico gramatica n aceita registro em operações
+	inteiroA = mat[4][4]*vet[3]+vet[3];////Erro sintatico gramatica n aceita registro em operações
+	inteiroA = inteiroAConst-mat[4][4]*vet[3]+vet[3];
+	casa.largura = 3+inteiroAConst-8+mat[4][4]*vet[3]+vet[3]+casa.largura;
+	casa.altura = realA+3.5-55.7;
+	casa.altura = realAConst*realA+3.5-55.7;
+	casa.altura = casa.altura+casa.altura;////Erro sintatico gramatica n aceita registro em operações
+}

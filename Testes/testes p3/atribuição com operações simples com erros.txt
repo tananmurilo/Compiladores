@@ -1,0 +1,49 @@
+registro casa{
+	inteiro largura;
+	real altura;
+}
+constantes
+{
+	real realAConst = 99.88;	
+	inteiro inteiroAConst = 8;
+	cadeia Kad = "constante";
+	char ch ='c';
+}
+variaveis
+{
+	real realA = 1.6;
+	real realB;	
+	inteiro inteiroA = 3;
+	inteiro inteiroB;
+	cadeia KadVeriavel = "adasdasdas";
+	cadeia nn;
+	char chVearivel ='a';
+	inteiro vet[10];
+	inteiro mat[10][10];
+
+}
+funcao inteiro teste(){
+	retorno 23;
+}
+funcao real valor(){
+	retorno 23.8;
+}
+
+algoritmo
+{	
+	realA = 10.9+inteiroA+ 7.7-vet[10];
+	realA = realB*realAConst/5.6+nn;
+	realA = rua+nn-ch;
+	realA = Kad + realA;
+	realA = realAConst +3.3;
+	inteiroB = inteiroA-realA;
+	inteiroA = 30-4*inteiroA;
+	inteiroA = erro+erro2+5;
+	inteiroA = vet[3]-mat[4][4]+5.6;
+	inteiroA = mat[4][4]*vet[3]+vet[3];
+	inteiroA = inteiroAConst-mat[4][4]*vet[3]+vet[3];
+	casa.largura = 3+inteiroAConst-8+casa.largura;
+	casa.altura = realA+3.5-55.7+casa.largura;
+	casa.altura = realAConst*realA+3.5-55.7;
+	casa.altura = casa.altura+casa.altura;
+}

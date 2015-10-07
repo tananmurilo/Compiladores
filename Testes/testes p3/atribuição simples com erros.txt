@@ -1,0 +1,69 @@
+registro casa{
+	inteiro largura;
+	real altura;
+}
+constantes
+{
+	real realAConst = 99.88;	
+	inteiro inteiroAConst = 8;
+	cadeia Kad = "constante";
+	char ch ='c';
+}
+variaveis
+{
+	real realA = 1.6;
+	real realB;	
+	inteiro inteiroA = 3;
+	inteiro inteiroB;
+	cadeia KadVeriavel = "adasdasdas";
+	cadeia nn;
+	char chVearivel ='a';
+	inteiro vet[10];
+	inteiro mat[10][10];
+
+}
+funcao inteiro teste(){
+	retorno 23;
+}
+funcao real valor(){
+	retorno 23.8;
+}
+
+algoritmo
+{	
+	
+	realA = 10; //real e inteiro
+	realA = KadVeriavel;
+	realA = chVearivel ;
+	realA = "Cadeia";
+	realA = teste();//real e inteiro
+	99 = inteiroB; //isso era pra ser erro sintatico
+	88 = 345;//isso era pra ser erro sintatico
+	88 = realA;//isso era pra ser erro sintatico
+	inteiroB = realA;
+	inteiroA = inteiroB;
+	inteiroA = 30.99;
+	inteiroA = valor();
+	inteiroA = casa.altura;
+	inteiroA = vet[3];
+	inteiroA = mat[4][4];
+	inteiroA = casa.fake;//registro n existe
+	nn = 'c';
+	nn = 234;
+	nn = teste();	
+	nn = inteiroA;
+	nn = realAConst;
+	KadVeriavel = ch;
+	chVearivel = "cadeia";
+	chVearivel = 42342;
+	chVearivel = Kad;
+	ch = 's'; //constante
+	ch = chVearivel;
+	erro = inteiroA;
+	inteiroA =erro2;
+	erro = teste();
+	casa.altura = "error";
+	casa.altura = 10; //real e inteiro
+	casa.altura = teste();
+	casa.altura = vet[4];
+}

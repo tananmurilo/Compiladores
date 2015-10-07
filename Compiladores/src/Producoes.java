@@ -1473,7 +1473,7 @@ private boolean aceVM(){
 }
 
 private String valorNumericoTipo(int headPos){
-    String tipo=null;
+    String tipo="nulo";
     if(tokenList.get(headPos).equals("Numero")) {
         //inteiro ou real n precisa verificar 
         tipo = semantico.inteiro_real(valueList.get(headPos));
@@ -1500,7 +1500,7 @@ private String valorNumericoTipo(int headPos){
                                             tipo = semantico.procurarPalavra(nome).getTipo();
                                        }
 
-                                       if(tipo == null){
+                                       if(tipo == "nulo"||tipo == null){
                                            imprimeErroSemantico("Erro "+nome+" não foi declarado.");
 
                                        }else if(tipo.equals("inteiro")||tipo.equals("real")){
@@ -1540,7 +1540,7 @@ private String valorNumericoTipo(int headPos){
                                                     tipo = semantico.procurarPalavra(nome).getTipo();
                                                }
 
-                                               if(tipo == null){
+                                               if(tipo == "nulo"||tipo == null){
                                                    imprimeErroSemantico("Erro "+nome+" não foi declarado.");
 
                                                }else if(tipo.equals("inteiro")||tipo.equals("real")){
@@ -1562,7 +1562,7 @@ private String valorNumericoTipo(int headPos){
                                                     tipo = semantico.procurarPalavra(nome).getTipo();
                                                }
 
-                                               if(tipo == null){
+                                               if(tipo == "nulo"||tipo == null){
                                                    imprimeErroSemantico("Erro "+nome+" não foi declarado.");
 
                                                }else if(tipo.equals("inteiro")||tipo.equals("real")){
@@ -1585,7 +1585,7 @@ private String valorNumericoTipo(int headPos){
                             tipo = semantico.procurarPalavra(nome).getTipo();
                        }
                       
-                       if(tipo == null){
+                       if(tipo == "nulo"||tipo == null){
                            imprimeErroSemantico("Erro "+nome+" não foi declarado.");
 
                        }else if(tipo.equals("inteiro")||tipo.equals("real")){
@@ -1701,7 +1701,8 @@ private boolean opn(String tipo){
     //verificar o valor anterior e seguinte de opn pra ver se é real ou inteiro;
     if(valueList.get(head).equals("+")||valueList.get(head).equals("-")||valueList.get(head).equals("*")||valueList.get(head).equals("/")){
         if(tokenList.get(head+1).equals("Numero")){
-            String n = semantico.inteiro_real(valueList.get(head+1));
+            String n ="";
+            n = semantico.inteiro_real(valueList.get(head+1));
             if((n.equals("inteiro")&&tipo.equals("inteiro"))||(n.equals("real")&&tipo.equals("real"))){
                 //iguais
             }else{
@@ -1733,7 +1734,8 @@ private boolean opn(String tipo){
                }
         }else if(valueList.get(head+1).equals("(")){//operações do tipo a + (5+6)+4; verificar tipo do a com 5
             if(tokenList.get(head+2).equals("Numero")){
-                String n = semantico.inteiro_real(valueList.get(head+2));
+                String n ="";
+                 n = semantico.inteiro_real(valueList.get(head+2));
                 if((n.equals("inteiro")&&tipo.equals("inteiro"))||(n.equals("real")&&tipo.equals("real"))){
                     //iguais
                 }else{
@@ -1766,7 +1768,8 @@ private boolean opn(String tipo){
         }
             if(valueList.get(head-1).equals(")")){
                 if(tokenList.get(head-2).equals("Numero")){
-                    String n = semantico.inteiro_real(valueList.get(head-2));
+                    String n ="";
+                    n = semantico.inteiro_real(valueList.get(head-2));
                     if((n.equals("inteiro")&&tipo.equals("inteiro"))||(n.equals("real")&&tipo.equals("real"))){
                         //iguais
                     }else{
