@@ -1,0 +1,20 @@
+constantes
+{
+	
+}
+variaveis
+{
+	int a;
+}
+
+funcao vazio x(inteiro a, real b){
+}
+
+funcao inteiro x(inteiro a, real b){
+
+	retorno 4;
+}
+
+algoritmo
+{
+}

@@ -9,6 +9,6 @@ variaveis
 
 algoritmo
 {
-    	a=0.0;
-	a=0;
+    	a = 7.0;
+	a = 7;
 }

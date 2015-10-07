@@ -1,0 +1,19 @@
+constantes
+{
+	
+}
+variaveis
+{
+	int a;
+	real b;
+	cadeia h;
+}
+
+algoritmo
+{
+	se(2==3){}
+	se("e"==h){}
+	se(3.0==b){}
+	se(a==b){}
+	se(a==h){}
+}

@@ -1,0 +1,17 @@
+constantes
+{
+	
+}
+variaveis
+{
+	int a[2];
+	real b[3][5];
+	inteiro c[3.0];
+	real[3][5.6];
+	cadeia h;
+}
+
+algoritmo
+{
+	a[0] = b[3.6][5];
+}

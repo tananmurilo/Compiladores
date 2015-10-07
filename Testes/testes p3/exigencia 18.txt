@@ -1,0 +1,15 @@
+constantes
+{
+	
+}
+variaveis
+{
+	int a;
+	int b[3];
+	int c[3][3];
+}
+
+algoritmo
+{
+	escreva('f', "ff", a, b[3], c[0][0], 3+4 );
+}

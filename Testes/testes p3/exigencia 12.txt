@@ -1,0 +1,26 @@
+
+constantes
+{
+	real k=1.6;	
+	inteiro j=3;
+	cadeia sorte = "adasdasdas";
+	char ch ='a';
+}
+variaveis
+{
+	inteiro cont = 0;
+	real valor = 4.6;
+
+
+}
+
+algoritmo
+{	
+	variaveis{
+		char k= "ola";
+		inteiro j = 4.6;
+	}
+	
+	
+
+}

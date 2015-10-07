@@ -9,6 +9,6 @@ variaveis
 
 algoritmo
 {
-    	a=0.0;
-	a=0;
+    se((3>4) && (4<5))	{
+	}	
 }

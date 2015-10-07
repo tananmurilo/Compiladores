@@ -1,0 +1,15 @@
+constantes
+{
+	
+}
+variaveis
+{
+	int a;
+}
+
+algoritmo
+{
+    a = 4 + 'f';
+	a = 4 + "ola";
+	a= 5 + verdadeiro;		
+}

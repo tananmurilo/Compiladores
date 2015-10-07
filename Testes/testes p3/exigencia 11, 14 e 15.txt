@@ -1,7 +1,4 @@
-registro casa{
-	inteiro largura;
-	real altura;
-}
+
 constantes
 {
 	real k=1.6;	

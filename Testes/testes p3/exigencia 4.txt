@@ -1,0 +1,18 @@
+constantes
+{
+	
+}
+variaveis
+{
+	int a;
+}
+
+funcao inteiro x(inteiro a, real b){
+
+	retorno 33;
+}
+
+algoritmo
+{
+    		
+}
