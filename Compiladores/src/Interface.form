@@ -12,17 +12,9 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenu1ActionPerformed"/>
           </Events>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="MenuLexico">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Abrir arquivo Lexico"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="MenuLexicoActionPerformed"/>
-              </Events>
-            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="MenuSintatico">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Abrir arquivo Sintatico"/>
+                <Property name="text" type="java.lang.String" value="Abrir arquivo"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="MenuSintaticoActionPerformed"/>

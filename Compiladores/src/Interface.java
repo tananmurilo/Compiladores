@@ -48,7 +48,6 @@ public class Interface extends javax.swing.JFrame {
         painelEntrada = new javax.swing.JTextPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        MenuLexico = new javax.swing.JMenuItem();
         MenuSintatico = new javax.swing.JMenuItem();
         menuSalvar = new javax.swing.JMenuItem();
 
@@ -110,15 +109,7 @@ public class Interface extends javax.swing.JFrame {
             }
         });
 
-        MenuLexico.setText("Abrir arquivo Lexico");
-        MenuLexico.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                MenuLexicoActionPerformed(evt);
-            }
-        });
-        jMenu1.add(MenuLexico);
-
-        MenuSintatico.setText("Abrir arquivo Sintatico");
+        MenuSintatico.setText("Abrir arquivo");
         MenuSintatico.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 MenuSintaticoActionPerformed(evt);
@@ -155,60 +146,6 @@ public class Interface extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     
-    /**
-     * Metodo executado quando o item "abrir arquivo" do menu for acionado.
-     * Executa JFileChooser e ler o arquivo selecionado e mostra no painel. 
-     * @param evt 
-     */
-    private void MenuLexicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuLexicoActionPerformed
-         /* pegar o caminho do arquivo para leitura*/
-        
-        JFileChooser file = new JFileChooser(); 
-        file.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        //filtro apenas para arquivos txt
-        file.addChoosableFileFilter(new FileNameExtensionFilter( "Arquivo texto (*.txt)", "txt"));  
-        file.setAcceptAllFileFilterUsed(false);  
-        // Impede seleções múltiplas.  
-        file.setMultiSelectionEnabled(false);  
-          int i= file.showSaveDialog(null);
-       
-        if (i==1){
-           this.path="erro ao abrir arquivo";
-           this.Status_arquivo.setText(path);
-        } else {
-            File arquivo = file.getSelectedFile();
-            this.path=arquivo.getPath();
-            System.out.println(arquivo.getPath());
-            this.Status_arquivo.setText("Arquivo: "+path);
-            
-            //chamada do método de leitura de arquivo
-            Arquivo arq = new Arquivo();
-            arq.read(path);
-            LinkedList<String> linha =  new LinkedList<>();
-            linha = arq.getLinhas(); //pega as linhas do arquivo lido
-            String text="";
-            int k = 0;
-            for (String linha1 : linha) {
-                k++;
-                if(linha1!=null){// a ultima posição na lista é null 
-                    text= text+k+" "+linha1+"\n";
-                }    
-            }
-            this.painelEntrada.setText(text); //add o texto ao painel
-            
-            AnalizadorLexico analizador = new AnalizadorLexico();
-            LinkedList<String> Tokens = new LinkedList<String>();
-            Tokens =   analizador.separarTokens(arq.getLinhas());//tokens separado, mas sem o tratamento.
-            textoFinal = analizador.getTexto();//pega o texto com todos os tokens já processados
-            
-                                   
-             this.painelSaida.setText(textoFinal); //add o texto ao painel
-            
-        }
-        
-        
-    }//GEN-LAST:event_MenuLexicoActionPerformed
-
     private void jMenu1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu1ActionPerformed
       
     }//GEN-LAST:event_jMenu1ActionPerformed
@@ -345,7 +282,6 @@ public class Interface extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem MenuLexico;
     private javax.swing.JMenuItem MenuSintatico;
     private javax.swing.JLabel Status_Saida;
     private javax.swing.JLabel Status_arquivo;
