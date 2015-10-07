@@ -1669,10 +1669,17 @@ private boolean opn(String tipo){
                 imprimeErroSemantico("Erro tipos incompativeis em operações. "+tipo+" e "+n);
             }
         }else if(tokenList.get(head+1).equals("Identificador")){
-               String nome = valueList.get(head+1);
+            String nome="";
+            if(valueList.get(head+2).equals(".")&&tokenList.get(head+3).equals("Identificador")){
+                 nome = valueList.get(head+1)+"."+valueList.get(head+3);
+            }else{
+                 nome = valueList.get(head+1);
+            }
+              
                String tipo2=null;
                if(semantico.procurarPalavra(nome)!=null){
                     tipo2 = semantico.procurarPalavra(nome).getTipo();
+                    //System.out.println(semantico.procurarPalavra(nome).getToken());
                     
                }
 
@@ -1694,7 +1701,13 @@ private boolean opn(String tipo){
                     imprimeErroSemantico("Erro tipos incompativeis em operações. "+tipo+" e "+n);
                 }
             }else if(tokenList.get(head+2).equals("Identificador")){
-                   String nome = valueList.get(head+2);
+                    String nome="";
+                    if(valueList.get(head+3).equals(".")&&tokenList.get(head+4).equals("Identificador")){
+                         nome = valueList.get(head+2)+"."+valueList.get(head+4);
+                    }else{
+                         nome = valueList.get(head+2);
+                    }
+                   //String nome = valueList.get(head+2);
                    String tipo2=null;
                    if(semantico.procurarPalavra(nome)!=null){
                         tipo2 = semantico.procurarPalavra(nome).getTipo();
@@ -1721,7 +1734,13 @@ private boolean opn(String tipo){
                         imprimeErroSemantico("Erro tipos incompativeis em operações. "+n+" e "+tipo);
                     }
                 }else if(tokenList.get(head-2).equals("Identificador")){
-                       String nome = valueList.get(head+2);
+                       String nome="";
+                        if(valueList.get(head-4).equals(".")&&tokenList.get(head-2).equals("Identificador")){
+                             nome = valueList.get(head-4)+"."+valueList.get(head-2);
+                        }else{ 
+                             nome = valueList.get(head-2);
+                        }
+                      // String nome = valueList.get(head+2);
                        String tipo2=null;
                        if(semantico.procurarPalavra(nome)!=null){
                             tipo2 = semantico.procurarPalavra(nome).getTipo();
