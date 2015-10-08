@@ -18,6 +18,7 @@ import java.util.Iterator;
 public class AnalizadorSemantico {
     
     private List<Map> listaEscopos =  new LinkedList<>();
+    private List<String> listaRegistros =  new LinkedList<>();
     private PalavrasReservadas palavrasReservadas =  new PalavrasReservadas();
 
     public AnalizadorSemantico() {
@@ -39,7 +40,15 @@ public class AnalizadorSemantico {
     
     // adicionar na estrutura da tabela ( parametros)
     public void addNaTabela(String nome,String token, String tipo,int tam1,int tam2){
-                  
+            
+            if(listaRegistros.contains(tipo)){
+                Estrutura registro = procurarPalavraEscopo(tipo);
+                String[][] atr = registro.getAtributos();
+                
+                for(int i=0; i<atr.length; i++){
+                    addNaTabela(nome+"."+atr[i][1], "variavel" , atr[i][0], 0, 0);// adiciona os atributos como variaveis na tabela com o nome: registro.atributo
+                }
+            }
             
             Estrutura temp = new Estrutura();
             temp.setNome(nome);
@@ -60,7 +69,7 @@ public class AnalizadorSemantico {
             String[][] atr = new String[atributos.size()][2];
             for(int i=0; i<atributos.size(); i++){
                 atr[i] = atributos.get(i);
-                addNaTabela(nome+"."+atr[i][1], "variavel" , atr[i][0], 0, 0);// adiciona os atributos como variaveis na tabela com o nome: registro.atributo
+                //addNaTabela(nome+"."+atr[i][1], "variavel" , atr[i][0], 0, 0);// adiciona os atributos como variaveis na tabela com o nome: registro.atributo
             }
         
             Estrutura temp = new Estrutura();
@@ -73,6 +82,7 @@ public class AnalizadorSemantico {
             
             Map escopo = listaEscopos.get(listaEscopos.size() - 1);
             escopo.put(nome, temp); 
+            listaRegistros.add(nome);
             
     }
     /*

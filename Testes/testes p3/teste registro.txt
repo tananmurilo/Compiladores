@@ -1,0 +1,27 @@
+registro casa{
+	inteiro largura;
+	real altura;
+}
+
+constantes
+{
+	
+}
+variaveis
+{
+	casa a;
+}
+
+algoritmo
+{
+	a.largura = 3.0;
+	a.largura = 3;
+
+	a.altura = 3.0;
+	a.altura = 3;
+
+	a.largura = a.altura;
+
+	casa.largura= casa.altura; // tem que dar erro
+
+}
